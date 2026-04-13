@@ -1,0 +1,132 @@
+"use client";
+
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+const STORIES = [
+  {
+    id: 1,
+    category: "Style",
+    title: "The Top 5 Pros and Cons of Style",
+    subtitle:
+      "My visual universe is surrealistic, colorful and dark at the same time.",
+    image: "/images/magazine-real.png",
+    accent: "bg-red",
+  },
+  {
+    id: 2,
+    category: "Technology",
+    title: "How Technology Is Changing",
+    subtitle:
+      "My visual universe is surrealistic, colorful and dark at the same time.",
+    image: "/images/story-tech.png",
+    accent: "bg-white",
+  },
+  {
+    id: 3,
+    category: "Culture",
+    title: "Raw Expression",
+    subtitle: "",
+    image: "/images/story-portrait.png",
+    accent: "bg-transparent",
+  },
+];
+
+export default function EditorialGrid() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.set(headingRef.current, { y: 40, opacity: 0 });
+      ScrollTrigger.create({
+        trigger: headingRef.current,
+        start: "top 85%",
+        onEnter: () => {
+          gsap.to(headingRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: "power2.out",
+          });
+        },
+        once: true,
+      });
+
+      const cards = gridRef.current?.querySelectorAll(".story-card");
+      if (!cards) return;
+
+      gsap.set(cards, { y: 80, opacity: 0 });
+      ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: "top 75%",
+        onEnter: () => {
+          gsap.to(cards, {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: "power2.out",
+          });
+        },
+        once: true,
+      });
+    },
+    { scope: gridRef }
+  );
+
+  return (
+    <section className="min-h-screen w-full bg-black px-6 py-24 md:px-10 lg:px-16">
+      {/* Section heading — BIG */}
+      <h2
+        ref={headingRef}
+        className="mb-16 text-center font-poppins text-[8vw] font-black uppercase tracking-wide text-white md:text-[5vw]"
+      >
+        Latest Stories
+      </h2>
+
+      <div
+        ref={gridRef}
+        className="mx-auto grid max-w-7xl grid-cols-1 gap-6 md:grid-cols-3"
+      >
+        {STORIES.map((story) => (
+          <a
+            key={story.id}
+            href="#"
+            className="story-card group relative block aspect-[3/4] overflow-hidden"
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08]"
+              style={{ backgroundImage: `url(${story.image})` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-red/0 transition-colors duration-300 group-hover:bg-red/15" />
+            <div className={`absolute left-0 top-0 h-1.5 w-full ${story.accent}`} />
+
+            <div className="relative z-10 flex h-full flex-col justify-end p-6 md:p-8">
+              <span className="mb-3 font-montserrat text-xs font-bold uppercase tracking-[0.3em] text-white/60">
+                {story.category}
+              </span>
+              <h3 className="font-poppins text-2xl font-black uppercase leading-[1] text-white md:text-3xl lg:text-4xl">
+                {story.title}
+              </h3>
+              {story.subtitle && (
+                <p className="mt-3 font-montserrat text-sm leading-relaxed text-white/60">
+                  {story.subtitle}
+                </p>
+              )}
+              <div className="mt-5 flex items-center gap-2 font-montserrat text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-red">
+                Read Full Story
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-2">
+                  &rarr;
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
