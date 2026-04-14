@@ -15,6 +15,17 @@ export default function GSAPProvider({
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Detect mobile — disable Lenis on touch devices for native scroll feel
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(pointer: coarse)").matches ||
+        window.innerWidth < 768);
+
+    if (isMobile) {
+      // Skip Lenis on mobile — use native scroll
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

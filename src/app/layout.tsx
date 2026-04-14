@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Montserrat } from "next/font/google";
+import { Poppins, Montserrat, Archivo } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import GSAPProvider from "@/providers/GSAPProvider";
@@ -16,6 +16,14 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
   variable: "--font-montserrat-var",
   display: "swap",
+});
+
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-archivo-var",
+  display: "swap",
+  axes: ["wdth"],
 });
 
 // Placeholder for custom fonts — replace src with actual font files when available
@@ -51,7 +59,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${montserrat.variable}`}
+      className={`${poppins.variable} ${montserrat.variable} ${archivo.variable}`}
     >
       <body>
         <GSAPProvider>{children}</GSAPProvider>

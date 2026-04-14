@@ -8,17 +8,19 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Shop", href: "/shop" },
-  { label: "Contact", href: "/contact" },
-  { label: "Style Guide", href: "/style-guide" },
-  { label: "Image Licensing", href: "/image-licensing" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Advertise", href: "/advertise" },
+  { label: "Event", href: "/event" },
+  { label: "Newsletter", href: "/newsletter" },
+  { label: "Submission", href: "/submission" },
 ];
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState("/");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerTopRef = useRef<HTMLSpanElement>(null);
   const hamburgerMidRef = useRef<HTMLSpanElement>(null);
@@ -88,26 +90,50 @@ export default function Navbar() {
           isScrolled ? "bg-black/90 backdrop-blur-md" : "bg-transparent"
         )}
       >
-        <div className="flex items-center justify-between px-6 py-5 md:px-10 lg:px-16">
-          {/* Logo — bold */}
+        <div className="flex items-center justify-between px-6 py-5 md:px-10 lg:px-14">
+          {/* Logo */}
           <a href="/" className="relative z-50">
-            <span className="font-poppins text-lg font-black tracking-[0.3em] text-white md:text-xl">
+            <span
+              className="font-archivo text-lg font-bold tracking-[0.25em] text-white md:text-xl"
+              style={{ fontStretch: "125%" }}
+            >
               OBARE
             </span>
           </a>
 
-          {/* Desktop nav — bigger text */}
-          <div className="hidden items-center gap-8 md:flex">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="group relative font-montserrat text-sm font-bold uppercase tracking-widest text-white/70 transition-colors hover:text-white"
-              >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 h-[2px] w-0 bg-red transition-all duration-300 group-hover:w-full" />
-              </a>
-            ))}
+          {/* Desktop nav — slash-separated with red active dot */}
+          <div className="hidden items-center gap-0 md:flex">
+            {NAV_LINKS.map((link, i) => {
+              const isActive = activeHref === link.href;
+              return (
+                <div key={link.href} className="flex items-center">
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveHref(link.href);
+                    }}
+                    className={cn(
+                      "group relative flex items-center gap-2 px-2 font-archivo text-[13px] font-bold uppercase tracking-[0.04em] transition-colors",
+                      isActive
+                        ? "text-red"
+                        : "text-white/80 hover:text-white"
+                    )}
+                    style={{ fontStretch: "125%" }}
+                  >
+                    {isActive && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-red" />
+                    )}
+                    {link.label}
+                  </a>
+                  {i < NAV_LINKS.length - 1 && (
+                    <span className="font-archivo text-sm text-white/30">
+                      /
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Hamburger */}
@@ -123,24 +149,36 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu — massive type */}
+      {/* Mobile menu */}
       <div
         ref={mobileMenuRef}
-        className="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-6 bg-black"
+        className="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-5 bg-black"
         style={{ clipPath: "inset(0 0 100% 0)" }}
       >
-        {NAV_LINKS.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            onClick={() => setIsMobileOpen(false)}
-            className="mobile-link font-poppins text-5xl font-black uppercase tracking-wide text-white transition-colors hover:text-red"
-          >
-            {link.label}
-          </a>
-        ))}
+        {NAV_LINKS.map((link) => {
+          const isActive = activeHref === link.href;
+          return (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveHref(link.href);
+                setIsMobileOpen(false);
+              }}
+              className={cn(
+                "mobile-link flex items-center gap-3 font-archivo text-3xl font-bold uppercase tracking-wide transition-colors",
+                isActive ? "text-red" : "text-white hover:text-red"
+              )}
+              style={{ fontStretch: "125%" }}
+            >
+              {isActive && <span className="h-2 w-2 rounded-full bg-red" />}
+              {link.label}
+            </a>
+          );
+        })}
         <div className="mt-8">
-          <span className="font-montserrat text-sm uppercase tracking-widest text-white/40">
+          <span className="font-archivo text-sm uppercase tracking-widest text-white/40">
             info@ObareMag.com
           </span>
         </div>

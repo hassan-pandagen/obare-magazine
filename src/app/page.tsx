@@ -66,14 +66,15 @@ export default function Home() {
       sections.forEach((section, i) => {
         const card = section.querySelector<HTMLElement>(".folder-card");
 
-        // First card already in place — skip animation
-        // Cards 2, 3, 4 slide UP from below as their section scrolls into view
         if (card && i > 0) {
+          const isMobile = window.innerWidth < 768;
+          const tiltAngle = isMobile ? 6 : 10;
+
           gsap.fromTo(
             card,
             {
               yPercent: 110,
-              rotationZ: 1.5,
+              rotationZ: tiltAngle,
             },
             {
               yPercent: 0,
@@ -81,9 +82,9 @@ export default function Home() {
               ease: "power2.out",
               scrollTrigger: {
                 trigger: section,
-                start: "top bottom",    // Starts when section enters viewport
-                end: "top top",         // Done when section's top hits viewport top
-                scrub: true,
+                start: "top bottom",
+                end: "top 30%",
+                scrub: 0.5,
               },
             }
           );
@@ -99,15 +100,9 @@ export default function Home() {
       <Navbar />
 
       <main>
-        {/* 1. Hero — normal full-screen scroll */}
         <Hero />
-
-        {/* 2. Why Travel — transition section, normal scroll */}
         <WhyTravel />
 
-        {/* 3. FOLDER STACK — each section is 150vh tall for scroll space,
-             inside sticky container holds the card. Provides room for the
-             slide-up animation to be visible before the next card arrives. */}
         <div ref={stackContainerRef}>
           {PROJECTS.map((project, i) => (
             <section
@@ -129,7 +124,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* After stack */}
         <Marquee />
         <EditorialGrid />
         <FooterCTA />

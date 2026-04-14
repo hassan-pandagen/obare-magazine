@@ -10,6 +10,7 @@
 
   --font-poppins: var(--font-poppins-var);
   --font-montserrat: var(--font-montserrat-var);
+  --font-archivo: var(--font-archivo-var);
   --font-manverse: var(--font-manverse-var);
   --font-greater: var(--font-greater-var);
 }
