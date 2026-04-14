@@ -42,7 +42,7 @@ export default function WhyTravel() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-black"
+      className="relative flex h-full w-full flex-col justify-end bg-black"
     >
       {/* Background image — subtle */}
       <div
