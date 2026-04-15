@@ -7,6 +7,7 @@ interface FolderSectionProps {
   author?: string;
   videoSrc?: string;
   imageSrc?: string;
+  href?: string;
 }
 
 export default function FolderSection({
@@ -16,6 +17,7 @@ export default function FolderSection({
   author,
   videoSrc,
   imageSrc,
+  href = "#",
 }: FolderSectionProps) {
   return (
     <div
@@ -70,10 +72,17 @@ export default function FolderSection({
           </p>
         )}
         <a
-          href="#"
-          className="mt-5 hidden font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-red md:mt-7 md:inline-block"
+          href={href}
+          className="group relative mt-5 hidden items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7 md:inline-flex"
         >
-          View Project &rarr;
+          <span className="relative">
+            View Project
+            <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-left scale-x-100 bg-white transition-transform duration-500 group-hover:scale-x-0" />
+            <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-right scale-x-0 bg-red transition-transform duration-500 delay-100 group-hover:scale-x-100" />
+          </span>
+          <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">
+            &rarr;
+          </span>
         </a>
       </div>
     </div>

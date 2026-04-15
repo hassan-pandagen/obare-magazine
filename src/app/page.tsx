@@ -21,6 +21,7 @@ const PROJECTS = [
     category: "Culture",
     author: "Obi Nwachukwu",
     videoSrc: "/videos/reveal-bg.mp4",
+    href: "/projects/bare-models",
   },
   {
     id: 2,
@@ -29,6 +30,7 @@ const PROJECTS = [
     category: "Travel",
     author: "Amara Keita",
     imageSrc: "/images/traveling.png",
+    href: "/projects/traveling-light",
   },
   {
     id: 3,
@@ -37,6 +39,7 @@ const PROJECTS = [
     category: "About OBARE",
     author: "OBARE Editorial",
     videoSrc: "/videos/who-we-are.mp4",
+    href: "/projects/the-magazine-thats-real",
   },
   {
     id: 4,
@@ -45,6 +48,7 @@ const PROJECTS = [
     category: "Editorial",
     author: "Zara Osei",
     imageSrc: "/images/magazine-real.png",
+    href: "/projects/raw-expression",
   },
 ];
 
@@ -62,21 +66,20 @@ export default function Home() {
 
       const sections = gsap.utils.toArray<HTMLElement>(".folder-section");
 
+      const isMobile = window.innerWidth < 768;
+      const tiltAngle = isMobile ? 8 : 14;
+
       sections.forEach((section, i) => {
         const card = section.querySelector<HTMLElement>(".folder-card");
 
         if (card && i > 0) {
-          const isMobile = window.innerWidth < 768;
-          const tiltAngle = isMobile ? 6 : 10;
-
           gsap.fromTo(
             card,
             {
-              yPercent: 110,
               rotationZ: tiltAngle,
+              transformOrigin: "0% 0%",
             },
             {
-              yPercent: 0,
               rotationZ: 0,
               ease: "none",
               scrollTrigger: {
@@ -102,23 +105,22 @@ export default function Home() {
         <Hero />
         <WhyTravel />
 
-        <div ref={stackContainerRef}>
+        <div ref={stackContainerRef} className="relative">
           {PROJECTS.map((project, i) => (
             <section
               key={project.id}
-              className="folder-section relative h-[150vh] w-full"
+              className="folder-section sticky top-0 h-[130vh] w-full"
               style={{ zIndex: i + 10 }}
             >
-              <div className="sticky top-0 h-screen w-full overflow-hidden">
-                <FolderSection
-                  title={project.title}
-                  subtitle={project.subtitle}
-                  category={project.category}
-                  author={project.author}
-                  videoSrc={project.videoSrc}
-                  imageSrc={project.imageSrc}
-                />
-              </div>
+              <FolderSection
+                title={project.title}
+                subtitle={project.subtitle}
+                category={project.category}
+                author={project.author}
+                videoSrc={project.videoSrc}
+                imageSrc={project.imageSrc}
+                href={project.href}
+              />
             </section>
           ))}
         </div>
