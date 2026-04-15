@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 interface FolderSectionProps {
   title: string;
   subtitle?: string;
@@ -19,19 +21,43 @@ export default function FolderSection({
   imageSrc,
   href = "#",
 }: FolderSectionProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const card = cardRef.current;
+    if (!video || !card) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    io.observe(card);
+    return () => io.disconnect();
+  }, [videoSrc]);
+
   return (
     <div
+      ref={cardRef}
       className="folder-card relative h-screen w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)]"
       style={{ borderRadius: "24px 24px 0 0" }}
     >
       {/* Full-bleed media */}
       {videoSrc ? (
         <video
+          ref={videoRef}
           src={videoSrc}
-          autoPlay
           loop
           muted
           playsInline
+          preload="metadata"
           className="absolute inset-0 h-full w-full object-cover"
         />
       ) : imageSrc ? (

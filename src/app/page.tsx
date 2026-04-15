@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import WhyTravel from "@/components/sections/WhyTravel";
 import FolderSection from "@/components/sections/FolderSection";
+import ReelsSection from "@/components/sections/ReelsSection";
 import Marquee from "@/components/sections/Marquee";
 import EditorialGrid from "@/components/sections/EditorialGrid";
 import FooterCTA from "@/components/sections/FooterCTA";
@@ -109,7 +110,7 @@ export default function Home() {
           {PROJECTS.map((project, i) => (
             <section
               key={project.id}
-              className="folder-section sticky top-0 h-[130vh] w-full"
+              className="folder-section sticky top-0 h-[110vh] w-full md:h-[130vh]"
               style={{ zIndex: i + 10 }}
             >
               <FolderSection
@@ -125,6 +126,7 @@ export default function Home() {
           ))}
         </div>
 
+        <ReelsSection />
         <Marquee />
         <EditorialGrid />
         <FooterCTA />
