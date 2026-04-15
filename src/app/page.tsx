@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
 import Loader from "@/components/layout/Loader";
 import Footer from "@/components/layout/Footer";
@@ -79,12 +78,12 @@ export default function Home() {
             {
               yPercent: 0,
               rotationZ: 0,
-              ease: "power2.out",
+              ease: "none",
               scrollTrigger: {
                 trigger: section,
                 start: "top bottom",
-                end: "top 30%",
-                scrub: 0.5,
+                end: "top top",
+                scrub: true,
               },
             }
           );
