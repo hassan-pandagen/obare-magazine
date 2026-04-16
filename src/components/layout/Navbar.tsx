@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,23 +9,26 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "Articles", href: "/articles" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
   { label: "Advertise", href: "/advertise" },
   { label: "Event", href: "/event" },
   { label: "Newsletter", href: "/newsletter" },
-  { label: "Submission", href: "/submission" },
+  { label: "Submission", href: "/submissions" },
 ];
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [activeHref, setActiveHref] = useState("/");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerTopRef = useRef<HTMLSpanElement>(null);
   const hamburgerMidRef = useRef<HTMLSpanElement>(null);
   const hamburgerBotRef = useRef<HTMLSpanElement>(null);
+
+  const [isHidden, setIsHidden] = useState(false);
 
   useGSAP(() => {
     ScrollTrigger.create({
@@ -35,6 +39,50 @@ export default function Navbar() {
       },
     });
   });
+
+  // Smart-hide — hide on scroll down, show on scroll up.
+  // Uses rAF throttling + a directional-accumulator so momentum-scroll
+  // noise doesn't cause flicker on iOS.
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let accum = 0;
+    let ticking = false;
+
+    const check = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+
+      if (y < 80 || isMobileOpen) {
+        setIsHidden(false);
+        accum = 0;
+      } else {
+        // Accumulate same-direction motion; flip accumulator on reverse
+        if ((accum > 0 && delta < 0) || (accum < 0 && delta > 0)) accum = 0;
+        accum += delta;
+
+        if (accum > 12) {
+          setIsHidden(true);
+          accum = 0;
+        } else if (accum < -12) {
+          setIsHidden(false);
+          accum = 0;
+        }
+      }
+
+      lastY = y;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(check);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isMobileOpen]);
 
   useEffect(() => {
     const top = hamburgerTopRef.current;
@@ -86,8 +134,9 @@ export default function Navbar() {
       <nav
         ref={navRef}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-colors duration-300",
-          isScrolled ? "bg-black/90 backdrop-blur-md" : "bg-transparent"
+          "fixed top-0 left-0 right-0 z-50 transition-[transform,background-color,backdrop-filter] duration-300 ease-out will-change-transform",
+          isScrolled ? "bg-black/90 backdrop-blur-md" : "bg-transparent",
+          isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
         <div className="flex items-center justify-between px-6 py-5 md:px-10 lg:px-14">
@@ -104,15 +153,11 @@ export default function Navbar() {
           {/* Desktop nav — slash-separated with red active dot */}
           <div className="hidden items-center gap-0 md:flex">
             {NAV_LINKS.map((link, i) => {
-              const isActive = activeHref === link.href;
+              const isActive = pathname === link.href;
               return (
                 <div key={link.href} className="flex items-center">
                   <a
                     href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setActiveHref(link.href);
-                    }}
                     className={cn(
                       "group relative flex items-center gap-2 px-2 font-archivo text-[13px] font-bold uppercase tracking-[0.04em] transition-colors",
                       isActive
@@ -156,16 +201,12 @@ export default function Navbar() {
         style={{ clipPath: "inset(0 0 100% 0)" }}
       >
         {NAV_LINKS.map((link) => {
-          const isActive = activeHref === link.href;
+          const isActive = pathname === link.href;
           return (
             <a
               key={link.href}
               href={link.href}
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveHref(link.href);
-                setIsMobileOpen(false);
-              }}
+              onClick={() => setIsMobileOpen(false)}
               className={cn(
                 "mobile-link flex items-center gap-3 font-archivo text-3xl font-bold uppercase tracking-wide transition-colors",
                 isActive ? "text-red" : "text-white hover:text-red"

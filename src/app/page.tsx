@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
 import Loader from "@/components/layout/Loader";
 import Footer from "@/components/layout/Footer";
@@ -70,24 +71,49 @@ export default function Home() {
       const isMobile = window.innerWidth < 768;
       const tiltAngle = isMobile ? 8 : 14;
 
+      // Helper: pause every folder video then play only the target
+      const playOnly = (target: HTMLVideoElement | null) => {
+        sections.forEach((s) => {
+          const v = s.querySelector<HTMLVideoElement>(".folder-video");
+          if (v && v !== target) v.pause();
+        });
+        target?.play().catch(() => {});
+      };
+
       sections.forEach((section, i) => {
         const card = section.querySelector<HTMLElement>(".folder-card");
+        const video = section.querySelector<HTMLVideoElement>(".folder-video");
 
+        // Promote every card to its own GPU layer immediately
+        if (card) gsap.set(card, { force3D: true, willChange: "transform" });
+
+        // Video management: only the card sitting at the top plays
+        if (video) {
+          ScrollTrigger.create({
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            onEnter: () => playOnly(video),
+            onEnterBack: () => playOnly(video),
+            onLeave: () => video.pause(),
+            onLeaveBack: () => video.pause(),
+          });
+        }
+
+        // Tilt un-fold animation for cards 2-4
         if (card && i > 0) {
           gsap.fromTo(
             card,
-            {
-              rotationZ: tiltAngle,
-              transformOrigin: "0% 0%",
-            },
+            { rotationZ: tiltAngle, transformOrigin: "0% 0%", force3D: true },
             {
               rotationZ: 0,
               ease: "none",
+              force3D: true,
               scrollTrigger: {
                 trigger: section,
                 start: "top bottom",
                 end: "top top",
-                scrub: true,
+                scrub: 0.3,
               },
             }
           );

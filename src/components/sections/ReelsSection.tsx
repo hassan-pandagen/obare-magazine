@@ -19,7 +19,7 @@ const REELS: Reel[] = [
     title: "Bare Models",
     category: "Culture",
     videoSrc: "/videos/reels/reel-1.mp4",
-    posterSrc: "/videos/reels/reel-1.jpg",
+    posterSrc: "/videos/reels/reel-1.jpeg",
     href: "/projects/bare-models",
   },
   {
@@ -27,7 +27,7 @@ const REELS: Reel[] = [
     title: "Traveling Light",
     category: "Travel",
     videoSrc: "/videos/reels/reel-2.mp4",
-    posterSrc: "/videos/reels/reel-2.jpg",
+    posterSrc: "/videos/reels/reel-2.jpeg",
     href: "/projects/traveling-light",
   },
   {
@@ -35,7 +35,7 @@ const REELS: Reel[] = [
     title: "In the Studio",
     category: "Editorial",
     videoSrc: "/videos/reels/reel-3.mp4",
-    posterSrc: "/videos/reels/reel-3.jpg",
+    posterSrc: "/videos/reels/reel-3.jpeg",
     href: "/projects/in-the-studio",
   },
   {
@@ -43,7 +43,7 @@ const REELS: Reel[] = [
     title: "Raw Expression",
     category: "Adventure",
     videoSrc: "/videos/reels/reel-4.mp4",
-    posterSrc: "/videos/reels/reel-4.jpg",
+    posterSrc: "/videos/reels/reel-4.jpeg",
     href: "/projects/raw-expression",
   },
 ];
@@ -261,25 +261,23 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const item = itemRef.current;
-    if (!video || !item) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.2 }
-    );
-    io.observe(item);
-    return () => io.disconnect();
-  }, []);
+  // Play only on hover — never autoplay all 4 simultaneously
+  const handleMouseEnter = () => {
+    videoRef.current?.play().catch(() => {});
+  };
+  const handleMouseLeave = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    v.currentTime = 0;
+  };
 
   return (
     <div ref={itemRef} className="reel-item-desktop">
       <button
         onClick={onOpen}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className="group relative block w-full overflow-hidden rounded-xl bg-zinc-900"
         style={{ aspectRatio: "9 / 16" }}
         aria-label={`Play ${reel.title}`}
@@ -291,20 +289,20 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
         <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
           {reel.category}
         </span>
-        <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red/0 transition-all duration-500 group-hover:bg-red group-hover:scale-110">
+        <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 group-hover:bg-red group-hover:scale-110">
           <svg
             width="14"
             height="16"
             viewBox="0 0 14 16"
             fill="white"
-            className="ml-1 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            className="ml-1"
           >
             <path d="M0 0L14 8L0 16V0Z" />
           </svg>

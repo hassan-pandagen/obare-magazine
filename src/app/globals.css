@@ -49,6 +49,15 @@ body {
   color: var(--color-white);
 }
 
+/* Hero ticker marquee */
+@keyframes hero-ticker-anim {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.hero-ticker {
+  animation: hero-ticker-anim 15s linear infinite;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

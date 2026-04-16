@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 interface FolderSectionProps {
   title: string;
@@ -24,29 +24,14 @@ export default function FolderSection({
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    const card = cardRef.current;
-    if (!video || !card) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    io.observe(card);
-    return () => io.disconnect();
-  }, [videoSrc]);
+  // Expose the video element via a data attribute so page.tsx ScrollTrigger
+  // can pause/play it — no IntersectionObserver here, avoids multiple videos
+  // playing simultaneously during sticky stacking.
 
   return (
     <div
       ref={cardRef}
-      className="folder-card relative h-screen w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)]"
+      className="folder-card relative h-screen w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
       style={{ borderRadius: "24px 24px 0 0" }}
     >
       {/* Full-bleed media */}
@@ -57,8 +42,8 @@ export default function FolderSection({
           loop
           muted
           playsInline
-          preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover"
+          preload="none"
+          className="folder-video absolute inset-0 h-full w-full object-cover"
         />
       ) : imageSrc ? (
         <img
@@ -70,7 +55,7 @@ export default function FolderSection({
         <div className="absolute inset-0 h-full w-full bg-zinc-900" />
       )}
 
-      {/* Legibility gradient — soft top + stronger bottom for the title */}
+      {/* Gradient overlay */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40" />
 
       {/* Top-left: category + author */}
