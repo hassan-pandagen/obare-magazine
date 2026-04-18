@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -8,7 +9,12 @@ import Lenis from "lenis";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function GSAPProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
+    // Sanity Studio manages its own scroll — don't hijack it
+    if (pathname?.startsWith("/studio")) return;
+
     // Disable Lenis on touch/mobile — native scroll is smoother there
     const isMobile =
       window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
@@ -41,7 +47,7 @@ export default function GSAPProvider({ children }: { children: React.ReactNode }
       gsap.ticker.remove(onTick);
       lenis.destroy();
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

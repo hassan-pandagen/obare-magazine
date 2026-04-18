@@ -58,6 +58,34 @@ body {
   animation: hero-ticker-anim 15s linear infinite;
 }
 
+/* Editorial grid Swiper pagination */
+.editorial-swiper {
+  padding-bottom: 48px !important;
+}
+.editorial-swiper .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  width: 8px;
+  height: 8px;
+}
+.editorial-swiper .swiper-pagination-bullet-active {
+  background: #ff2d2d;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* Categories marquee */
+@keyframes obare-marquee-anim {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+.obare-marquee {
+  animation: obare-marquee-anim 20s linear infinite;
+}
+.obare-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

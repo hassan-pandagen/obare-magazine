@@ -5,7 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 interface Reel {
-  id: number;
+  id: string | number;
   title: string;
   category: string;
   videoSrc: string;
@@ -13,42 +13,8 @@ interface Reel {
   href: string;
 }
 
-const REELS: Reel[] = [
-  {
-    id: 1,
-    title: "Bare Models",
-    category: "Culture",
-    videoSrc: "/videos/reels/reel-1.mp4",
-    posterSrc: "/videos/reels/reel-1.jpeg",
-    href: "/projects/bare-models",
-  },
-  {
-    id: 2,
-    title: "Traveling Light",
-    category: "Travel",
-    videoSrc: "/videos/reels/reel-2.mp4",
-    posterSrc: "/videos/reels/reel-2.jpeg",
-    href: "/projects/traveling-light",
-  },
-  {
-    id: 3,
-    title: "In the Studio",
-    category: "Editorial",
-    videoSrc: "/videos/reels/reel-3.mp4",
-    posterSrc: "/videos/reels/reel-3.jpeg",
-    href: "/projects/in-the-studio",
-  },
-  {
-    id: 4,
-    title: "Raw Expression",
-    category: "Adventure",
-    videoSrc: "/videos/reels/reel-4.mp4",
-    posterSrc: "/videos/reels/reel-4.jpeg",
-    href: "/projects/raw-expression",
-  },
-];
-
-export default function ReelsSection() {
+export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
+  if (reels.length === 0) return null;
   const sectionRef = useRef<HTMLElement>(null);
   const desktopGridRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
@@ -160,7 +126,7 @@ export default function ReelsSection() {
               ref={desktopGridRef}
               className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-4"
             >
-              {REELS.map((reel) => (
+              {reels.map((reel) => (
                 <DesktopReel
                   key={reel.id}
                   reel={reel}
@@ -207,7 +173,7 @@ export default function ReelsSection() {
               className="absolute inset-0"
               style={{ transformOrigin: "50% 50%" }}
             >
-              {REELS.map((reel, i) => (
+              {reels.map((reel, i) => (
                 <WheelReel
                   key={reel.id}
                   reel={reel}
@@ -223,19 +189,19 @@ export default function ReelsSection() {
           <div className="flex flex-col items-center gap-5 px-5 text-center">
             <div className="min-h-[60px]">
               <span className="block font-montserrat text-[9px] font-bold uppercase tracking-[0.35em] text-red">
-                {REELS[activeIdx].category}
+                {reels[activeIdx]?.category}
               </span>
               <a
-                href={REELS[activeIdx].href}
+                href={reels[activeIdx]?.href ?? "#"}
                 className="mt-2 inline-flex items-baseline gap-2 font-poppins text-xl font-black uppercase text-white"
               >
-                {REELS[activeIdx].title}
+                {reels[activeIdx]?.title}
                 <span className="text-xs">&rarr;</span>
               </a>
             </div>
 
             <div className="flex gap-2">
-              {REELS.map((_, i) => (
+              {reels.map((_, i) => (
                 <span
                   key={i}
                   className={`h-1.5 rounded-full transition-all duration-500 ${
@@ -363,7 +329,7 @@ function WheelReel({
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />

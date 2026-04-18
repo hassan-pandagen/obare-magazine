@@ -146,9 +146,12 @@ function ArticleCard({ article }: { article: ArticleCard }) {
     ? urlFor(article.coverImage).width(600).height(400).fit("crop").url()
     : null;
 
+  const slug = article.slug?.current;
+  if (!slug) return null;
+
   return (
     <a
-      href={`/articles/${article.slug.current}`}
+      href={`/articles/${slug}`}
       className="group flex flex-col"
     >
       {/* Cover */}

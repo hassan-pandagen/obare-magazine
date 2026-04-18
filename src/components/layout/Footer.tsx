@@ -1,5 +1,7 @@
 "use client";
 
+import FooterCTA from "@/components/sections/FooterCTA";
+
 const SITEMAP_LINKS = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
@@ -18,13 +20,9 @@ const FOOTER_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-black">
-      {/* Big OBARE text */}
-      <div className="py-12 text-center">
-        <h2 className="font-poppins text-[15vw] font-bold leading-none tracking-[0.3em] text-white md:text-[10vw]">
-          OBARE
-        </h2>
-      </div>
+    <>
+      <FooterCTA />
+      <footer className="bg-black">
 
       {/* Footer columns */}
       <div className="border-t border-white/10 px-6 py-12 md:px-10 lg:px-16">
@@ -64,7 +62,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="font-montserrat text-xs text-white/40 transition-colors hover:text-white"
+                    className="font-montserrat text-xs text-white/70 transition-colors hover:text-white"
                   >
                     {link.label}
                   </a>
@@ -96,7 +94,7 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/10 px-6 py-4 text-center">
-        <p className="font-montserrat text-xs text-white/30">
+        <p className="font-montserrat text-xs text-white/60">
           &copy; 2025 OBARE Magazine. All rights reserved.
         </p>
       </div>
@@ -104,5 +102,6 @@ export default function Footer() {
       {/* Red bar at very bottom */}
       <div className="h-2 bg-red" />
     </footer>
+    </>
   );
 }

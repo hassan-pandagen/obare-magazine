@@ -61,6 +61,20 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${montserrat.variable} ${archivo.variable}`}
     >
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-bg.webp"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/red-accent.webp"
+          fetchPriority="high"
+        />
+      </head>
       <body>
         <GSAPProvider>{children}</GSAPProvider>
       </body>

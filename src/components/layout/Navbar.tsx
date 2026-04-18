@@ -6,14 +6,20 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
+import AdvertiseModal from "@/components/modals/AdvertiseModal";
+import EventModal from "@/components/modals/EventModal";
 
-const NAV_LINKS = [
+type NavItem =
+  | { label: string; href: string; modal?: never }
+  | { label: string; modal: "advertise" | "event"; href?: never };
+
+const NAV_LINKS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Articles", href: "/articles" },
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Advertise", href: "/advertise" },
-  { label: "Event", href: "/event" },
+  { label: "Advertise", modal: "advertise" },
+  { label: "Event", modal: "event" },
   { label: "Newsletter", href: "/newsletter" },
   { label: "Submission", href: "/submissions" },
 ];
@@ -23,6 +29,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [openModal, setOpenModal] = useState<"advertise" | "event" | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerTopRef = useRef<HTMLSpanElement>(null);
   const hamburgerMidRef = useRef<HTMLSpanElement>(null);
@@ -153,28 +160,35 @@ export default function Navbar() {
           {/* Desktop nav — slash-separated with red active dot */}
           <div className="hidden items-center gap-0 md:flex">
             {NAV_LINKS.map((link, i) => {
-              const isActive = pathname === link.href;
+              const isActive = link.href ? pathname === link.href : false;
+              const cls = cn(
+                "group relative flex items-center gap-2 px-2 font-archivo text-[13px] font-bold uppercase tracking-[0.04em] transition-colors",
+                isActive ? "text-red" : "text-white/80 hover:text-white"
+              );
+              const inner = (
+                <>
+                  {isActive && <span className="h-1.5 w-1.5 rounded-full bg-red" />}
+                  {link.label}
+                </>
+              );
               return (
-                <div key={link.href} className="flex items-center">
-                  <a
-                    href={link.href}
-                    className={cn(
-                      "group relative flex items-center gap-2 px-2 font-archivo text-[13px] font-bold uppercase tracking-[0.04em] transition-colors",
-                      isActive
-                        ? "text-red"
-                        : "text-white/80 hover:text-white"
-                    )}
-                    style={{ fontStretch: "125%" }}
-                  >
-                    {isActive && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-red" />
-                    )}
-                    {link.label}
-                  </a>
+                <div key={link.label} className="flex items-center">
+                  {link.modal ? (
+                    <button
+                      type="button"
+                      onClick={() => setOpenModal(link.modal!)}
+                      className={cls}
+                      style={{ fontStretch: "125%" }}
+                    >
+                      {inner}
+                    </button>
+                  ) : (
+                    <a href={link.href} className={cls} style={{ fontStretch: "125%" }}>
+                      {inner}
+                    </a>
+                  )}
                   {i < NAV_LINKS.length - 1 && (
-                    <span className="font-archivo text-sm text-white/30">
-                      /
-                    </span>
+                    <span className="font-archivo text-sm text-white/30">/</span>
                   )}
                 </div>
               );
@@ -201,20 +215,42 @@ export default function Navbar() {
         style={{ clipPath: "inset(0 0 100% 0)" }}
       >
         {NAV_LINKS.map((link) => {
-          const isActive = pathname === link.href;
-          return (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMobileOpen(false)}
-              className={cn(
-                "mobile-link flex items-center gap-3 font-archivo text-3xl font-bold uppercase tracking-wide transition-colors",
-                isActive ? "text-red" : "text-white hover:text-red"
-              )}
-              style={{ fontStretch: "125%" }}
-            >
+          const isActive = link.href ? pathname === link.href : false;
+          const cls = cn(
+            "mobile-link flex items-center gap-3 font-archivo text-3xl font-bold uppercase tracking-wide transition-colors",
+            isActive ? "text-red" : "text-white hover:text-red"
+          );
+          const inner = (
+            <>
               {isActive && <span className="h-2 w-2 rounded-full bg-red" />}
               {link.label}
+            </>
+          );
+          if (link.modal) {
+            return (
+              <button
+                key={link.label}
+                type="button"
+                onClick={() => {
+                  setIsMobileOpen(false);
+                  setOpenModal(link.modal!);
+                }}
+                className={cls}
+                style={{ fontStretch: "125%" }}
+              >
+                {inner}
+              </button>
+            );
+          }
+          return (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={() => setIsMobileOpen(false)}
+              className={cls}
+              style={{ fontStretch: "125%" }}
+            >
+              {inner}
             </a>
           );
         })}
@@ -224,6 +260,9 @@ export default function Navbar() {
           </span>
         </div>
       </div>
+
+      <AdvertiseModal open={openModal === "advertise"} onClose={() => setOpenModal(null)} />
+      <EventModal open={openModal === "event"} onClose={() => setOpenModal(null)} />
     </>
   );
 }

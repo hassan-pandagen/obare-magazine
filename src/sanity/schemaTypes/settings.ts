@@ -82,6 +82,72 @@ export const settings = defineType({
       ],
     }),
     defineField({
+      name: "editorialStories",
+      title: "Editorial Grid (homepage story cards)",
+      type: "array",
+      validation: (r) => r.max(6),
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({ name: "title", type: "string", title: "Title", validation: (r) => r.required() }),
+            defineField({ name: "subtitle", type: "text", title: "Subtitle", rows: 2 }),
+            defineField({ name: "category", type: "string", title: "Category" }),
+            defineField({
+              name: "image",
+              type: "image",
+              title: "Image",
+              options: { hotspot: true },
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "accent",
+              title: "Accent Color",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Red", value: "bg-red" },
+                  { title: "White", value: "bg-white" },
+                  { title: "None", value: "bg-transparent" },
+                ],
+                layout: "radio",
+              },
+              initialValue: "bg-red",
+            }),
+            defineField({
+              name: "linkedArticle",
+              type: "reference",
+              title: "Linked Article",
+              to: [{ type: "article" }],
+            }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "category", media: "image" },
+            prepare: ({ title, subtitle, media }) => ({ title, subtitle, media }),
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "footerCtaVideo",
+      title: "Footer CTA — Background Video (plays on Get Started hover)",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      description: "Short 8-second loop recommended. Plays behind the buttons when user hovers Get Started.",
+    }),
+    defineField({
+      name: "contactHeroImage",
+      title: "Contact Us — Hero Background Image",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "submissionsHeroImage",
+      title: "Submissions — Hero Background Image",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "seoDefaults",
       title: "SEO Defaults",
       type: "object",

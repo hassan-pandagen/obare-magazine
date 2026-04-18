@@ -59,7 +59,7 @@ export default function VideoReveal() {
         <div
           ref={imageRef}
           className="absolute inset-[-10%] bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/traveling.png')" }}
+          style={{ backgroundImage: "url('/images/traveling.webp')" }}
         />
 
         {/* Dark overlay that fades out on scroll */}

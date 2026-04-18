@@ -92,7 +92,7 @@ export default function Hero() {
       <div
         ref={bgRef}
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero-bg.png')" }}
+        style={{ backgroundImage: "url('/images/hero-bg.webp')" }}
       />
       <div className="absolute inset-0 bg-black/30" />
 
@@ -106,8 +106,11 @@ export default function Hero() {
         }}
       >
         <img
-          src="/images/red-accent.png"
+          src="/images/red-accent.webp"
           alt=""
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
           className="h-full w-full object-cover"
         />
       </div>

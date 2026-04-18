@@ -16,7 +16,7 @@ export default function Marquee() {
 
   return (
     <section className="w-full overflow-hidden bg-black py-8 md:py-12">
-      <div className="animate-marquee flex whitespace-nowrap">
+      <div className="obare-marquee flex whitespace-nowrap">
         {items.map((cat, i) => (
           <span key={i} className="flex items-center">
             <span className="font-poppins text-[8vw] font-black uppercase text-white/80 md:text-[5vw]">
@@ -28,23 +28,6 @@ export default function Marquee() {
           </span>
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-33.333%);
-          }
-        }
-        .animate-marquee {
-          animation: marquee 20s linear infinite;
-        }
-        .animate-marquee:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
     </section>
   );
 }

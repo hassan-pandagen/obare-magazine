@@ -46,6 +46,16 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // ── About Us Page (singleton) ─────────────────────────────────────────
+      S.listItem()
+        .title("About Us Page")
+        .child(
+          S.editor()
+            .id("aboutPage")
+            .schemaType("aboutPage")
+            .documentId("about-page")
+        ),
+
       // ── Site Settings (singleton) ─────────────────────────────────────────
       S.listItem()
         .title("Site Settings")

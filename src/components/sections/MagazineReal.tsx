@@ -70,7 +70,7 @@ export default function MagazineReal() {
         <div
           ref={imageRef}
           className="absolute inset-[-10%] bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/magazine-real.png')" }}
+          style={{ backgroundImage: "url('/images/magazine-real.webp')" }}
         />
       </div>
 

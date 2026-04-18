@@ -47,7 +47,7 @@ export default function WhyTravel() {
       {/* Background image — subtle */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-15"
-        style={{ backgroundImage: "url('/images/hero-bg.png')" }}
+        style={{ backgroundImage: "url('/images/hero-bg.webp')" }}
       />
 
       <div className="relative z-10 px-6 py-16 md:px-10 md:py-24 lg:px-16">

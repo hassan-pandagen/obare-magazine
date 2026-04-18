@@ -10,36 +10,22 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-const STORIES = [
-  {
-    id: 1,
-    category: "Style",
-    title: "The Top 5 Pros and Cons of Style",
-    subtitle:
-      "My visual universe is surrealistic, colorful and dark at the same time.",
-    image: "/images/magazine-real.png",
-    accent: "bg-red",
-  },
-  {
-    id: 2,
-    category: "Technology",
-    title: "How Technology Is Changing",
-    subtitle:
-      "My visual universe is surrealistic, colorful and dark at the same time.",
-    image: "/images/story-tech.png",
-    accent: "bg-white",
-  },
-  {
-    id: 3,
-    category: "Culture",
-    title: "Raw Expression",
-    subtitle: "",
-    image: "/images/story-portrait.png",
-    accent: "bg-transparent",
-  },
-];
+export interface EditorialStory {
+  id: string | number;
+  category?: string;
+  title: string;
+  subtitle?: string;
+  image: string;
+  accent: string;
+  href?: string;
+}
 
-export default function EditorialGrid() {
+export default function EditorialGrid({
+  stories = [],
+}: {
+  stories?: EditorialStory[];
+}) {
+  if (stories.length === 0) return null;
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -63,9 +49,9 @@ export default function EditorialGrid() {
     { scope: sectionRef }
   );
 
-  const renderCard = (story: (typeof STORIES)[0]) => (
+  const renderCard = (story: EditorialStory) => (
     <a
-      href="#"
+      href={story.href ?? "#"}
       className="story-card group relative block aspect-[3/4] h-full w-full overflow-hidden"
     >
       <div
@@ -120,7 +106,7 @@ export default function EditorialGrid() {
           loop
           className="editorial-swiper"
         >
-          {STORIES.map((story) => (
+          {stories.map((story) => (
             <SwiperSlide key={story.id}>{renderCard(story)}</SwiperSlide>
           ))}
         </Swiper>
@@ -128,27 +114,11 @@ export default function EditorialGrid() {
 
       {/* Desktop: Grid */}
       <div className="mx-auto hidden max-w-7xl grid-cols-3 gap-6 md:grid">
-        {STORIES.map((story) => (
+        {stories.map((story) => (
           <div key={story.id}>{renderCard(story)}</div>
         ))}
       </div>
 
-      <style jsx global>{`
-        .editorial-swiper {
-          padding-bottom: 48px !important;
-        }
-        .editorial-swiper .swiper-pagination-bullet {
-          background: rgba(255, 255, 255, 0.3);
-          opacity: 1;
-          width: 8px;
-          height: 8px;
-        }
-        .editorial-swiper .swiper-pagination-bullet-active {
-          background: #ff2d2d;
-          width: 24px;
-          border-radius: 4px;
-        }
-      `}</style>
     </section>
   );
 }

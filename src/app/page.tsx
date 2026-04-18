@@ -1,164 +1,87 @@
-"use client";
+import { client } from "@/sanity/client";
+import {
+  homepageSettingsQuery,
+  homepageReelsQuery,
+} from "@/sanity/queries/homepage";
+import HomeClient, {
+  type HomeProject,
+  type HomeReel,
+  type HomeStory,
+} from "@/components/sections/HomeClient";
 
-import { useState, useCallback, useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Navbar from "@/components/layout/Navbar";
-import Loader from "@/components/layout/Loader";
-import Footer from "@/components/layout/Footer";
-import Hero from "@/components/sections/Hero";
-import WhyTravel from "@/components/sections/WhyTravel";
-import FolderSection from "@/components/sections/FolderSection";
-import ReelsSection from "@/components/sections/ReelsSection";
-import Marquee from "@/components/sections/Marquee";
-import EditorialGrid from "@/components/sections/EditorialGrid";
-import FooterCTA from "@/components/sections/FooterCTA";
+export const revalidate = 60;
 
-const PROJECTS = [
-  {
-    id: 1,
-    title: "Bare Models",
-    subtitle: "My visual universe is surrealistic, colorful and dark at the same time.",
-    category: "Culture",
-    author: "Obi Nwachukwu",
-    videoSrc: "/videos/reveal-bg.mp4",
-    href: "/projects/bare-models",
-  },
-  {
-    id: 2,
-    title: "Traveling Light",
-    subtitle: "Exploring the world through a lens that's authentic and unapologetic.",
-    category: "Travel",
-    author: "Amara Keita",
-    imageSrc: "/images/traveling.png",
-    href: "/projects/traveling-light",
-  },
-  {
-    id: 3,
-    title: "The Magazine That's Real",
-    subtitle: "We believe in raw expression, bold creativity, and stories that move people.",
-    category: "About OBARE",
-    author: "OBARE Editorial",
-    videoSrc: "/videos/who-we-are.mp4",
-    href: "/projects/the-magazine-thats-real",
-  },
-  {
-    id: 4,
-    title: "Raw Expression",
-    subtitle: "My visual universe is surrealistic, colorful and dark at the same time.",
-    category: "Editorial",
-    author: "Zara Osei",
-    imageSrc: "/images/magazine-real.png",
-    href: "/projects/raw-expression",
-  },
-];
+interface SettingsResult {
+  homepageProjects?: Array<{
+    title: string;
+    subtitle?: string;
+    category?: string;
+    author?: string;
+    videoUrl?: string;
+    imageUrl?: string;
+    linkedSlug?: string;
+    externalHref?: string;
+  }>;
+  editorialStories?: Array<{
+    title: string;
+    subtitle?: string;
+    category?: string;
+    accent?: string;
+    imageUrl?: string;
+    linkedSlug?: string;
+  }>;
+}
 
-export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const stackContainerRef = useRef<HTMLDivElement>(null);
+interface ReelResult {
+  _id: string;
+  title: string;
+  category: string;
+  videoUrl: string;
+  posterUrl?: string;
+  linkedSlug?: string;
+}
 
-  const handleLoadComplete = useCallback(() => {
-    setIsLoaded(true);
-  }, []);
+export default async function Home() {
+  const [settings, reelDocs] = await Promise.all([
+    client.fetch<SettingsResult | null>(homepageSettingsQuery),
+    client.fetch<ReelResult[]>(homepageReelsQuery),
+  ]);
 
-  useGSAP(
-    () => {
-      if (!stackContainerRef.current) return;
-
-      const sections = gsap.utils.toArray<HTMLElement>(".folder-section");
-
-      const isMobile = window.innerWidth < 768;
-      const tiltAngle = isMobile ? 8 : 14;
-
-      // Helper: pause every folder video then play only the target
-      const playOnly = (target: HTMLVideoElement | null) => {
-        sections.forEach((s) => {
-          const v = s.querySelector<HTMLVideoElement>(".folder-video");
-          if (v && v !== target) v.pause();
-        });
-        target?.play().catch(() => {});
-      };
-
-      sections.forEach((section, i) => {
-        const card = section.querySelector<HTMLElement>(".folder-card");
-        const video = section.querySelector<HTMLVideoElement>(".folder-video");
-
-        // Promote every card to its own GPU layer immediately
-        if (card) gsap.set(card, { force3D: true, willChange: "transform" });
-
-        // Video management: only the card sitting at the top plays
-        if (video) {
-          ScrollTrigger.create({
-            trigger: section,
-            start: "top top",
-            end: "bottom top",
-            onEnter: () => playOnly(video),
-            onEnterBack: () => playOnly(video),
-            onLeave: () => video.pause(),
-            onLeaveBack: () => video.pause(),
-          });
-        }
-
-        // Tilt un-fold animation for cards 2-4
-        if (card && i > 0) {
-          gsap.fromTo(
-            card,
-            { rotationZ: tiltAngle, transformOrigin: "0% 0%", force3D: true },
-            {
-              rotationZ: 0,
-              ease: "none",
-              force3D: true,
-              scrollTrigger: {
-                trigger: section,
-                start: "top bottom",
-                end: "top top",
-                scrub: 0.3,
-              },
-            }
-          );
-        }
-      });
-    },
-    { scope: stackContainerRef, dependencies: [isLoaded] }
+  const projects: HomeProject[] = (settings?.homepageProjects ?? []).map(
+    (p, i) => ({
+      id: `project-${i}`,
+      title: p.title,
+      subtitle: p.subtitle,
+      category: p.category,
+      author: p.author,
+      videoSrc: p.videoUrl,
+      imageSrc: p.imageUrl,
+      href: p.linkedSlug
+        ? `/articles/${p.linkedSlug}`
+        : p.externalHref ?? "#",
+    })
   );
 
-  return (
-    <>
-      {!isLoaded && <Loader onComplete={handleLoadComplete} />}
-      <Navbar />
+  const reels: HomeReel[] = (reelDocs ?? []).map((r) => ({
+    id: r._id,
+    title: r.title,
+    category: r.category,
+    videoSrc: r.videoUrl,
+    posterSrc: r.posterUrl ?? "",
+    href: r.linkedSlug ? `/articles/${r.linkedSlug}` : "#",
+  }));
 
-      <main>
-        <Hero />
-        <WhyTravel />
-
-        <div ref={stackContainerRef} className="relative">
-          {PROJECTS.map((project, i) => (
-            <section
-              key={project.id}
-              className="folder-section sticky top-0 h-[110vh] w-full md:h-[130vh]"
-              style={{ zIndex: i + 10 }}
-            >
-              <FolderSection
-                title={project.title}
-                subtitle={project.subtitle}
-                category={project.category}
-                author={project.author}
-                videoSrc={project.videoSrc}
-                imageSrc={project.imageSrc}
-                href={project.href}
-              />
-            </section>
-          ))}
-        </div>
-
-        <ReelsSection />
-        <Marquee />
-        <EditorialGrid />
-        <FooterCTA />
-      </main>
-
-      <Footer />
-    </>
+  const stories: HomeStory[] = (settings?.editorialStories ?? []).map(
+    (s, i) => ({
+      id: `story-${i}`,
+      title: s.title,
+      subtitle: s.subtitle,
+      category: s.category,
+      image: s.imageUrl ?? "",
+      accent: s.accent ?? "bg-red",
+      href: s.linkedSlug ? `/articles/${s.linkedSlug}` : "#",
+    })
   );
+
+  return <HomeClient projects={projects} reels={reels} stories={stories} />;
 }

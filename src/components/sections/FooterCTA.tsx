@@ -1,23 +1,42 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { client } from "@/sanity/client";
+import { footerCtaVideoQuery } from "@/sanity/queries/aboutPage";
 
-// Each letter of OBARE gets a different girl image clipped inside it
 const LETTER_IMAGES = [
-  { letter: "O", image: "/images/hero-bg.png" },
-  { letter: "B", image: "/images/magazine-real.png" },
-  { letter: "A", image: "/images/traveling.png" },
-  { letter: "R", image: "/images/story-portrait.png" },
-  { letter: "E", image: "/images/story-tech.png" },
+  { letter: "O", image: "/images/hero-bg.webp" },
+  { letter: "B", image: "/images/magazine-real.webp" },
+  { letter: "A", image: "/images/traveling.webp" },
+  { letter: "R", image: "/images/obare-r.webp" },
+  { letter: "E", image: "/images/obare-e.webp" },
 ];
 
 export default function FooterCTA() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const lettersRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const [ctaVideo, setCtaVideo] = useState<string | null>(null);
+
+  useEffect(() => {
+    client
+      .fetch<string | null>(footerCtaVideoQuery)
+      .then((url) => setCtaVideo(url ?? null))
+      .catch(() => {});
+  }, []);
+
+  const onVideoEnter = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  };
+  const onVideoLeave = () => videoRef.current?.pause();
 
   useGSAP(
     () => {
@@ -37,7 +56,6 @@ export default function FooterCTA() {
         once: true,
       });
 
-      // Stagger the letters in — use fromTo so initial state is reliable
       const letters = lettersRef.current?.querySelectorAll(".obare-letter");
       if (letters && letters.length > 0) {
         ScrollTrigger.create({
@@ -64,15 +82,11 @@ export default function FooterCTA() {
   );
 
   return (
-    <section
-      ref={sectionRef}
-      className="w-full bg-white"
-    >
-      {/* Red accent strip at top */}
+    <section ref={sectionRef} className="w-full bg-white">
       <div className="h-2 w-full bg-red" />
 
-      <div className="flex min-h-[50vh] flex-col items-center justify-center px-6 py-12 md:min-h-[80vh] md:py-32">
-        {/* LET'S TALK → black text on white */}
+      <div className="flex flex-col items-center justify-center px-6 py-16 md:py-24">
+        {/* LET'S TALK → */}
         <a
           ref={ctaRef}
           href="/contact"
@@ -84,7 +98,7 @@ export default function FooterCTA() {
           </span>
         </a>
 
-        {/* OBARE — each letter has a girl image clipped inside */}
+        {/* OBARE letters with images */}
         <div ref={lettersRef} className="mt-4 flex items-center gap-[0.3vw] md:gap-[1vw]">
           {LETTER_IMAGES.map(({ letter, image }, i) => (
             <div
@@ -103,9 +117,47 @@ export default function FooterCTA() {
             </div>
           ))}
         </div>
+
+        {/* Two-button CTA */}
+        <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row md:mt-16">
+          <a
+            href="/submissions"
+            onMouseEnter={onVideoEnter}
+            onMouseLeave={onVideoLeave}
+            onFocus={onVideoEnter}
+            onBlur={onVideoLeave}
+            className="group/btn relative inline-flex items-center justify-center overflow-hidden rounded-full bg-red px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-300 hover:scale-[1.03]"
+          >
+            {ctaVideo && (
+              <>
+                <video
+                  ref={videoRef}
+                  src={ctaVideo}
+                  muted
+                  loop
+                  playsInline
+                  preload="none"
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
+                />
+                <span
+                  className="pointer-events-none absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
+                  aria-hidden
+                />
+              </>
+            )}
+            <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+              Get Started Now
+            </span>
+          </a>
+          <a
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-full border border-black bg-transparent px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-black hover:text-white"
+          >
+            Contact Us
+          </a>
+        </div>
       </div>
 
-      {/* Red accent strip at bottom */}
       <div className="h-2 w-full bg-red" />
     </section>
   );

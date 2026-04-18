@@ -5,6 +5,7 @@ import { event } from "./event";
 import { rsvp } from "./rsvp";
 import { submission } from "./submission";
 import { settings } from "./settings";
+import { aboutPage } from "./aboutPage";
 
 export const schemaTypes = [
   article,
@@ -14,4 +15,5 @@ export const schemaTypes = [
   rsvp,
   submission,
   settings,
+  aboutPage,
 ];
