@@ -103,7 +103,7 @@ export default function EditorialGrid({
           pagination={{ clickable: true }}
           autoplay={{ delay: 2500, disableOnInteraction: false }}
           speed={500}
-          loop
+          loop={stories.length > 2}
           className="editorial-swiper"
         >
           {stories.map((story) => (

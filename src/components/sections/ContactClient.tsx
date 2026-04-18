@@ -46,7 +46,7 @@ export default function ContactClient({ heroBgImage }: { heroBgImage?: string })
               className="absolute inset-0 -z-0 bg-cover"
               style={{
                 backgroundImage: `url('${heroBgImage}')`,
-                backgroundPosition: "center 25%",
+                backgroundPosition: "center 65%",
               }}
             />
           )}

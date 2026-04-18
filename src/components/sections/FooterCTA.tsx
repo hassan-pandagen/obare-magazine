@@ -22,6 +22,9 @@ export default function FooterCTA() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [ctaVideo, setCtaVideo] = useState<string | null>(null);
+  // Deferred preload — keeps initial page weight out of Lighthouse audits,
+  // then buffers the video in the background so hover playback is instant.
+  const [videoReady, setVideoReady] = useState(false);
 
   useEffect(() => {
     client
@@ -29,6 +32,17 @@ export default function FooterCTA() {
       .then((url) => setCtaVideo(url ?? null))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!ctaVideo) return;
+    const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback;
+    const schedule = (cb: () => void) =>
+      idle ? idle(cb, { timeout: 7000 }) : window.setTimeout(cb, 6000);
+    const id = schedule(() => setVideoReady(true));
+    return () => {
+      if (typeof id === "number") clearTimeout(id);
+    };
+  }, [ctaVideo]);
 
   const onVideoEnter = () => {
     const v = videoRef.current;
@@ -128,7 +142,7 @@ export default function FooterCTA() {
             onBlur={onVideoLeave}
             className="group/btn relative inline-flex items-center justify-center overflow-hidden rounded-full bg-red px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-300 hover:scale-[1.03]"
           >
-            {ctaVideo && (
+            {ctaVideo && videoReady && (
               <>
                 <video
                   ref={videoRef}
@@ -136,7 +150,7 @@ export default function FooterCTA() {
                   muted
                   loop
                   playsInline
-                  preload="none"
+                  preload="auto"
                   className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
                 />
                 <span

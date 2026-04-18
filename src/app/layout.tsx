@@ -75,7 +75,7 @@ export default function RootLayout({
           fetchPriority="high"
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <GSAPProvider>{children}</GSAPProvider>
       </body>
     </html>

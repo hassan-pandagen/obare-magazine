@@ -75,6 +75,13 @@ export default function HomeClient({ projects, reels, stories }: Props) {
         target?.play().catch(() => {});
       };
 
+      // First card's video should be buffered eagerly — user sees it immediately
+      const firstVideo = sections[0]?.querySelector<HTMLVideoElement>(".folder-video");
+      if (firstVideo) {
+        firstVideo.preload = "auto";
+        firstVideo.load();
+      }
+
       sections.forEach((section, i) => {
         const card = section.querySelector<HTMLElement>(".folder-card");
         const video = section.querySelector<HTMLVideoElement>(".folder-video");
@@ -91,6 +98,24 @@ export default function HomeClient({ projects, reels, stories }: Props) {
             onLeave: () => video.pause(),
             onLeaveBack: () => video.pause(),
           });
+
+          // Preload-ahead: when THIS card starts entering the viewport,
+          // warm up the NEXT card's video so it's buffered before the user gets there.
+          const nextSection = sections[i + 1];
+          if (nextSection) {
+            const nextVideo = nextSection.querySelector<HTMLVideoElement>(".folder-video");
+            if (nextVideo) {
+              ScrollTrigger.create({
+                trigger: section,
+                start: "top 80%",
+                once: true,
+                onEnter: () => {
+                  nextVideo.preload = "auto";
+                  nextVideo.load();
+                },
+              });
+            }
+          }
         }
 
         if (card && i > 0) {
