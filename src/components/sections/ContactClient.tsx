@@ -57,7 +57,7 @@ export default function ContactClient({ heroBgImage }: { heroBgImage?: string })
               Get in Touch
             </span>
             <h1 className="font-poppins font-black uppercase leading-[0.85]" style={{ fontSize: "clamp(3.5rem, 12vw, 12rem)" }}>
-              Contact Us
+              Contact <span className="text-red">Us</span>
             </h1>
           </div>
         </section>
