@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { optimizeImg } from "@/lib/sanityImg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -327,7 +328,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   <div
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
-                      backgroundImage: `url('${data.heroImageUrl}')`,
+                      backgroundImage: `url('${optimizeImg(data.heroImageUrl, { w: 1200 })}')`,
                       backgroundPosition: "center 30%",
                     }}
                   />
@@ -388,7 +389,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   {pillar.imageUrl && (
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-[1.06]"
-                      style={{ backgroundImage: `url('${pillar.imageUrl}')` }}
+                      style={{ backgroundImage: `url('${optimizeImg(pillar.imageUrl, { w: 700 })}')` }}
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
@@ -430,7 +431,7 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
             <>
               <div
                 className="section-image absolute inset-0 bg-cover bg-center will-change-transform"
-                style={{ backgroundImage: `url('${section.imageUrl}')` }}
+                style={{ backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200 })}')` }}
               />
               {section.redOverlay && (
                 <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Field, Input, Textarea, Select, SubmitButton } from "@/components/ui/FormField";
+import { optimizeImg } from "@/lib/sanityImg";
 
 const DEPARTMENTS = [
   { label: "General Enquiries", value: "general" },
@@ -45,7 +46,7 @@ export default function ContactClient({ heroBgImage }: { heroBgImage?: string })
             <div
               className="absolute inset-0 -z-0 bg-cover"
               style={{
-                backgroundImage: `url('${heroBgImage}')`,
+                backgroundImage: `url('${optimizeImg(heroBgImage, { w: 1600 })}')`,
                 backgroundPosition: "center 65%",
               }}
             />

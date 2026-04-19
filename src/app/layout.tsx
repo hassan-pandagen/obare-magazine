@@ -60,8 +60,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${poppins.variable} ${montserrat.variable} ${archivo.variable}`}
+      suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link
           rel="preload"
           as="image"

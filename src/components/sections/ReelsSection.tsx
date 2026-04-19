@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { optimizeImg } from "@/lib/sanityImg";
 
 interface Reel {
   id: string | number;
@@ -251,7 +252,7 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
         <video
           ref={videoRef}
           src={reel.videoSrc}
-          poster={reel.posterSrc}
+          poster={optimizeImg(reel.posterSrc, { w: 500 })}
           muted
           loop
           playsInline
@@ -325,7 +326,7 @@ function WheelReel({
       <video
         ref={videoRef}
         src={reel.videoSrc}
-        poster={reel.posterSrc}
+        poster={optimizeImg(reel.posterSrc, { w: 500 })}
         muted
         loop
         playsInline
@@ -379,7 +380,7 @@ function ReelModal({ reel, onClose }: { reel: Reel; onClose: () => void }) {
       >
         <video
           src={reel.videoSrc}
-          poster={reel.posterSrc}
+          poster={optimizeImg(reel.posterSrc, { w: 500 })}
           autoPlay
           loop
           controls

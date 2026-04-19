@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
+import { optimizeImg } from "@/lib/sanityImg";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -56,7 +57,7 @@ export default function EditorialGrid({
     >
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08]"
-        style={{ backgroundImage: `url(${story.image})` }}
+        style={{ backgroundImage: `url(${optimizeImg(story.image, { w: 900 })})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       <div className="absolute inset-0 bg-red/0 transition-colors duration-300 group-hover:bg-red/15" />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { optimizeImg } from "@/lib/sanityImg";
 
 interface FolderSectionProps {
   title: string;
@@ -47,7 +48,7 @@ export default function FolderSection({
         />
       ) : imageSrc ? (
         <img
-          src={imageSrc}
+          src={optimizeImg(imageSrc, { w: 1600 })}
           alt={title}
           className="absolute inset-0 h-full w-full object-cover"
         />

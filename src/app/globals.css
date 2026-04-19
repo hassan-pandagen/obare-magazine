@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-red: #FF2D2D;
+  --color-red: #E81818;
   --color-black: #0A0A0A;
   --color-white: #F5F5F0;
   --color-grey: #888888;
@@ -69,7 +69,7 @@ body {
   height: 8px;
 }
 .editorial-swiper .swiper-pagination-bullet-active {
-  background: #ff2d2d;
+  background: var(--color-red);
   width: 24px;
   border-radius: 4px;
 }
