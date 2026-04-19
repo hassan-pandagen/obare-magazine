@@ -252,13 +252,15 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
         <video
           ref={videoRef}
           src={reel.videoSrc}
-          poster={optimizeImg(reel.posterSrc, { w: 500 })}
+          poster={optimizeImg(reel.posterSrc, { w: 380 })}
           muted
           loop
           playsInline
           preload="none"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-        />
+        >
+          <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+        </video>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
         <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
           {reel.category}
@@ -326,13 +328,15 @@ function WheelReel({
       <video
         ref={videoRef}
         src={reel.videoSrc}
-        poster={optimizeImg(reel.posterSrc, { w: 500 })}
+        poster={optimizeImg(reel.posterSrc, { w: 380 })}
         muted
         loop
         playsInline
         preload="none"
         className="absolute inset-0 h-full w-full object-cover"
-      />
+      >
+        <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+      </video>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       {isActive && (
         <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red/90">
@@ -380,13 +384,15 @@ function ReelModal({ reel, onClose }: { reel: Reel; onClose: () => void }) {
       >
         <video
           src={reel.videoSrc}
-          poster={optimizeImg(reel.posterSrc, { w: 500 })}
+          poster={optimizeImg(reel.posterSrc, { w: 380 })}
           autoPlay
           loop
           controls
           playsInline
           className="h-full w-full object-cover"
-        />
+        >
+          <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+        </video>
       </div>
     </div>
   );

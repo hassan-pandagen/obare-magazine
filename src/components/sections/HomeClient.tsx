@@ -22,6 +22,7 @@ export interface HomeProject {
   author?: string;
   videoSrc?: string;
   imageSrc?: string;
+  imageHotspot?: { x?: number; y?: number };
   href: string;
 }
 
@@ -163,6 +164,7 @@ export default function HomeClient({ projects, reels, stories }: Props) {
                 author={project.author}
                 videoSrc={project.videoSrc}
                 imageSrc={project.imageSrc}
+                imageHotspot={project.imageHotspot}
                 href={project.href}
               />
             </section>

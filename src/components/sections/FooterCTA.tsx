@@ -8,11 +8,11 @@ import { client } from "@/sanity/client";
 import { footerCtaVideoQuery } from "@/sanity/queries/aboutPage";
 
 const LETTER_IMAGES = [
-  { letter: "O", image: "/images/hero-bg.webp" },
-  { letter: "B", image: "/images/magazine-real.webp" },
-  { letter: "A", image: "/images/traveling.webp" },
-  { letter: "R", image: "/images/obare-r.webp" },
-  { letter: "E", image: "/images/obare-e.webp" },
+  { letter: "O", image: "/images/hero-bg-letter.webp" },
+  { letter: "B", image: "/images/magazine-real-letter.webp" },
+  { letter: "A", image: "/images/traveling-letter.webp" },
+  { letter: "R", image: "/images/obare-r-letter.webp" },
+  { letter: "E", image: "/images/obare-e-letter.webp" },
 ];
 
 export default function FooterCTA() {
@@ -152,7 +152,9 @@ export default function FooterCTA() {
                   playsInline
                   preload="auto"
                   className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
-                />
+                >
+                  <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+                </video>
                 <span
                   className="pointer-events-none absolute inset-0 bg-black/35 opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
                   aria-hidden

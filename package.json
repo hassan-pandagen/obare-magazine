@@ -2,6 +2,12 @@
   "name": "obare-magazine",
   "version": "0.1.0",
   "private": true,
+  "description": "OBARE Magazine — built by Panda Code Gen (https://www.pandacodegen.com/)",
+  "author": {
+    "name": "Panda Code Gen",
+    "url": "https://www.pandacodegen.com/"
+  },
+  "homepage": "https://www.pandacodegen.com/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -19,6 +19,7 @@ interface SettingsResult {
     author?: string;
     videoUrl?: string;
     imageUrl?: string;
+    imageHotspot?: { x?: number; y?: number };
     linkedSlug?: string;
     externalHref?: string;
   }>;
@@ -56,6 +57,7 @@ export default async function Home() {
       author: p.author,
       videoSrc: p.videoUrl,
       imageSrc: p.imageUrl,
+      imageHotspot: p.imageHotspot,
       href: p.linkedSlug
         ? `/articles/${p.linkedSlug}`
         : p.externalHref ?? "#",

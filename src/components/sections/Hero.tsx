@@ -88,11 +88,10 @@ export default function Hero() {
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Background image */}
+      {/* Background image — responsive via CSS media query */}
       <div
         ref={bgRef}
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/hero-bg.webp')" }}
+        className="hero-bg-responsive absolute inset-0 bg-cover bg-center"
       />
       <div className="absolute inset-0 bg-black/30" />
 

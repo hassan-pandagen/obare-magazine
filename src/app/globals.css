@@ -49,6 +49,16 @@ body {
   color: var(--color-white);
 }
 
+/* Responsive hero background — mobile-first, swaps to desktop at 768px+ */
+.hero-bg-responsive {
+  background-image: url("/images/hero-bg-mobile.webp");
+}
+@media (min-width: 768px) {
+  .hero-bg-responsive {
+    background-image: url("/images/hero-bg.webp");
+  }
+}
+
 /* Hero ticker marquee */
 @keyframes hero-ticker-anim {
   0%   { transform: translateX(0); }

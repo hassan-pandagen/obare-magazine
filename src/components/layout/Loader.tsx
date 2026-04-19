@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
+const SESSION_KEY = "obare-loader-shown";
+
 export default function Loader({ onComplete }: { onComplete: () => void }) {
   const loaderRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -10,19 +12,30 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Skip loader on repeat visits within the same session
+    if (typeof window !== "undefined" && sessionStorage.getItem(SESSION_KEY)) {
+      onComplete();
+      return;
+    }
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+
     const tl = gsap.timeline({
       onComplete: () => {
         onComplete();
       },
     });
 
-    // Animate progress bar from 0% to 100%
+    // Progress bar — minimum duration to keep loader visible but not block LCP
     tl.to(
       { val: 0 },
       {
         val: 100,
-        duration: 2,
-        ease: "power2.inOut",
+        duration: 0.5,
+        ease: "power2.out",
         onUpdate: function () {
           const val = Math.round(this.targets()[0].val);
           setProgress(val);
@@ -33,19 +46,11 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       }
     );
 
-    // Flash the text
-    tl.to(textRef.current, {
-      scale: 1.05,
-      duration: 0.2,
-      ease: "power2.in",
-    });
-
-    // Slide the loader up
+    // Slide the loader up immediately after progress fills
     tl.to(loaderRef.current, {
       clipPath: "inset(0 0 100% 0)",
-      duration: 0.8,
+      duration: 0.35,
       ease: "power3.inOut",
-      delay: 0.1,
     });
 
     return () => {

@@ -18,6 +18,7 @@ export const homepageSettingsQuery = groq`
       author,
       "videoUrl": videoFile.asset->url,
       "imageUrl": image.asset->url,
+      "imageHotspot": image.hotspot { x, y },
       "linkedSlug": linkedArticle->slug.current,
       externalHref,
     },

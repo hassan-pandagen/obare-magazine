@@ -1,3 +1,8 @@
+/**
+ * OBARE Magazine
+ * Built by Panda Code Gen — https://www.pandacodegen.com/
+ */
+
 import type { Metadata } from "next";
 import { Poppins, Montserrat, Archivo } from "next/font/google";
 import localFont from "next/font/local";
@@ -68,8 +73,16 @@ export default function RootLayout({
         <link
           rel="preload"
           as="image"
+          href="/images/hero-bg-mobile.webp"
+          fetchPriority="high"
+          media="(max-width: 767px)"
+        />
+        <link
+          rel="preload"
+          as="image"
           href="/images/hero-bg.webp"
           fetchPriority="high"
+          media="(min-width: 768px)"
         />
         <link
           rel="preload"

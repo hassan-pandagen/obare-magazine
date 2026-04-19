@@ -10,6 +10,7 @@ interface FolderSectionProps {
   author?: string;
   videoSrc?: string;
   imageSrc?: string;
+  imageHotspot?: { x?: number; y?: number };
   href?: string;
 }
 
@@ -20,6 +21,7 @@ export default function FolderSection({
   author,
   videoSrc,
   imageSrc,
+  imageHotspot,
   href = "#",
 }: FolderSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -45,12 +47,20 @@ export default function FolderSection({
           playsInline
           preload="none"
           className="folder-video absolute inset-0 h-full w-full object-cover"
-        />
+        >
+          <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+        </video>
       ) : imageSrc ? (
         <img
-          src={optimizeImg(imageSrc, { w: 1600 })}
+          src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
           alt={title}
           className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            objectPosition:
+              imageHotspot && typeof imageHotspot.x === "number" && typeof imageHotspot.y === "number"
+                ? `${imageHotspot.x * 100}% ${imageHotspot.y * 100}%`
+                : "center 25%",
+          }}
         />
       ) : (
         <div className="absolute inset-0 h-full w-full bg-zinc-900" />
