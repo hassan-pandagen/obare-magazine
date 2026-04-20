@@ -15,6 +15,7 @@ export interface AboutSection {
   title: string;
   body?: string;
   imageUrl?: string;
+  imageHotspot?: { x?: number; y?: number };
   layout?: "image-left" | "image-right" | "full-bleed";
   redOverlay?: boolean;
 }
@@ -23,6 +24,7 @@ export interface AboutPillar {
   title: string;
   body?: string;
   imageUrl?: string;
+  imageHotspot?: { x?: number; y?: number };
 }
 
 export interface AboutData {
@@ -30,6 +32,7 @@ export interface AboutData {
   heroHeadline?: string;
   heroSubtitle?: string;
   heroImageUrl?: string;
+  heroImageHotspot?: { x?: number; y?: number };
   sections?: AboutSection[];
   pillarsTitle?: string;
   pillars?: AboutPillar[];
@@ -326,10 +329,13 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   style={{ transform: "rotate(-5deg)" }}
                 >
                   <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover"
                     style={{
-                      backgroundImage: `url('${optimizeImg(data.heroImageUrl, { w: 1200 })}')`,
-                      backgroundPosition: "center 30%",
+                      backgroundImage: `url('${optimizeImg(data.heroImageUrl, { w: 1200, hotspot: data.heroImageHotspot })}')`,
+                      backgroundPosition:
+                        data.heroImageHotspot && typeof data.heroImageHotspot.x === "number"
+                          ? `${data.heroImageHotspot.x * 100}% ${data.heroImageHotspot.y! * 100}%`
+                          : "center 30%",
                     }}
                   />
                   <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />
@@ -388,8 +394,14 @@ export default function AboutClient({ data }: { data: AboutData }) {
                 >
                   {pillar.imageUrl && (
                     <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-[1.06]"
-                      style={{ backgroundImage: `url('${optimizeImg(pillar.imageUrl, { w: 700 })}')` }}
+                      className="absolute inset-0 bg-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                      style={{
+                        backgroundImage: `url('${optimizeImg(pillar.imageUrl, { w: 700, hotspot: pillar.imageHotspot })}')`,
+                        backgroundPosition:
+                          pillar.imageHotspot && typeof pillar.imageHotspot.x === "number"
+                            ? `${pillar.imageHotspot.x * 100}% ${pillar.imageHotspot.y! * 100}%`
+                            : "center",
+                      }}
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
@@ -472,7 +484,7 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
           imageFirst ? "md:grid-cols-[1.1fr_1fr]" : "md:grid-cols-[1fr_1.1fr]"
         }`}
       >
-        {imageFirst && <SectionImage section={section} />}
+        {imageFirst && <SectionImage section={section} imageFirst={imageFirst} />}
         <div className={imageFirst ? "md:pl-4" : "md:pr-4"}>
           {section.eyebrow && (
             <span className="section-eyebrow mb-6 block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">
@@ -491,25 +503,67 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
             </div>
           )}
         </div>
-        {!imageFirst && <SectionImage section={section} />}
+        {!imageFirst && <SectionImage section={section} imageFirst={imageFirst} />}
       </div>
     </section>
   );
 }
 
-function SectionImage({ section }: { section: AboutSection }) {
+function SectionImage({
+  section,
+  imageFirst,
+}: {
+  section: AboutSection;
+  imageFirst: boolean;
+}) {
+  // Alternate tilt direction based on image side for visual rhythm
+  const tilt = imageFirst ? "-4deg" : "4deg";
+  const hotspot = section.imageHotspot;
+  const bgPosition =
+    hotspot && typeof hotspot.x === "number" && typeof hotspot.y === "number"
+      ? `${hotspot.x * 100}% ${hotspot.y * 100}%`
+      : "center 30%";
+
   if (!section.imageUrl) {
-    return <div className="aspect-[4/5] w-full bg-zinc-900" />;
+    return <div className="aspect-[4/5] w-full bg-zinc-900 md:aspect-[4/3]" />;
   }
+
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm">
+    <div
+      className="section-image relative aspect-[4/5] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform md:aspect-[4/3]"
+      style={{ transform: `rotate(${tilt})` }}
+    >
       <div
-        className="section-image absolute inset-0 bg-cover bg-center will-change-transform"
-        style={{ backgroundImage: `url('${section.imageUrl}')` }}
+        className="absolute inset-0 bg-cover"
+        style={{
+          backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200, hotspot })}')`,
+          backgroundPosition: bgPosition,
+        }}
       />
       {section.redOverlay && (
         <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />
       )}
+
+      {/* Camera UI chrome */}
+      <div className="pointer-events-none absolute inset-0 text-white">
+        <div className="absolute left-3 top-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:left-4 md:top-4 md:text-xs">
+          <span className="inline-block h-2 w-2 rounded-full bg-red" />
+          2026.1.25
+          <span className="opacity-70">03:50 PM</span>
+        </div>
+        <div className="absolute right-3 top-3 rounded-sm bg-black/40 px-2 py-0.5 font-archivo text-[10px] font-bold tracking-[0.15em] backdrop-blur-sm md:right-4 md:top-4 md:text-xs">
+          200-300
+        </div>
+        <div className="absolute bottom-3 left-3 flex items-center gap-3 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:left-4 md:text-xs">
+          <span>F. 3.2</span>
+          <span className="rounded-sm bg-white/90 px-1.5 py-0.5 text-black">ISO</span>
+          <span>600</span>
+        </div>
+        <div className="absolute bottom-3 right-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:right-4 md:text-xs">
+          <span className="rounded-sm bg-black/40 px-1.5 py-0.5 backdrop-blur-sm">RAW</span>
+          <span>3/10</span>
+        </div>
+      </div>
     </div>
   );
 }

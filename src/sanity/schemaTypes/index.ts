@@ -6,6 +6,7 @@ import { rsvp } from "./rsvp";
 import { submission } from "./submission";
 import { settings } from "./settings";
 import { aboutPage } from "./aboutPage";
+import { linksPage } from "./linksPage";
 
 export const schemaTypes = [
   article,
@@ -16,4 +17,5 @@ export const schemaTypes = [
   submission,
   settings,
   aboutPage,
+  linksPage,
 ];

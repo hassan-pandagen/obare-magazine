@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import { optimizeImg } from "@/lib/sanityImg";
+import { RedEmphasis } from "@/lib/redEmphasis";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -68,11 +69,11 @@ export default function EditorialGrid({
           {story.category}
         </span>
         <h3 className="font-poppins text-2xl font-black uppercase leading-[1] text-white md:text-3xl lg:text-4xl">
-          {story.title}
+          <RedEmphasis>{story.title}</RedEmphasis>
         </h3>
         {story.subtitle && (
           <p className="mt-3 font-montserrat text-sm leading-relaxed text-white/60">
-            {story.subtitle}
+            <RedEmphasis>{story.subtitle}</RedEmphasis>
           </p>
         )}
         <div className="mt-5 flex items-center gap-2 font-archivo text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-red" style={{ fontStretch: "125%" }}>
@@ -91,7 +92,7 @@ export default function EditorialGrid({
         ref={headingRef}
         className="mb-12 text-center font-poppins text-[8vw] font-black uppercase tracking-wide text-white md:mb-16 md:text-[5vw]"
       >
-        Latest Stories
+        <span className="text-red">Featured</span> Stories
       </h2>
 
       {/* Mobile: Swiper carousel */}

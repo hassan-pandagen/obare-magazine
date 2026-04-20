@@ -28,8 +28,9 @@ export const settings = defineType({
       type: "object",
       fields: [
         defineField({ name: "instagram", type: "url", title: "Instagram" }),
-        defineField({ name: "twitter", type: "url", title: "Twitter / X" }),
         defineField({ name: "youtube", type: "url", title: "YouTube" }),
+        defineField({ name: "twitter", type: "url", title: "X / Twitter" }),
+        defineField({ name: "facebook", type: "url", title: "Facebook" }),
         defineField({ name: "tiktok", type: "url", title: "TikTok" }),
       ],
     }),
@@ -53,9 +54,10 @@ export const settings = defineType({
     }),
     defineField({
       name: "homepageProjects",
-      title: "Homepage Folder Stack (4 cards)",
+      title: "Homepage Folder Stack (up to 9 cards)",
+      description: "Recommended ratio: 6 images + 3 videos. Spread videos across positions 1, 5, and 8 for pacing.",
       type: "array",
-      validation: (r) => r.max(4),
+      validation: (r) => r.max(9),
       of: [
         defineArrayMember({
           type: "object",

@@ -56,6 +56,16 @@ export const structure: StructureResolver = (S) =>
             .documentId("about-page")
         ),
 
+      // ── Link-in-Bio Page (singleton) ──────────────────────────────────────
+      S.listItem()
+        .title("Link-in-Bio (/links)")
+        .child(
+          S.editor()
+            .id("linksPage")
+            .schemaType("linksPage")
+            .documentId("links-page")
+        ),
+
       // ── Site Settings (singleton) ─────────────────────────────────────────
       S.listItem()
         .title("Site Settings")

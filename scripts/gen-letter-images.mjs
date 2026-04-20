@@ -7,6 +7,7 @@ const sources = [
   "traveling",
   "story-portrait",
   "story-tech",
+  "obare-o",
   "obare-r",
   "obare-e",
 ];

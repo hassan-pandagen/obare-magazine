@@ -1,6 +1,7 @@
 import { serverClient } from "@/sanity/client";
 import { allArticlesQuery } from "@/sanity/queries/articles";
 import { urlFor } from "@/sanity/imageUrl";
+import { RedEmphasis } from "@/lib/redEmphasis";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -181,11 +182,11 @@ function ArticleCard({ article }: { article: ArticleCard }) {
           )}
         </p>
         <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white transition-colors group-hover:text-red">
-          {article.title}
+          <RedEmphasis>{article.title}</RedEmphasis>
         </h2>
         {article.excerpt && (
           <p className="mt-3 line-clamp-2 font-montserrat text-sm leading-relaxed text-white/50">
-            {article.excerpt}
+            <RedEmphasis>{article.excerpt}</RedEmphasis>
           </p>
         )}
         <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-hover:text-red">

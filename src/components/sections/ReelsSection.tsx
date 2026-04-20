@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { optimizeImg } from "@/lib/sanityImg";
+import { RedEmphasis } from "@/lib/redEmphasis";
 
 interface Reel {
   id: string | number;
@@ -196,7 +197,7 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
                 href={reels[activeIdx]?.href ?? "#"}
                 className="mt-2 inline-flex items-baseline gap-2 font-poppins text-xl font-black uppercase text-white"
               >
-                {reels[activeIdx]?.title}
+                <RedEmphasis>{reels[activeIdx]?.title}</RedEmphasis>
                 <span className="text-xs">&rarr;</span>
               </a>
             </div>
@@ -281,7 +282,7 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
         href={reel.href}
         className="group/title mt-4 inline-flex items-baseline gap-2 font-poppins text-lg font-black uppercase leading-tight text-white transition-colors hover:text-red xl:text-xl"
       >
-        {reel.title}
+        <RedEmphasis>{reel.title}</RedEmphasis>
         <span className="inline-block text-sm transition-transform duration-500 group-hover/title:translate-x-1">
           &rarr;
         </span>

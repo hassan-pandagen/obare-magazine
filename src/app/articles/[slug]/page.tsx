@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { serverClient } from "@/sanity/client";
 import { articleBySlugQuery, adjacentArticlesQuery } from "@/sanity/queries/articles";
 import { urlFor } from "@/sanity/imageUrl";
+import { RedEmphasis } from "@/lib/redEmphasis";
 import ArticleBody from "@/components/portable/ArticleBody";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -65,7 +66,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                 </span>
               )}
               <h1 className="font-poppins text-[9vw] font-black uppercase leading-[0.88] text-white md:text-[6vw] lg:text-[5vw]">
-                {article.title}
+                <RedEmphasis>{article.title}</RedEmphasis>
               </h1>
 
               {/* Authors */}
@@ -112,7 +113,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
         <section className="px-6 py-16 md:px-14 lg:px-20">
           {article.excerpt && (
             <p className="mx-auto mb-12 max-w-2xl font-poppins text-xl font-black italic leading-snug text-white/60 md:text-2xl">
-              {article.excerpt}
+              <RedEmphasis>{article.excerpt}</RedEmphasis>
             </p>
           )}
           {article.body && <ArticleBody body={article.body} />}

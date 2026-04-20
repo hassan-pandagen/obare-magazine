@@ -29,7 +29,7 @@ const components: PortableTextComponents = {
   },
 
   marks: {
-    strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
+    strong: ({ children }) => <strong className="font-bold text-red">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
     underline: ({ children }) => <span className="underline">{children}</span>,
     link: ({ value, children }) => (

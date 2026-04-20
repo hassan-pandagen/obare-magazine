@@ -6,19 +6,22 @@ export const aboutPageQuery = groq`
     heroHeadline,
     heroSubtitle,
     "heroImageUrl": heroImage.asset->url,
+    "heroImageHotspot": heroImage.hotspot { x, y },
     sections[] {
       eyebrow,
       title,
       body,
       layout,
       redOverlay,
-      "imageUrl": image.asset->url
+      "imageUrl": image.asset->url,
+      "imageHotspot": image.hotspot { x, y }
     },
     pillarsTitle,
     pillars[] {
       title,
       body,
-      "imageUrl": image.asset->url
+      "imageUrl": image.asset->url,
+      "imageHotspot": image.hotspot { x, y }
     },
     ctaHeadline,
     ctaSubtitle,
@@ -40,4 +43,17 @@ export const submissionsHeroImageQuery = groq`
 
 export const footerCtaVideoQuery = groq`
   *[_type == "settings"][0].footerCtaVideo.asset->url
+`;
+
+export const footerMetaQuery = groq`
+  *[_type == "settings"][0] {
+    "ctaVideoUrl": footerCtaVideo.asset->url,
+    socialLinks {
+      instagram,
+      youtube,
+      twitter,
+      facebook,
+      tiktok
+    }
+  }
 `;

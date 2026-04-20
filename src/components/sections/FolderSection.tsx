@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { optimizeImg } from "@/lib/sanityImg";
+import { RedEmphasis } from "@/lib/redEmphasis";
 
 interface FolderSectionProps {
   title: string;
@@ -86,11 +87,11 @@ export default function FolderSection({
       {/* Bottom-left: title + subtitle + CTA */}
       <div className="absolute bottom-10 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
         <h2 className="font-poppins font-black uppercase leading-[0.88] text-white text-[13vw] md:text-[8vw] lg:text-[7vw]">
-          {title}
+          <RedEmphasis>{title}</RedEmphasis>
         </h2>
         {subtitle && (
           <p className="mt-4 max-w-xl font-montserrat text-sm leading-relaxed text-white/75 md:mt-6 md:text-base">
-            {subtitle}
+            <RedEmphasis>{subtitle}</RedEmphasis>
           </p>
         )}
         <a
@@ -98,7 +99,7 @@ export default function FolderSection({
           className="group relative mt-5 hidden items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7 md:inline-flex"
         >
           <span className="relative">
-            View Project
+            View Article
             <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-left scale-x-100 bg-white transition-transform duration-500 group-hover:scale-x-0" />
             <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-right scale-x-0 bg-red transition-transform duration-500 delay-100 group-hover:scale-x-100" />
           </span>
@@ -110,3 +111,4 @@ export default function FolderSection({
     </div>
   );
 }
+
