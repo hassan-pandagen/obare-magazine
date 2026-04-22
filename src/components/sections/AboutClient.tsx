@@ -16,6 +16,8 @@ export interface AboutSection {
   body?: string;
   imageUrl?: string;
   imageHotspot?: { x?: number; y?: number };
+  imageMobileUrl?: string;
+  imageMobileHotspot?: { x?: number; y?: number };
   layout?: "image-left" | "image-right" | "full-bleed";
   redOverlay?: boolean;
 }
@@ -25,6 +27,8 @@ export interface AboutPillar {
   body?: string;
   imageUrl?: string;
   imageHotspot?: { x?: number; y?: number };
+  imageMobileUrl?: string;
+  imageMobileHotspot?: { x?: number; y?: number };
 }
 
 export interface AboutData {
@@ -33,6 +37,8 @@ export interface AboutData {
   heroSubtitle?: string;
   heroImageUrl?: string;
   heroImageHotspot?: { x?: number; y?: number };
+  heroImageMobileUrl?: string;
+  heroImageMobileHotspot?: { x?: number; y?: number };
   sections?: AboutSection[];
   pillarsTitle?: string;
   pillars?: AboutPillar[];
@@ -328,8 +334,27 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   className="about-hero-image relative aspect-[4/3] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.5)] will-change-transform"
                   style={{ transform: "rotate(-5deg)" }}
                 >
+                  {/* Mobile hero image layer */}
                   <div
-                    className="absolute inset-0 bg-cover"
+                    className="absolute inset-0 bg-cover md:hidden"
+                    style={{
+                      backgroundImage: `url('${optimizeImg(
+                        data.heroImageMobileUrl ?? data.heroImageUrl,
+                        {
+                          w: 900,
+                          hotspot: data.heroImageMobileHotspot ?? data.heroImageHotspot,
+                        }
+                      )}')`,
+                      backgroundPosition:
+                        (data.heroImageMobileHotspot ?? data.heroImageHotspot) &&
+                        typeof (data.heroImageMobileHotspot ?? data.heroImageHotspot)!.x === "number"
+                          ? `${(data.heroImageMobileHotspot ?? data.heroImageHotspot)!.x! * 100}% ${(data.heroImageMobileHotspot ?? data.heroImageHotspot)!.y! * 100}%`
+                          : "center 30%",
+                    }}
+                  />
+                  {/* Desktop hero image layer */}
+                  <div
+                    className="absolute inset-0 hidden bg-cover md:block"
                     style={{
                       backgroundImage: `url('${optimizeImg(data.heroImageUrl, { w: 1200, hotspot: data.heroImageHotspot })}')`,
                       backgroundPosition:
@@ -393,16 +418,32 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   className="pillar-card group relative aspect-[4/5] overflow-hidden rounded-md bg-zinc-900"
                 >
                   {pillar.imageUrl && (
-                    <div
-                      className="absolute inset-0 bg-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                      style={{
-                        backgroundImage: `url('${optimizeImg(pillar.imageUrl, { w: 700, hotspot: pillar.imageHotspot })}')`,
-                        backgroundPosition:
-                          pillar.imageHotspot && typeof pillar.imageHotspot.x === "number"
-                            ? `${pillar.imageHotspot.x * 100}% ${pillar.imageHotspot.y! * 100}%`
-                            : "center",
-                      }}
-                    />
+                    <>
+                      {/* Mobile */}
+                      <div
+                        className="absolute inset-0 bg-cover transition-transform duration-700 group-hover:scale-[1.06] md:hidden"
+                        style={{
+                          backgroundImage: `url('${optimizeImg(
+                            pillar.imageMobileUrl ?? pillar.imageUrl,
+                            {
+                              w: 600,
+                              hotspot: pillar.imageMobileHotspot ?? pillar.imageHotspot,
+                            }
+                          )}')`,
+                        }}
+                      />
+                      {/* Desktop */}
+                      <div
+                        className="absolute inset-0 hidden bg-cover transition-transform duration-700 group-hover:scale-[1.06] md:block"
+                        style={{
+                          backgroundImage: `url('${optimizeImg(pillar.imageUrl, { w: 700, hotspot: pillar.imageHotspot })}')`,
+                          backgroundPosition:
+                            pillar.imageHotspot && typeof pillar.imageHotspot.x === "number"
+                              ? `${pillar.imageHotspot.x * 100}% ${pillar.imageHotspot.y! * 100}%`
+                              : "center",
+                        }}
+                      />
+                    </>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-7">
@@ -528,13 +569,29 @@ function SectionImage({
     return <div className="aspect-[4/5] w-full bg-zinc-900 md:aspect-[4/3]" />;
   }
 
+  const mobileUrl = section.imageMobileUrl ?? section.imageUrl;
+  const mobileHotspot = section.imageMobileHotspot ?? section.imageHotspot;
+  const mobileBgPos =
+    mobileHotspot && typeof mobileHotspot.x === "number" && typeof mobileHotspot.y === "number"
+      ? `${mobileHotspot.x * 100}% ${mobileHotspot.y * 100}%`
+      : "center 30%";
+
   return (
     <div
       className="section-image relative aspect-[4/5] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform md:aspect-[4/3]"
       style={{ transform: `rotate(${tilt})` }}
     >
+      {/* Mobile layer */}
       <div
-        className="absolute inset-0 bg-cover"
+        className="absolute inset-0 bg-cover md:hidden"
+        style={{
+          backgroundImage: `url('${optimizeImg(mobileUrl, { w: 900, hotspot: mobileHotspot })}')`,
+          backgroundPosition: mobileBgPos,
+        }}
+      />
+      {/* Desktop layer */}
+      <div
+        className="absolute inset-0 hidden bg-cover md:block"
         style={{
           backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200, hotspot })}')`,
           backgroundPosition: bgPosition,

@@ -217,7 +217,7 @@ function SocialRow({ socials = {} }: { socials?: FooterMeta["socialLinks"] }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={item.label}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/20 text-black transition-all duration-300 hover:border-red hover:bg-red hover:text-white"
+          className="flex h-14 w-14 items-center justify-center rounded-full border border-black/25 text-black transition-all duration-300 hover:border-red hover:bg-red hover:text-white"
         >
           {item.svg}
         </a>
@@ -230,7 +230,7 @@ function SocialRow({ socials = {} }: { socials?: FooterMeta["socialLinks"] }) {
 
 function InstagramIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="2" width="20" height="20" rx="5" />
       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -240,7 +240,7 @@ function InstagramIcon() {
 
 function YouTubeIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
       <path d="M23 7.3c-.3-1-1-1.8-2-2.1C19 4.7 12 4.7 12 4.7s-7 0-9 .5c-1 .3-1.7 1.1-2 2.1C.5 9.3.5 12 .5 12s0 2.7.5 4.7c.3 1 1 1.8 2 2.1 2 .5 9 .5 9 .5s7 0 9-.5c1-.3 1.7-1.1 2-2.1.5-2 .5-4.7.5-4.7s0-2.7-.5-4.7zM9.8 15.7V8.3L15.9 12l-6.1 3.7z" />
     </svg>
   );
@@ -248,7 +248,7 @@ function YouTubeIcon() {
 
 function XIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   );
@@ -256,7 +256,7 @@ function XIcon() {
 
 function FacebookIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
       <path d="M24 12a12 12 0 1 0-13.88 11.85v-8.38H7.08V12h3.05V9.36c0-3 1.79-4.67 4.53-4.67 1.31 0 2.69.24 2.69.24v2.95H15.83c-1.49 0-1.95.92-1.95 1.87V12h3.33l-.53 3.47h-2.8v8.38A12 12 0 0 0 24 12z" />
     </svg>
   );
@@ -264,7 +264,7 @@ function FacebookIcon() {
 
 function TikTokIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
       <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1z" />
     </svg>
   );

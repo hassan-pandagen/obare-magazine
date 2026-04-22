@@ -21,8 +21,8 @@ export default function NewsletterPage() {
       <Navbar />
 
       <main className="bg-black text-white">
-        {/* ── Full-screen sign-up ──────────────────────────────────────── */}
-        <section className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+        {/* ── Full-screen sign-up (desktop) / natural flow (mobile) ────── */}
+        <section className="flex flex-col items-center justify-center px-6 pb-16 pt-32 text-center md:min-h-screen md:py-0">
           {status === "sent" ? (
             <div className="max-w-lg">
               <span className="mb-6 block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">

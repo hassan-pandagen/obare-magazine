@@ -81,7 +81,7 @@ export default function SubmissionsClient({ heroBgImage }: { heroBgImage?: strin
         </section>
 
         {/* ── WHAT WE LOOK FOR ─────────────────────────────────────────── */}
-        <section className="border-t border-white/10 px-6 py-20 md:px-14 lg:px-20">
+        <section className="border-t border-white/10 px-6 pt-8 pb-16 md:px-14 md:py-20 lg:px-20">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-0 md:grid-cols-4">
               {[
@@ -108,7 +108,7 @@ export default function SubmissionsClient({ heroBgImage }: { heroBgImage?: strin
               ].map((item) => (
                 <div
                   key={item.num}
-                  className="group relative border-l border-white/10 px-8 py-10 transition-colors hover:border-red"
+                  className="group relative border-l border-white/10 px-6 py-6 transition-colors hover:border-red md:px-8 md:py-10"
                 >
                   <p className="font-poppins text-5xl font-black text-red/40 transition-colors group-hover:text-red">
                     {item.num}

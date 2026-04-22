@@ -84,6 +84,31 @@ body {
   border-radius: 4px;
 }
 
+/* Reels mobile swiper — Instagram-style carousel */
+.reels-mobile-swiper {
+  /* Swiper's own theme variables — overrides the default blue */
+  --swiper-theme-color: var(--color-red);
+  --swiper-pagination-color: var(--color-red);
+  --swiper-pagination-bullet-inactive-color: #ffffff;
+  --swiper-pagination-bullet-inactive-opacity: 0.3;
+}
+.reels-mobile-swiper .swiper {
+  padding-bottom: 32px !important;
+  overflow: visible;
+}
+.reels-mobile-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+.reels-mobile-swiper .swiper-pagination-bullet {
+  width: 6px;
+  height: 6px;
+  transition: all 0.4s ease;
+}
+.reels-mobile-swiper .swiper-pagination-bullet-active {
+  width: 22px;
+  border-radius: 3px;
+}
+
 /* Categories marquee */
 @keyframes obare-marquee-anim {
   0%   { transform: translateX(0); }
@@ -94,6 +119,33 @@ body {
 }
 .obare-marquee:hover {
   animation-play-state: paused;
+}
+
+/* ── Messy editorial body treatment for articles ─────────────────────── */
+
+/* Drop cap on the first paragraph of an article body */
+.article-paragraph:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-poppins), sans-serif;
+  font-weight: 900;
+  font-size: 5.5rem;
+  line-height: 0.85;
+  padding: 0.1em 0.2em 0 0;
+  margin-top: 0.05em;
+  color: var(--color-red);
+}
+
+/* Every 3rd paragraph gets a subtle left indent — breaks the perfect column */
+.article-paragraph:nth-of-type(3n) {
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Every 5th paragraph is slightly italic with a different rhythm */
+.article-paragraph:nth-of-type(5n) {
+  font-style: italic;
+  color: rgba(245, 245, 240, 0.7);
+  font-size: 1.05em;
 }
 
 /* Custom scrollbar */

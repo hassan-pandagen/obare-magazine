@@ -20,6 +20,8 @@ interface SettingsResult {
     videoUrl?: string;
     imageUrl?: string;
     imageHotspot?: { x?: number; y?: number };
+    imageMobileUrl?: string;
+    imageMobileHotspot?: { x?: number; y?: number };
     linkedSlug?: string;
     externalHref?: string;
   }>;
@@ -29,6 +31,7 @@ interface SettingsResult {
     category?: string;
     accent?: string;
     imageUrl?: string;
+    imageMobileUrl?: string;
     linkedSlug?: string;
   }>;
 }
@@ -58,6 +61,8 @@ export default async function Home() {
       videoSrc: p.videoUrl,
       imageSrc: p.imageUrl,
       imageHotspot: p.imageHotspot,
+      imageMobileSrc: p.imageMobileUrl,
+      imageMobileHotspot: p.imageMobileHotspot,
       href: p.linkedSlug
         ? `/articles/${p.linkedSlug}`
         : p.externalHref ?? "#",
@@ -80,6 +85,7 @@ export default async function Home() {
       subtitle: s.subtitle,
       category: s.category,
       image: s.imageUrl ?? "",
+      imageMobile: s.imageMobileUrl,
       accent: s.accent ?? "bg-red",
       href: s.linkedSlug ? `/articles/${s.linkedSlug}` : "#",
     })

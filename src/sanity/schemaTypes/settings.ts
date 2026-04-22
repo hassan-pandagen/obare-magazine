@@ -54,10 +54,9 @@ export const settings = defineType({
     }),
     defineField({
       name: "homepageProjects",
-      title: "Homepage Folder Stack (up to 9 cards)",
-      description: "Recommended ratio: 6 images + 3 videos. Spread videos across positions 1, 5, and 8 for pacing.",
+      title: "Homepage Folder Stack (unlimited)",
+      description: "Add as many cards as you want — the stack grows as you scroll. Mix videos and images for pacing.",
       type: "array",
-      validation: (r) => r.max(9),
       of: [
         defineArrayMember({
           type: "object",
@@ -67,7 +66,20 @@ export const settings = defineType({
             defineField({ name: "category", type: "string", title: "Category" }),
             defineField({ name: "author", type: "string", title: "Author" }),
             defineField({ name: "videoFile", type: "file", title: "Video", options: { accept: "video/*" } }),
-            defineField({ name: "image", type: "image", title: "Image", options: { hotspot: true } }),
+            defineField({
+              name: "image",
+              type: "image",
+              title: "Image (Desktop) — 16:9 landscape",
+              options: { hotspot: true },
+              description: "Upload a horizontal image (e.g. 1920×1080) for desktop viewers.",
+            }),
+            defineField({
+              name: "imageMobile",
+              type: "image",
+              title: "Image (Mobile) — 9:16 portrait — optional",
+              options: { hotspot: true },
+              description: "Upload a vertical image (e.g. 1080×1920) for mobile. Leave empty to use the desktop image on mobile too.",
+            }),
             defineField({
               name: "linkedArticle",
               type: "reference",
@@ -98,9 +110,16 @@ export const settings = defineType({
             defineField({
               name: "image",
               type: "image",
-              title: "Image",
+              title: "Image (Desktop)",
               options: { hotspot: true },
               validation: (r) => r.required(),
+            }),
+            defineField({
+              name: "imageMobile",
+              type: "image",
+              title: "Image (Mobile) — optional",
+              options: { hotspot: true },
+              description: "Leave empty to use desktop image on mobile too.",
             }),
             defineField({
               name: "accent",

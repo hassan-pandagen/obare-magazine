@@ -19,6 +19,8 @@ export const homepageSettingsQuery = groq`
       "videoUrl": videoFile.asset->url,
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
+      "imageMobileUrl": imageMobile.asset->url,
+      "imageMobileHotspot": imageMobile.hotspot { x, y },
       "linkedSlug": linkedArticle->slug.current,
       externalHref,
     },
@@ -28,6 +30,7 @@ export const homepageSettingsQuery = groq`
       category,
       accent,
       "imageUrl": image.asset->url,
+      "imageMobileUrl": imageMobile.asset->url,
       "linkedSlug": linkedArticle->slug.current,
     }
   }

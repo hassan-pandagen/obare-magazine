@@ -7,6 +7,8 @@ export const aboutPageQuery = groq`
     heroSubtitle,
     "heroImageUrl": heroImage.asset->url,
     "heroImageHotspot": heroImage.hotspot { x, y },
+    "heroImageMobileUrl": heroImageMobile.asset->url,
+    "heroImageMobileHotspot": heroImageMobile.hotspot { x, y },
     sections[] {
       eyebrow,
       title,
@@ -14,14 +16,18 @@ export const aboutPageQuery = groq`
       layout,
       redOverlay,
       "imageUrl": image.asset->url,
-      "imageHotspot": image.hotspot { x, y }
+      "imageHotspot": image.hotspot { x, y },
+      "imageMobileUrl": imageMobile.asset->url,
+      "imageMobileHotspot": imageMobile.hotspot { x, y }
     },
     pillarsTitle,
     pillars[] {
       title,
       body,
       "imageUrl": image.asset->url,
-      "imageHotspot": image.hotspot { x, y }
+      "imageHotspot": image.hotspot { x, y },
+      "imageMobileUrl": imageMobile.asset->url,
+      "imageMobileHotspot": imageMobile.hotspot { x, y }
     },
     ctaHeadline,
     ctaSubtitle,

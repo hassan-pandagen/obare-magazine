@@ -30,6 +30,17 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openModal, setOpenModal] = useState<"advertise" | "event" | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return;
+    setSearchOpen(false);
+    setIsMobileOpen(false);
+    window.location.href = `/articles?q=${encodeURIComponent(q)}`;
+  };
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const hamburgerTopRef = useRef<HTMLSpanElement>(null);
   const hamburgerMidRef = useRef<HTMLSpanElement>(null);
@@ -193,6 +204,14 @@ export default function Navbar() {
                 </div>
               );
             })}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="ml-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red"
+            >
+              <SearchIcon />
+            </button>
           </div>
 
           {/* Hamburger */}
@@ -217,7 +236,7 @@ export default function Navbar() {
         {NAV_LINKS.map((link) => {
           const isActive = link.href ? pathname === link.href : false;
           const cls = cn(
-            "mobile-link flex items-center gap-3 font-archivo text-3xl font-bold uppercase tracking-wide transition-colors",
+            "mobile-link flex items-center gap-3 font-archivo text-[2rem] font-bold uppercase tracking-[0.04em] transition-colors",
             isActive ? "text-red" : "text-white hover:text-red"
           );
           const inner = (
@@ -254,6 +273,17 @@ export default function Navbar() {
             </a>
           );
         })}
+        <button
+          type="button"
+          onClick={() => {
+            setIsMobileOpen(false);
+            setSearchOpen(true);
+          }}
+          aria-label="Search articles"
+          className="mobile-link mt-6 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 text-white transition-all hover:border-red hover:text-red"
+        >
+          <SearchIcon large />
+        </button>
         <div className="mt-8">
           <span className="font-archivo text-sm uppercase tracking-widest text-white/40">
             info@ObareMag.com
@@ -261,8 +291,66 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Search overlay */}
+      {searchOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-start justify-center bg-black/90 px-6 pt-24 backdrop-blur-md md:pt-32"
+          onClick={() => setSearchOpen(false)}
+        >
+          <form
+            onSubmit={submitSearch}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-xl"
+          >
+            <div className="flex items-center gap-3 border-b-2 border-red pb-3">
+              <SearchIcon large />
+              <input
+                autoFocus
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search articles..."
+                className="w-full bg-transparent font-poppins text-2xl font-bold text-white outline-none placeholder:text-white/30 md:text-3xl"
+              />
+              <button
+                type="button"
+                onClick={() => setSearchOpen(false)}
+                aria-label="Close search"
+                className="ml-2 text-white/60 hover:text-white"
+              >
+                <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M1 1L13 13M13 1L1 13" />
+                </svg>
+              </button>
+            </div>
+            <p className="mt-4 font-montserrat text-xs uppercase tracking-[0.3em] text-white/40">
+              Press Enter to search
+            </p>
+          </form>
+        </div>
+      )}
+
       <AdvertiseModal open={openModal === "advertise"} onClose={() => setOpenModal(null)} />
       <EventModal open={openModal === "event"} onClose={() => setOpenModal(null)} />
     </>
+  );
+}
+
+function SearchIcon({ large = false }: { large?: boolean }) {
+  const size = large ? 22 : 16;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.5" y2="16.5" />
+    </svg>
   );
 }

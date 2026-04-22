@@ -31,9 +31,16 @@ export const aboutPage = defineType({
     }),
     defineField({
       name: "heroImage",
-      title: "Hero Image",
+      title: "Hero Image (Desktop)",
       type: "image",
       options: { hotspot: true },
+    }),
+    defineField({
+      name: "heroImageMobile",
+      title: "Hero Image (Mobile) — optional",
+      type: "image",
+      options: { hotspot: true },
+      description: "Leave empty to use desktop image on mobile too.",
     }),
 
     /* ── 4 narrative sections ─────────────────────────── */
@@ -69,9 +76,16 @@ export const aboutPage = defineType({
             }),
             defineField({
               name: "image",
-              title: "Image",
+              title: "Image (Desktop)",
               type: "image",
               options: { hotspot: true },
+            }),
+            defineField({
+              name: "imageMobile",
+              title: "Image (Mobile) — optional",
+              type: "image",
+              options: { hotspot: true },
+              description: "Leave empty to use desktop image on mobile too.",
             }),
             defineField({
               name: "layout",
@@ -132,9 +146,16 @@ export const aboutPage = defineType({
             }),
             defineField({
               name: "image",
-              title: "Image",
+              title: "Image (Desktop)",
               type: "image",
               options: { hotspot: true },
+            }),
+            defineField({
+              name: "imageMobile",
+              title: "Image (Mobile) — optional",
+              type: "image",
+              options: { hotspot: true },
+              description: "Leave empty to use desktop image on mobile too.",
             }),
           ],
           preview: {

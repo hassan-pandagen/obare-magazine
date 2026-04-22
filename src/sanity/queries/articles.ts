@@ -47,7 +47,9 @@ export const articleBySlugQuery = groq`
       _type == "inlineVideo" => {
         ...,
         "fileUrl": file.asset->url,
-        "posterUrl": posterImage.asset->url
+        "fileMobileUrl": fileMobile.asset->url,
+        "posterUrl": posterImage.asset->url,
+        "posterMobileUrl": posterImageMobile.asset->url
       },
       _type == "inlineReel" => {
         ...,

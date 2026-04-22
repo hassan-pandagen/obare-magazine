@@ -23,6 +23,8 @@ export interface HomeProject {
   videoSrc?: string;
   imageSrc?: string;
   imageHotspot?: { x?: number; y?: number };
+  imageMobileSrc?: string;
+  imageMobileHotspot?: { x?: number; y?: number };
   href: string;
 }
 
@@ -76,46 +78,54 @@ export default function HomeClient({ projects, reels, stories }: Props) {
         target?.play().catch(() => {});
       };
 
-      // First card's video should be buffered eagerly — user sees it immediately
-      const firstVideo = sections[0]?.querySelector<HTMLVideoElement>(".folder-video");
-      if (firstVideo) {
-        firstVideo.preload = "auto";
-        firstVideo.load();
-      }
+      // First card's video should be buffered eagerly — user sees it immediately.
+      // Re-query after any layout change (mobile ↔ desktop) refreshes triggers.
+      const warmFirst = () => {
+        const v = sections[0]?.querySelector<HTMLVideoElement>(".folder-video");
+        if (v) {
+          v.preload = "auto";
+          v.load();
+        }
+      };
+      warmFirst();
 
       sections.forEach((section, i) => {
         const card = section.querySelector<HTMLElement>(".folder-card");
-        const video = section.querySelector<HTMLVideoElement>(".folder-video");
+        // Resolve video via fresh querySelector INSIDE callbacks below so
+        // layout-change remounts (mobile ↔ desktop) still find the right element.
+        const hasInitialVideo = section.querySelector<HTMLVideoElement>(".folder-video");
 
         if (card) gsap.set(card, { force3D: true, willChange: "transform" });
 
-        if (video) {
+        if (hasInitialVideo) {
+          const getVideo = () => section.querySelector<HTMLVideoElement>(".folder-video");
+
           ScrollTrigger.create({
             trigger: section,
             start: "top top",
             end: "bottom top",
-            onEnter: () => playOnly(video),
-            onEnterBack: () => playOnly(video),
-            onLeave: () => video.pause(),
-            onLeaveBack: () => video.pause(),
+            onEnter: () => playOnly(getVideo()),
+            onEnterBack: () => playOnly(getVideo()),
+            onLeave: () => getVideo()?.pause(),
+            onLeaveBack: () => getVideo()?.pause(),
           });
 
           // Preload-ahead: when THIS card starts entering the viewport,
           // warm up the NEXT card's video so it's buffered before the user gets there.
           const nextSection = sections[i + 1];
           if (nextSection) {
-            const nextVideo = nextSection.querySelector<HTMLVideoElement>(".folder-video");
-            if (nextVideo) {
-              ScrollTrigger.create({
-                trigger: section,
-                start: "top 80%",
-                once: true,
-                onEnter: () => {
-                  nextVideo.preload = "auto";
-                  nextVideo.load();
-                },
-              });
-            }
+            ScrollTrigger.create({
+              trigger: section,
+              start: "top 80%",
+              once: true,
+              onEnter: () => {
+                const nv = nextSection.querySelector<HTMLVideoElement>(".folder-video");
+                if (nv) {
+                  nv.preload = "auto";
+                  nv.load();
+                }
+              },
+            });
           }
         }
 
@@ -165,6 +175,8 @@ export default function HomeClient({ projects, reels, stories }: Props) {
                 videoSrc={project.videoSrc}
                 imageSrc={project.imageSrc}
                 imageHotspot={project.imageHotspot}
+                imageMobileSrc={project.imageMobileSrc}
+                imageMobileHotspot={project.imageMobileHotspot}
                 href={project.href}
               />
             </section>

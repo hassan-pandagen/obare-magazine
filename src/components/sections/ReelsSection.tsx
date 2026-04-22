@@ -3,8 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
 import { optimizeImg } from "@/lib/sanityImg";
 import { RedEmphasis } from "@/lib/redEmphasis";
+import "swiper/css";
+import "swiper/css/pagination";
 
 interface Reel {
   id: string | number;
@@ -19,88 +23,68 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
   if (reels.length === 0) return null;
   const sectionRef = useRef<HTMLElement>(null);
   const desktopGridRef = useRef<HTMLDivElement>(null);
-  const wheelRef = useRef<HTMLDivElement>(null);
   const [activeReel, setActiveReel] = useState<Reel | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
   useGSAP(
     () => {
-      if (!sectionRef.current) return;
+      if (!sectionRef.current || !desktopGridRef.current) return;
+      // Desktop-only domino animation. Mobile uses a Swiper (no GSAP).
+      if (window.innerWidth < 768) return;
 
-      const isMobile = window.innerWidth < 768;
+      const fallAngle = 88;
+      const items = gsap.utils.toArray<HTMLElement>(
+        ".reel-item-desktop",
+        desktopGridRef.current
+      );
 
-      if (isMobile && wheelRef.current) {
-        // ======= MOBILE: SPIN WHEEL =======
-        gsap.to(wheelRef.current, {
-          rotation: -270,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 90%",
-            end: "bottom bottom",
-            scrub: 1,
-            onUpdate: (self) => {
-              const idx = Math.min(3, Math.round(self.progress * 3));
-              setActiveIdx(idx);
-            },
+      gsap.set(items, {
+        rotationZ: -70,
+        xPercent: 35,
+        yPercent: 45,
+        opacity: 0,
+        transformOrigin: "100% 100%",
+      });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 90%",
+          end: "bottom bottom",
+          scrub: 1,
+        },
+      });
+
+      items.forEach((item, i) => {
+        tl.to(
+          item,
+          {
+            rotationZ: 0,
+            xPercent: 0,
+            yPercent: 0,
+            opacity: 1,
+            ease: "power3.out",
+            duration: 1,
           },
-        });
-      } else if (desktopGridRef.current) {
-        // ======= DESKTOP: DOMINOES =======
-        const fallAngle = 88;
-        const items = gsap.utils.toArray<HTMLElement>(
-          ".reel-item-desktop",
-          desktopGridRef.current
+          i
         );
+      });
 
-        gsap.set(items, {
-          rotationZ: -70,
-          xPercent: 35,
-          yPercent: 45,
-          opacity: 0,
-          transformOrigin: "100% 100%",
-        });
+      tl.addLabel("exit", 5);
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 90%",
-            end: "bottom bottom",
-            scrub: 1,
+      items.forEach((item, i) => {
+        tl.to(
+          item,
+          {
+            rotationZ: fallAngle,
+            yPercent: 15,
+            opacity: 0,
+            ease: "power2.in",
+            duration: 0.8,
           },
-        });
-
-        items.forEach((item, i) => {
-          tl.to(
-            item,
-            {
-              rotationZ: 0,
-              xPercent: 0,
-              yPercent: 0,
-              opacity: 1,
-              ease: "power3.out",
-              duration: 1,
-            },
-            i
-          );
-        });
-
-        tl.addLabel("exit", 5);
-
-        items.forEach((item, i) => {
-          tl.to(
-            item,
-            {
-              rotationZ: fallAngle,
-              yPercent: 15,
-              opacity: 0,
-              ease: "power2.in",
-              duration: 0.8,
-            },
-            `exit+=${i * 0.35}`
-          );
-        });
-      }
+          `exit+=${i * 0.35}`
+        );
+      });
     },
     { scope: sectionRef }
   );
@@ -108,110 +92,97 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-black"
-      style={{ height: "300vh" }}
+      className="relative w-full bg-black md:h-[300vh]"
     >
-      <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden">
-        {/* ===== DESKTOP LAYOUT ===== */}
-        <div className="hidden h-full w-full md:flex md:items-center">
-          <div className="mx-auto w-full max-w-[1600px] px-10 lg:px-16">
-            <div className="mb-10 lg:mb-12">
-              <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-red">
-                In Motion
-              </span>
-              <h2 className="mt-3 font-poppins text-5xl font-black uppercase leading-[0.9] text-white lg:text-6xl">
-                The Moving Picture
-              </h2>
-            </div>
-
-            <div
-              ref={desktopGridRef}
-              className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-4"
-            >
-              {reels.map((reel) => (
-                <DesktopReel
-                  key={reel.id}
-                  reel={reel}
-                  onOpen={() => setActiveReel(reel)}
-                />
-              ))}
-            </div>
-
-            <div className="mt-10 flex justify-end">
-              <a
-                href="/reels"
-                className="group inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white transition-colors hover:text-red"
-              >
-                View All Reels
-                <span className="inline-block transition-transform duration-500 group-hover:translate-x-2">
-                  &rarr;
-                </span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* ===== MOBILE LAYOUT: SPIN WHEEL ===== */}
-        <div className="flex h-full w-full flex-col items-center justify-between py-10 md:hidden">
-          {/* Header */}
-          <div className="px-5 text-center">
-            <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-red">
+      {/* ===== DESKTOP LAYOUT — sticky scroll + domino animation (unchanged) ===== */}
+      <div className="sticky top-0 hidden h-screen w-full overflow-hidden md:flex md:items-center">
+        <div className="mx-auto w-full max-w-[1600px] px-10 lg:px-16">
+          <div className="mb-10 lg:mb-12">
+            <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-red">
               In Motion
             </span>
-            <h2 className="mt-2 font-poppins text-3xl font-black uppercase leading-[0.9] text-white">
-              The Moving
-              <br />
-              Picture
+            <h2 className="mt-3 font-poppins text-5xl font-black uppercase leading-[0.9] text-white lg:text-6xl">
+              The Moving Picture
             </h2>
           </div>
 
-          {/* Wheel */}
-          <div className="relative aspect-square w-[115vw] max-w-none shrink-0">
-            {/* Faint guide circle */}
-            <div className="absolute inset-[12%] rounded-full border border-white/5" />
+          <div
+            ref={desktopGridRef}
+            className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-4"
+          >
+            {reels.map((reel) => (
+              <DesktopReel
+                key={reel.id}
+                reel={reel}
+                onOpen={() => setActiveReel(reel)}
+              />
+            ))}
+          </div>
 
-            <div
-              ref={wheelRef}
-              className="absolute inset-0"
-              style={{ transformOrigin: "50% 50%" }}
+          <div className="mt-10 flex justify-end">
+            <a
+              href="/reels"
+              className="group inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white transition-colors hover:text-red"
             >
-              {reels.map((reel, i) => (
-                <WheelReel
-                  key={reel.id}
+              View All Reels
+              <span className="inline-block transition-transform duration-500 group-hover:translate-x-2">
+                &rarr;
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== MOBILE LAYOUT: INSTAGRAM-STYLE SWIPER ===== */}
+      <div className="flex w-full flex-col items-center py-14 md:hidden">
+        {/* Header */}
+        <div className="px-5 text-center">
+          <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-red">
+            In Motion
+          </span>
+          <h2 className="mt-2 font-poppins text-3xl font-black uppercase leading-[0.9] text-white">
+            The Moving
+            <br />
+            Picture
+          </h2>
+        </div>
+
+        {/* Swiper carousel — one reel per view, swipe to advance */}
+        <div className="reels-mobile-swiper mt-8 w-full">
+          <Swiper
+            modules={[Pagination]}
+            slidesPerView={1.15}
+            centeredSlides
+            spaceBetween={14}
+            pagination={{ clickable: true }}
+            onSlideChange={(sw) => setActiveIdx(sw.activeIndex)}
+            className="px-5"
+          >
+            {reels.map((reel, i) => (
+              <SwiperSlide key={reel.id}>
+                <MobileSwiperReel
                   reel={reel}
-                  angle={i * 90}
                   isActive={activeIdx === i}
                   onOpen={() => setActiveReel(reel)}
                 />
-              ))}
-            </div>
-          </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
 
-          {/* Active reel info + dots */}
-          <div className="flex flex-col items-center gap-5 px-5 text-center">
-            <div className="min-h-[60px]">
-              <span className="block font-montserrat text-[9px] font-bold uppercase tracking-[0.35em] text-red">
-                {reels[activeIdx]?.category}
-              </span>
-              <a
-                href={reels[activeIdx]?.href ?? "#"}
-                className="mt-2 inline-flex items-baseline gap-2 font-poppins text-xl font-black uppercase text-white"
-              >
-                <RedEmphasis>{reels[activeIdx]?.title}</RedEmphasis>
-                <span className="text-xs">&rarr;</span>
-              </a>
-            </div>
-
-            <div className="flex gap-2">
-              {reels.map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    activeIdx === i ? "w-6 bg-red" : "w-1.5 bg-white/30"
-                  }`}
-                />
-              ))}
-            </div>
+        {/* Active reel info */}
+        <div className="mt-6 flex flex-col items-center gap-4 px-5 text-center">
+          <div className="min-h-[60px]">
+            <span className="block font-montserrat text-[9px] font-bold uppercase tracking-[0.35em] text-red">
+              {reels[activeIdx]?.category}
+            </span>
+            <a
+              href={reels[activeIdx]?.href ?? "#"}
+              className="mt-2 inline-flex items-baseline gap-2 font-poppins text-xl font-black uppercase text-white"
+            >
+              <RedEmphasis>{reels[activeIdx]?.title}</RedEmphasis>
+              <span className="text-xs">&rarr;</span>
+            </a>
           </div>
         </div>
       </div>
@@ -291,57 +262,62 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
   );
 }
 
-/* =============== MOBILE WHEEL REEL =============== */
+/* =============== MOBILE SWIPER REEL =============== */
 
-function WheelReel({
+function MobileSwiperReel({
   reel,
-  angle,
   isActive,
   onOpen,
 }: {
   reel: Reel;
-  angle: number;
   isActive: boolean;
   onOpen: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Play the video only for the active slide; pause + reset others so audio
+  // never plays over the one the user is looking at.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (isActive) v.play().catch(() => {});
-    else v.pause();
+    if (isActive) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+      v.currentTime = 0;
+    }
   }, [isActive]);
 
   return (
     <button
-      onClick={isActive ? onOpen : undefined}
-      className="absolute left-1/2 top-1/2 block origin-center overflow-hidden rounded-2xl bg-zinc-900 transition-[opacity,filter] duration-500"
+      onClick={onOpen}
+      className="group relative block w-full overflow-hidden rounded-2xl bg-zinc-900 transition-[opacity,transform] duration-500"
       style={{
-        width: "42%",
         aspectRatio: "9 / 16",
-        transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-60%)`,
         opacity: isActive ? 1 : 0.55,
-        filter: isActive ? "none" : "brightness(0.6) saturate(0.8)",
+        transform: isActive ? "scale(1)" : "scale(0.92)",
       }}
       aria-label={`Play ${reel.title}`}
     >
       <video
         ref={videoRef}
         src={reel.videoSrc}
-        poster={optimizeImg(reel.posterSrc, { w: 380 })}
+        poster={optimizeImg(reel.posterSrc, { w: 500 })}
         muted
         loop
         playsInline
-        preload="none"
+        preload="metadata"
         className="absolute inset-0 h-full w-full object-cover"
       >
         <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
       </video>
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10" />
+      <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm">
+        {reel.category}
+      </span>
       {isActive && (
-        <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red/90">
-          <svg width="12" height="14" viewBox="0 0 14 16" fill="white">
+        <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red/90 shadow-lg shadow-red/30">
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="white" className="ml-0.5">
             <path d="M0 0L14 8L0 16V0Z" />
           </svg>
         </div>
