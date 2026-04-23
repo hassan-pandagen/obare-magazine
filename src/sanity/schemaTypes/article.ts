@@ -28,7 +28,15 @@ export const article = defineType({
           fields: [
             defineField({ name: "name", type: "string", title: "Name" }),
             defineField({ name: "role", type: "string", title: "Role (e.g. Photographer)" }),
-            defineField({ name: "photo", type: "image", title: "Photo", options: { hotspot: true } }),
+            defineField({
+              name: "photo",
+              type: "image",
+              title: "Photo",
+              options: { hotspot: true },
+              fields: [
+                defineField({ name: "alt", type: "string", title: "Alt text (SEO)" }),
+              ],
+            }),
           ],
         }),
       ],
@@ -62,19 +70,33 @@ export const article = defineType({
     }),
     defineField({
       name: "coverImage",
-      title: "Cover Image",
+      title: "Cover Image (Desktop) — 16:9 landscape",
       type: "image",
       options: { hotspot: true },
       fields: [
-        defineField({ name: "alt", type: "string", title: "Alt text" }),
+        defineField({ name: "alt", type: "string", title: "Alt text (SEO)" }),
         defineField({ name: "caption", type: "string", title: "Caption" }),
       ],
     }),
     defineField({
+      name: "coverImageMobile",
+      title: "Cover Image (Mobile) — 9:16 portrait — optional",
+      type: "image",
+      options: { hotspot: true },
+      description: "Leave empty to use desktop cover on mobile.",
+    }),
+    defineField({
       name: "coverVideo",
-      title: "Cover Video (overrides image if set)",
+      title: "Cover Video (Desktop) — overrides image if set",
       type: "file",
       options: { accept: "video/*" },
+    }),
+    defineField({
+      name: "coverVideoMobile",
+      title: "Cover Video (Mobile) — 9:16 — optional",
+      type: "file",
+      options: { accept: "video/*" },
+      description: "Leave empty to use desktop video on mobile.",
     }),
     defineField({
       name: "excerpt",
@@ -122,7 +144,14 @@ export const article = defineType({
           type: "image",
           options: { hotspot: true },
           fields: [
-            defineField({ name: "alt", type: "string", title: "Alt text" }),
+            defineField({
+              name: "imageMobile",
+              type: "image",
+              title: "Mobile version — optional",
+              options: { hotspot: true },
+              description: "Upload a vertical cut for mobile. Leave empty to use this image on mobile too.",
+            }),
+            defineField({ name: "alt", type: "string", title: "Alt text (SEO)" }),
             defineField({ name: "caption", type: "string", title: "Caption" }),
           ],
         }),

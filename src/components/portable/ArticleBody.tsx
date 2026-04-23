@@ -66,6 +66,9 @@ const components: PortableTextComponents = {
     image: ({ value }) => {
       if (!value?.url && !value?.asset) return null;
       const src = value.url ?? urlFor(value).width(1200).url();
+      const mobileSrc =
+        value.mobileUrl ??
+        (value.imageMobile?.asset ? urlFor(value.imageMobile).width(800).url() : null);
       // Deterministic tilt + horizontal nudge so layout stays stable across renders
       // but images don't all line up in a perfect column.
       const seed = (value.alt ?? " ").charCodeAt(0) || 1;
@@ -75,11 +78,14 @@ const components: PortableTextComponents = {
         <figure
           className={`my-14 -mx-6 md:mx-0 md:w-[85%] ${nudge} ${tilt}`}
         >
-          <img
-            src={src}
-            alt={value.alt ?? ""}
-            className="w-full object-cover shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:rounded-sm"
-          />
+          <picture>
+            {mobileSrc && <source media="(max-width: 767px)" srcSet={mobileSrc} />}
+            <img
+              src={src}
+              alt={value.alt ?? ""}
+              className="w-full object-cover shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:rounded-sm"
+            />
+          </picture>
           {value.caption && (
             <figcaption className="mt-3 px-6 font-montserrat text-xs italic text-white/50 md:px-0">
               {value.caption}

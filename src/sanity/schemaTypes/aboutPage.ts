@@ -42,6 +42,12 @@ export const aboutPage = defineType({
       options: { hotspot: true },
       description: "Leave empty to use desktop image on mobile too.",
     }),
+    defineField({
+      name: "heroImageAlt",
+      title: "Hero Image — Alt Text (SEO)",
+      type: "string",
+      description: "Describe what's in the image for accessibility + search engines.",
+    }),
 
     /* ── 4 narrative sections ─────────────────────────── */
     defineField({
@@ -86,6 +92,12 @@ export const aboutPage = defineType({
               type: "image",
               options: { hotspot: true },
               description: "Leave empty to use desktop image on mobile too.",
+            }),
+            defineField({
+              name: "imageAlt",
+              title: "Image — Alt Text (SEO)",
+              type: "string",
+              description: "Describe what's in the image for accessibility + search engines.",
             }),
             defineField({
               name: "layout",
@@ -156,6 +168,12 @@ export const aboutPage = defineType({
               type: "image",
               options: { hotspot: true },
               description: "Leave empty to use desktop image on mobile too.",
+            }),
+            defineField({
+              name: "imageAlt",
+              title: "Image — Alt Text (SEO)",
+              type: "string",
+              description: "Describe what's in the image for accessibility + search engines.",
             }),
           ],
           preview: {

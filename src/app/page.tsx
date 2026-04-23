@@ -17,6 +17,7 @@ interface SettingsResult {
     subtitle?: string;
     category?: string;
     author?: string;
+    imageAlt?: string;
     videoUrl?: string;
     imageUrl?: string;
     imageHotspot?: { x?: number; y?: number };
@@ -30,6 +31,7 @@ interface SettingsResult {
     subtitle?: string;
     category?: string;
     accent?: string;
+    imageAlt?: string;
     imageUrl?: string;
     imageMobileUrl?: string;
     linkedSlug?: string;
@@ -60,6 +62,7 @@ export default async function Home() {
       author: p.author,
       videoSrc: p.videoUrl,
       imageSrc: p.imageUrl,
+      imageAlt: p.imageAlt,
       imageHotspot: p.imageHotspot,
       imageMobileSrc: p.imageMobileUrl,
       imageMobileHotspot: p.imageMobileHotspot,
@@ -86,6 +89,7 @@ export default async function Home() {
       category: s.category,
       image: s.imageUrl ?? "",
       imageMobile: s.imageMobileUrl,
+      imageAlt: s.imageAlt,
       accent: s.accent ?? "bg-red",
       href: s.linkedSlug ? `/articles/${s.linkedSlug}` : "#",
     })

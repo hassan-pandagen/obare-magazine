@@ -8,6 +8,7 @@ export const articleCardFields = groq`
   publishedAt,
   excerpt,
   "coverImage": coverImage { asset, alt },
+  "coverImageMobile": coverImageMobile { asset },
   "authors": authors[] { name, role }
 `;
 
@@ -35,13 +36,16 @@ export const articleBySlugQuery = groq`
     publishedAt,
     excerpt,
     "coverImage": coverImage { asset, alt, caption },
+    "coverImageMobile": coverImageMobile { asset },
     "coverVideo": coverVideo.asset->url,
-    authors[] { name, role, "photo": photo.asset->url },
+    "coverVideoMobile": coverVideoMobile.asset->url,
+    authors[] { name, role, "photo": photo.asset->url, "photoAlt": photo.alt },
     body[] {
       ...,
       _type == "image" => {
         ...,
         "url": asset->url,
+        "mobileUrl": imageMobile.asset->url,
         "dimensions": asset->metadata.dimensions
       },
       _type == "inlineVideo" => {

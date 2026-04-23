@@ -16,7 +16,15 @@ const CATEGORIES = [
   "Other",
 ];
 
-export default function SubmissionsClient({ heroBgImage }: { heroBgImage?: string }) {
+export default function SubmissionsClient({
+  heroBgImage,
+  heroBgImageMobile,
+  heroBgAlt,
+}: {
+  heroBgImage?: string;
+  heroBgImageMobile?: string;
+  heroBgAlt?: string;
+}) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [form, setForm] = useState({
     name: "",
@@ -46,15 +54,22 @@ export default function SubmissionsClient({ heroBgImage }: { heroBgImage?: strin
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
         <section className="relative min-h-[70vh] flex flex-col justify-end px-6 pt-40 pb-16 md:px-14 lg:px-20 overflow-hidden">
-          {/* Background image */}
+          {/* Background image — mobile variant swaps via <picture> */}
           {heroBgImage && (
-            <div
-              className="absolute inset-0 -z-0 bg-cover"
-              style={{
-                backgroundImage: `url('${optimizeImg(heroBgImage, { w: 1600 })}')`,
-                backgroundPosition: "center 65%",
-              }}
-            />
+            <picture className="absolute inset-0 -z-0">
+              {heroBgImageMobile && (
+                <source
+                  media="(max-width: 767px)"
+                  srcSet={optimizeImg(heroBgImageMobile, { w: 900 })}
+                />
+              )}
+              <img
+                src={optimizeImg(heroBgImage, { w: 1600 })}
+                alt={heroBgAlt ?? ""}
+                className="h-full w-full object-cover"
+                style={{ objectPosition: "center 65%" }}
+              />
+            </picture>
           )}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/75 to-black" />
 

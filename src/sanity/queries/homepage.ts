@@ -1,5 +1,13 @@
 import { groq } from "next-sanity";
 
+/** Site logo — small query used client-side by the Navbar, cached in sessionStorage. */
+export const siteLogoQuery = groq`
+  *[_type == "settings"][0] {
+    "url": logo.asset->url,
+    "alt": logo.alt
+  }
+`;
+
 /** Homepage settings — hero, folder stack projects, editorial stories */
 export const homepageSettingsQuery = groq`
   *[_type == "settings"][0] {
@@ -8,14 +16,18 @@ export const homepageSettingsQuery = groq`
       type,
       headline,
       subheadline,
+      imageAlt,
       "videoUrl": videoFile.asset->url,
+      "videoMobileUrl": videoFileMobile.asset->url,
       "imageUrl": image.asset->url,
+      "imageMobileUrl": imageMobile.asset->url,
     },
     homepageProjects[] {
       title,
       subtitle,
       category,
       author,
+      imageAlt,
       "videoUrl": videoFile.asset->url,
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
@@ -29,6 +41,7 @@ export const homepageSettingsQuery = groq`
       subtitle,
       category,
       accent,
+      imageAlt,
       "imageUrl": image.asset->url,
       "imageMobileUrl": imageMobile.asset->url,
       "linkedSlug": linkedArticle->slug.current,

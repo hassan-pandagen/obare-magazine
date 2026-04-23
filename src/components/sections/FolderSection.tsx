@@ -12,6 +12,7 @@ interface FolderSectionProps {
   author?: string;
   videoSrc?: string;
   imageSrc?: string;
+  imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
   imageMobileSrc?: string;
   imageMobileHotspot?: { x?: number; y?: number };
@@ -25,6 +26,7 @@ export default function FolderSection({
   author,
   videoSrc,
   imageSrc,
+  imageAlt,
   imageHotspot,
   imageMobileSrc,
   imageMobileHotspot,
@@ -90,7 +92,7 @@ export default function FolderSection({
           )}
           <img
             src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
-            alt={title}
+            alt={imageAlt ?? title}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: isDesktop ? "center" : hotspotPos }}
           />

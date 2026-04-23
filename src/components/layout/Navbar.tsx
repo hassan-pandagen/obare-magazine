@@ -8,6 +8,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 import AdvertiseModal from "@/components/modals/AdvertiseModal";
 import EventModal from "@/components/modals/EventModal";
+import { client } from "@/sanity/client";
+import { siteLogoQuery } from "@/sanity/queries/homepage";
+
+interface SiteLogo {
+  url: string | null;
+  alt: string | null;
+}
+const LOGO_CACHE_KEY = "obare-site-logo-v1";
 
 type NavItem =
   | { label: string; href: string; modal?: never }
@@ -32,6 +40,32 @@ export default function Navbar() {
   const [openModal, setOpenModal] = useState<"advertise" | "event" | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  // Logo is fetched client-side so we don't have to thread it through 12 page components.
+  // Cached in sessionStorage on first load — subsequent page navigations are instant.
+  const [logo, setLogo] = useState<SiteLogo | null>(null);
+
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem(LOGO_CACHE_KEY);
+      if (cached) {
+        setLogo(JSON.parse(cached));
+        return;
+      }
+    } catch {
+      // sessionStorage can throw in private mode — just fall through to fetch.
+    }
+    client.fetch<SiteLogo | null>(siteLogoQuery).then((l) => {
+      if (!l) return;
+      setLogo(l);
+      try {
+        sessionStorage.setItem(LOGO_CACHE_KEY, JSON.stringify(l));
+      } catch {
+        // ignore storage failures
+      }
+    }).catch(() => {
+      // Silent — navbar falls back to OBARE text logo.
+    });
+  }, []);
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,17 +138,16 @@ export default function Navbar() {
 
   useEffect(() => {
     const top = hamburgerTopRef.current;
-    const mid = hamburgerMidRef.current;
     const bot = hamburgerBotRef.current;
-    if (!top || !mid || !bot) return;
+    if (!top || !bot) return;
 
+    // 2-bar X: top bar rotates to "/", bottom to "\", both converge to the center line.
+    // Gap between bars is 7px + 3px bar height = 10px → converge by 5px each.
     if (isMobileOpen) {
-      gsap.to(top, { rotate: 45, y: 8, duration: 0.3, ease: "power2.inOut" });
-      gsap.to(mid, { opacity: 0, duration: 0.15 });
-      gsap.to(bot, { rotate: -45, y: -8, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(top, { rotate: 45, y: 5, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(bot, { rotate: -45, y: -5, duration: 0.3, ease: "power2.inOut" });
     } else {
       gsap.to(top, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
-      gsap.to(mid, { opacity: 1, duration: 0.15, delay: 0.15 });
       gsap.to(bot, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
     }
   }, [isMobileOpen]);
@@ -157,15 +190,24 @@ export default function Navbar() {
           isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
-        <div className="flex items-center justify-between px-6 py-5 md:px-10 lg:px-14">
-          {/* Logo */}
-          <a href="/" className="relative z-50">
-            <span
-              className="font-archivo text-lg font-bold tracking-[0.25em] text-white md:text-xl"
-              style={{ fontStretch: "125%" }}
-            >
-              OBARE
-            </span>
+        <div className="flex items-center justify-between px-6 py-3 md:px-10 md:py-5 lg:px-14">
+          {/* Logo — uploaded image if available, else OBARE wordmark fallback */}
+          <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
+            {logo?.url ? (
+              <img
+                src={logo.url}
+                alt={logo.alt ?? "OBARE"}
+                className="h-7 w-auto md:h-8"
+                draggable={false}
+              />
+            ) : (
+              <span
+                className="font-archivo text-lg font-bold tracking-[0.25em] text-white md:text-xl"
+                style={{ fontStretch: "125%" }}
+              >
+                OBARE
+              </span>
+            )}
           </a>
 
           {/* Desktop nav — slash-separated with red active dot */}
@@ -214,15 +256,16 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Hamburger */}
+          {/* Hamburger — two thick bars, matches client reference */}
           <button
-            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-[6px] md:hidden"
+            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-[7px] md:hidden"
             onClick={() => setIsMobileOpen((prev) => !prev)}
             aria-label="Toggle menu"
           >
-            <span ref={hamburgerTopRef} className="block h-[2px] w-7 origin-center bg-white" />
-            <span ref={hamburgerMidRef} className="block h-[2px] w-7 bg-white" />
-            <span ref={hamburgerBotRef} className="block h-[2px] w-7 origin-center bg-white" />
+            <span ref={hamburgerTopRef} className="block h-[3px] w-8 origin-center bg-white" />
+            <span ref={hamburgerBotRef} className="block h-[3px] w-8 origin-center bg-white" />
+            {/* Unused in the 2-bar design; kept so GSAP refs resolve cleanly. */}
+            <span ref={hamburgerMidRef} className="hidden" />
           </button>
         </div>
       </nav>

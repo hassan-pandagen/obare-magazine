@@ -26,6 +26,9 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
   const coverSrc = article.coverImage?.asset
     ? urlFor(article.coverImage).width(1600).url()
     : null;
+  const coverMobileSrc = article.coverImageMobile?.asset
+    ? urlFor(article.coverImageMobile).width(900).url()
+    : null;
 
   return (
     <>
@@ -39,21 +42,30 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
             {/* Cover media (full-bleed, natural colors) */}
             {article.coverVideo ? (
               <video
-                src={article.coverVideo}
                 autoPlay
                 muted
                 loop
                 playsInline
                 className="absolute inset-0 h-full w-full object-cover"
               >
+                {/* Mobile source first so the browser picks it before falling through */}
+                {article.coverVideoMobile && (
+                  <source src={article.coverVideoMobile} media="(max-width: 767px)" type="video/mp4" />
+                )}
+                <source src={article.coverVideo} type="video/mp4" />
                 <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
               </video>
             ) : coverSrc ? (
-              <img
-                src={coverSrc}
-                alt={article.coverImage?.alt ?? article.title}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+              <picture className="absolute inset-0 h-full w-full">
+                {coverMobileSrc && (
+                  <source media="(max-width: 767px)" srcSet={coverMobileSrc} />
+                )}
+                <img
+                  src={coverSrc}
+                  alt={article.coverImage?.alt ?? article.title}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </picture>
             ) : (
               <div className="absolute inset-0 bg-zinc-900" />
             )}
@@ -95,8 +107,8 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                     </span>
                   )}
                   <h1
-                    className="font-poppins font-black uppercase leading-[0.88] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-                    style={{ fontSize: "clamp(2.5rem, 8vw, 8rem)" }}
+                    className="font-poppins font-black uppercase leading-[0.9] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] max-w-[85%]"
+                    style={{ fontSize: "clamp(2.25rem, 5.5vw, 5.5rem)" }}
                   >
                     <RedEmphasis>{article.title}</RedEmphasis>
                   </h1>

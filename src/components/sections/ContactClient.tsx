@@ -15,7 +15,15 @@ const DEPARTMENTS = [
   { label: "Other", value: "other" },
 ];
 
-export default function ContactClient({ heroBgImage }: { heroBgImage?: string }) {
+export default function ContactClient({
+  heroBgImage,
+  heroBgImageMobile,
+  heroBgAlt,
+}: {
+  heroBgImage?: string;
+  heroBgImageMobile?: string;
+  heroBgAlt?: string;
+}) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [form, setForm] = useState({
     name: "",
@@ -43,13 +51,20 @@ export default function ContactClient({ heroBgImage }: { heroBgImage?: string })
         {/* ── Header with background image ─────────────────────────────── */}
         <section className="relative overflow-hidden px-6 pb-20 pt-40 md:px-14 md:pb-28 lg:px-20">
           {heroBgImage && (
-            <div
-              className="absolute inset-0 -z-0 bg-cover"
-              style={{
-                backgroundImage: `url('${optimizeImg(heroBgImage, { w: 1600 })}')`,
-                backgroundPosition: "center 65%",
-              }}
-            />
+            <picture className="absolute inset-0 -z-0">
+              {heroBgImageMobile && (
+                <source
+                  media="(max-width: 767px)"
+                  srcSet={optimizeImg(heroBgImageMobile, { w: 900 })}
+                />
+              )}
+              <img
+                src={optimizeImg(heroBgImage, { w: 1600 })}
+                alt={heroBgAlt ?? ""}
+                className="h-full w-full object-cover"
+                style={{ objectPosition: "center 65%" }}
+              />
+            </picture>
           )}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/75 to-black" />
 

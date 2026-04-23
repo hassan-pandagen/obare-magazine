@@ -5,6 +5,7 @@ export const aboutPageQuery = groq`
     heroEyebrow,
     heroHeadline,
     heroSubtitle,
+    heroImageAlt,
     "heroImageUrl": heroImage.asset->url,
     "heroImageHotspot": heroImage.hotspot { x, y },
     "heroImageMobileUrl": heroImageMobile.asset->url,
@@ -15,6 +16,7 @@ export const aboutPageQuery = groq`
       body,
       layout,
       redOverlay,
+      imageAlt,
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
       "imageMobileUrl": imageMobile.asset->url,
@@ -24,6 +26,7 @@ export const aboutPageQuery = groq`
     pillars[] {
       title,
       body,
+      imageAlt,
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
       "imageMobileUrl": imageMobile.asset->url,
@@ -40,11 +43,19 @@ export const aboutPageQuery = groq`
 `;
 
 export const contactHeroImageQuery = groq`
-  *[_type == "settings"][0].contactHeroImage.asset->url
+  *[_type == "settings"][0] {
+    "url": contactHeroImage.asset->url,
+    "mobileUrl": contactHeroImageMobile.asset->url,
+    "alt": contactHeroImageAlt
+  }
 `;
 
 export const submissionsHeroImageQuery = groq`
-  *[_type == "settings"][0].submissionsHeroImage.asset->url
+  *[_type == "settings"][0] {
+    "url": submissionsHeroImage.asset->url,
+    "mobileUrl": submissionsHeroImageMobile.asset->url,
+    "alt": submissionsHeroImageAlt
+  }
 `;
 
 export const footerCtaVideoQuery = groq`

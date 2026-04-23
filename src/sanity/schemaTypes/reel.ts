@@ -31,7 +31,7 @@ export const reel = defineType({
       title: "Poster Image",
       type: "image",
       options: { hotspot: true },
-      fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
+      fields: [defineField({ name: "alt", type: "string", title: "Alt text (SEO)" })],
     }),
     defineField({
       name: "linkedArticle",

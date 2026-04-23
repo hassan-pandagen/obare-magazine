@@ -19,6 +19,7 @@ export interface EditorialStory {
   subtitle?: string;
   image: string;
   imageMobile?: string;
+  imageAlt?: string;
   accent: string;
   href?: string;
 }
@@ -55,16 +56,21 @@ export default function EditorialGrid({
   const renderCard = (story: EditorialStory) => (
     <a
       href={story.href ?? "#"}
+      aria-label={story.imageAlt ?? story.title}
       className="story-card group relative block aspect-[3/4] h-full w-full overflow-hidden"
     >
       {/* Two bg layers: mobile uses mobile image if provided, desktop always uses desktop image */}
       <div
+        role="img"
+        aria-label={story.imageAlt ?? story.title}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08] md:hidden"
         style={{
           backgroundImage: `url(${optimizeImg(story.imageMobile ?? story.image, { w: 700 })})`,
         }}
       />
       <div
+        role="img"
+        aria-label={story.imageAlt ?? story.title}
         className="absolute inset-0 hidden bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08] md:block"
         style={{ backgroundImage: `url(${optimizeImg(story.image, { w: 900 })})` }}
       />

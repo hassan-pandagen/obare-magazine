@@ -22,6 +22,7 @@ export interface HomeProject {
   author?: string;
   videoSrc?: string;
   imageSrc?: string;
+  imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
   imageMobileSrc?: string;
   imageMobileHotspot?: { x?: number; y?: number };
@@ -43,6 +44,8 @@ export interface HomeStory {
   subtitle?: string;
   category?: string;
   image: string;
+  imageMobile?: string;
+  imageAlt?: string;
   accent: string;
   href: string;
 }
@@ -174,6 +177,7 @@ export default function HomeClient({ projects, reels, stories }: Props) {
                 author={project.author}
                 videoSrc={project.videoSrc}
                 imageSrc={project.imageSrc}
+                imageAlt={project.imageAlt}
                 imageHotspot={project.imageHotspot}
                 imageMobileSrc={project.imageMobileSrc}
                 imageMobileHotspot={project.imageMobileHotspot}

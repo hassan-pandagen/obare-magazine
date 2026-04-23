@@ -28,6 +28,7 @@ interface ArticleCard {
   publishedAt: string;
   excerpt?: string;
   coverImage?: { asset: unknown; alt?: string };
+  coverImageMobile?: { asset: unknown };
   authors?: { name: string; role?: string }[];
 }
 
@@ -146,6 +147,9 @@ function ArticleCard({ article }: { article: ArticleCard }) {
   const imgSrc = article.coverImage?.asset
     ? urlFor(article.coverImage).width(600).height(400).fit("crop").url()
     : null;
+  const imgMobileSrc = article.coverImageMobile?.asset
+    ? urlFor(article.coverImageMobile).width(500).height(700).fit("crop").url()
+    : null;
 
   const slug = article.slug?.current;
   if (!slug) return null;
@@ -158,11 +162,16 @@ function ArticleCard({ article }: { article: ArticleCard }) {
       {/* Cover */}
       <div className="relative aspect-[3/2] w-full overflow-hidden bg-zinc-900">
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={article.coverImage?.alt ?? article.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
+          <picture>
+            {imgMobileSrc && (
+              <source media="(max-width: 767px)" srcSet={imgMobileSrc} />
+            )}
+            <img
+              src={imgSrc}
+              alt={article.coverImage?.alt ?? article.title}
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+            />
+          </picture>
         ) : (
           <div className="absolute inset-0 bg-zinc-900" />
         )}

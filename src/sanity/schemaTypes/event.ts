@@ -43,10 +43,17 @@ export const event = defineType({
     }),
     defineField({
       name: "coverImage",
-      title: "Cover Image",
+      title: "Cover Image (Desktop) — 16:9",
       type: "image",
       options: { hotspot: true },
-      fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
+      fields: [defineField({ name: "alt", type: "string", title: "Alt text (SEO)" })],
+    }),
+    defineField({
+      name: "coverImageMobile",
+      title: "Cover Image (Mobile) — 9:16 — optional",
+      type: "image",
+      options: { hotspot: true },
+      description: "Leave empty to use desktop cover on mobile.",
     }),
     defineField({
       name: "description",

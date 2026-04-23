@@ -25,10 +25,17 @@ export const page = defineType({
     }),
     defineField({
       name: "heroImage",
-      title: "Hero Image",
+      title: "Hero Image (Desktop)",
       type: "image",
       options: { hotspot: true },
-      fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
+      fields: [defineField({ name: "alt", type: "string", title: "Alt text (SEO)" })],
+    }),
+    defineField({
+      name: "heroImageMobile",
+      title: "Hero Image (Mobile) — optional",
+      type: "image",
+      options: { hotspot: true },
+      description: "Leave empty to use desktop image on mobile.",
     }),
     defineField({
       name: "body",
@@ -64,7 +71,7 @@ export const page = defineType({
         defineArrayMember({
           type: "image",
           options: { hotspot: true },
-          fields: [defineField({ name: "alt", type: "string", title: "Alt text" })],
+          fields: [defineField({ name: "alt", type: "string", title: "Alt text (SEO)" })],
         }),
       ],
     }),

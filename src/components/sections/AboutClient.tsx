@@ -15,6 +15,7 @@ export interface AboutSection {
   title: string;
   body?: string;
   imageUrl?: string;
+  imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
   imageMobileUrl?: string;
   imageMobileHotspot?: { x?: number; y?: number };
@@ -26,6 +27,7 @@ export interface AboutPillar {
   title: string;
   body?: string;
   imageUrl?: string;
+  imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
   imageMobileUrl?: string;
   imageMobileHotspot?: { x?: number; y?: number };
@@ -36,6 +38,7 @@ export interface AboutData {
   heroHeadline?: string;
   heroSubtitle?: string;
   heroImageUrl?: string;
+  heroImageAlt?: string;
   heroImageHotspot?: { x?: number; y?: number };
   heroImageMobileUrl?: string;
   heroImageMobileHotspot?: { x?: number; y?: number };
@@ -331,6 +334,8 @@ export default function AboutClient({ data }: { data: AboutData }) {
             {data.heroImageUrl && (
               <div className="relative flex items-center justify-end md:-mr-14 lg:-mr-20">
                 <div
+                  role="img"
+                  aria-label={data.heroImageAlt ?? data.heroHeadline ?? ""}
                   className="about-hero-image relative aspect-[4/3] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.5)] will-change-transform"
                   style={{ transform: "rotate(-5deg)" }}
                 >
@@ -415,6 +420,8 @@ export default function AboutClient({ data }: { data: AboutData }) {
               {data.pillars.map((pillar, i) => (
                 <article
                   key={i}
+                  role="img"
+                  aria-label={pillar.imageAlt ?? pillar.title}
                   className="pillar-card group relative aspect-[4/5] overflow-hidden rounded-md bg-zinc-900"
                 >
                   {pillar.imageUrl && (
@@ -483,6 +490,8 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
           {section.imageUrl && (
             <>
               <div
+                role="img"
+                aria-label={section.imageAlt ?? section.title}
                 className="section-image absolute inset-0 bg-cover bg-center will-change-transform"
                 style={{ backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200 })}')` }}
               />
@@ -578,6 +587,8 @@ function SectionImage({
 
   return (
     <div
+      role="img"
+      aria-label={section.imageAlt ?? section.title}
       className="section-image relative aspect-[4/5] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform md:aspect-[4/3]"
       style={{ transform: `rotate(${tilt})` }}
     >

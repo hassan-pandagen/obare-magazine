@@ -4,7 +4,19 @@ import ContactClient from "@/components/sections/ContactClient";
 
 export const revalidate = 60;
 
+interface HeroBg {
+  url: string | null;
+  mobileUrl: string | null;
+  alt: string | null;
+}
+
 export default async function ContactPage() {
-  const heroBgImage = await client.fetch<string | null>(contactHeroImageQuery);
-  return <ContactClient heroBgImage={heroBgImage ?? undefined} />;
+  const hero = await client.fetch<HeroBg | null>(contactHeroImageQuery);
+  return (
+    <ContactClient
+      heroBgImage={hero?.url ?? undefined}
+      heroBgImageMobile={hero?.mobileUrl ?? undefined}
+      heroBgAlt={hero?.alt ?? undefined}
+    />
+  );
 }
