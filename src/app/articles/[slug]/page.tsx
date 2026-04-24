@@ -4,6 +4,7 @@ import { articleBySlugQuery, adjacentArticlesQuery } from "@/sanity/queries/arti
 import { urlFor } from "@/sanity/imageUrl";
 import { RedEmphasis } from "@/lib/redEmphasis";
 import ArticleBody from "@/components/portable/ArticleBody";
+import NextArticleCard from "@/components/portable/NextArticleCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -217,64 +218,23 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           </div>
         </section>
 
-        {/* ── Prev / Next ───────────────────────────────────────────────── */}
-        {(adjacent.prev || adjacent.next) && (
-          <section className="border-t border-white/10 px-6 py-12 md:px-14 lg:px-20">
-            <div className="mx-auto flex max-w-4xl justify-between gap-8">
-              {adjacent.prev ? (
-                <a
-                  href={`/articles/${adjacent.prev.slug.current}`}
-                  className="group flex max-w-xs flex-col gap-2"
-                >
-                  <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 transition-colors group-hover:text-red">
-                    ← Previous
-                  </span>
-                  <span className="font-poppins text-sm font-black uppercase leading-tight text-white/60 transition-colors group-hover:text-white">
-                    {adjacent.prev.title}
-                  </span>
-                  {adjacent.prev.category && (
-                    <span className="font-montserrat text-[9px] uppercase tracking-[0.25em] text-white/25">
-                      {adjacent.prev.category}
-                    </span>
-                  )}
-                </a>
-              ) : (
-                <div />
-              )}
-
-              {adjacent.next ? (
-                <a
-                  href={`/articles/${adjacent.next.slug.current}`}
-                  className="group flex max-w-xs flex-col items-end gap-2 text-right"
-                >
-                  <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 transition-colors group-hover:text-red">
-                    Next →
-                  </span>
-                  <span className="font-poppins text-sm font-black uppercase leading-tight text-white/60 transition-colors group-hover:text-white">
-                    {adjacent.next.title}
-                  </span>
-                  {adjacent.next.category && (
-                    <span className="font-montserrat text-[9px] uppercase tracking-[0.25em] text-white/25">
-                      {adjacent.next.category}
-                    </span>
-                  )}
-                </a>
-              ) : (
-                <div />
-              )}
-            </div>
-          </section>
+        {/* ── Next article — Line Studio-style continuation.
+             Falls back to the oldest article so the "Next" loop is endless. ── */}
+        {(adjacent.next ?? adjacent.loopBack) && (
+          <NextArticleCard next={adjacent.next ?? adjacent.loopBack} />
         )}
 
-        {/* ── Back to articles ─────────────────────────────────────────── */}
-        <section className="border-t border-white/10 px-6 py-8 md:px-14 lg:px-20">
-          <a
-            href="/articles"
-            className="font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white/35 transition-colors hover:text-white"
-          >
-            ← All Articles
-          </a>
-        </section>
+        {/* ── Back to all articles (only if there's nothing to loop to either) ── */}
+        {!adjacent.next && !adjacent.loopBack && (
+          <section className="border-t border-white/10 px-6 py-8 md:px-14 lg:px-20">
+            <a
+              href="/articles"
+              className="font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white/35 transition-colors hover:text-white"
+            >
+              ← All Articles
+            </a>
+          </section>
+        )}
       </main>
 
       <Footer />

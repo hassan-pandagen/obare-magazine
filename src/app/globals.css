@@ -115,7 +115,7 @@ body {
   100% { transform: translateX(-33.333%); }
 }
 .obare-marquee {
-  animation: obare-marquee-anim 20s linear infinite;
+  animation: obare-marquee-anim 12s linear infinite;
 }
 .obare-marquee:hover {
   animation-play-state: paused;

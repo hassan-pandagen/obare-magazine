@@ -1,10 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Field, Input, Textarea, Select, SubmitButton } from "@/components/ui/FormField";
 import { optimizeImg } from "@/lib/sanityImg";
+import { client } from "@/sanity/client";
+import { footerMetaQuery } from "@/sanity/queries/aboutPage";
+
+interface SocialLinks {
+  instagram?: string;
+  youtube?: string;
+  twitter?: string;
+  facebook?: string;
+  tiktok?: string;
+}
 
 const DEPARTMENTS = [
   { label: "General Enquiries", value: "general" },
@@ -25,6 +35,15 @@ export default function ContactClient({
   heroBgAlt?: string;
 }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [socials, setSocials] = useState<SocialLinks>({});
+
+  useEffect(() => {
+    client
+      .fetch<{ socialLinks?: SocialLinks } | null>(footerMetaQuery)
+      .then((d) => setSocials(d?.socialLinks ?? {}))
+      .catch(() => {});
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -127,20 +146,26 @@ export default function ContactClient({
                   </div>
                 </div>
 
-                <div className="mt-10 flex gap-4">
+                <div className="mt-10 flex flex-wrap gap-4">
                   {[
-                    { label: "Instagram", href: "#" },
-                    { label: "X / Twitter", href: "#" },
-                    { label: "YouTube", href: "#" },
-                  ].map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      className="font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/40 transition-colors hover:text-white"
-                    >
-                      {s.label}
-                    </a>
-                  ))}
+                    { label: "Instagram", href: socials.instagram },
+                    { label: "X / Twitter", href: socials.twitter },
+                    { label: "YouTube", href: socials.youtube },
+                    { label: "Facebook", href: socials.facebook },
+                    { label: "TikTok", href: socials.tiktok },
+                  ]
+                    .filter((s) => s.href)
+                    .map((s) => (
+                      <a
+                        key={s.label}
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/40 transition-colors hover:text-white"
+                      >
+                        {s.label}
+                      </a>
+                    ))}
                 </div>
               </div>
 

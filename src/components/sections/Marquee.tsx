@@ -1,14 +1,11 @@
 "use client";
 
 const CATEGORIES = [
-  "Wellness",
-  "Movement",
-  "Street",
-  "Culture",
-  "Fitness",
-  "Style",
-  "Travel",
-  "Art",
+  "No Cover-Up",
+  "Unfiltered",
+  "Bare",
+  "Natural",
+  "Authentic",
 ];
 
 export default function Marquee() {

@@ -87,7 +87,7 @@ export default async function ArticlesPage({
                 type="text"
                 name="q"
                 defaultValue={params.q}
-                placeholder="Search by title or author…"
+                placeholder="Search Obare"
                 className="w-full border-b border-white/20 bg-transparent pb-2 pr-8 font-montserrat text-sm text-white outline-none placeholder:text-white/25 focus:border-white"
               />
               <button
@@ -190,7 +190,7 @@ function ArticleCard({ article }: { article: ArticleCard }) {
             <> &middot; {article.authors[0].name}</>
           )}
         </p>
-        <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white transition-colors group-hover:text-red">
+        <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white underline decoration-transparent decoration-2 underline-offset-[6px] transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
           <RedEmphasis>{article.title}</RedEmphasis>
         </h2>
         {article.excerpt && (
@@ -198,7 +198,7 @@ function ArticleCard({ article }: { article: ArticleCard }) {
             <RedEmphasis>{article.excerpt}</RedEmphasis>
           </p>
         )}
-        <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 transition-colors group-hover:text-red">
+        <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
           Read →
         </span>
       </div>

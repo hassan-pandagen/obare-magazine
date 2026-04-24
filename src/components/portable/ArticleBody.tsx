@@ -1,6 +1,10 @@
 "use client";
 
+import { useRef } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { urlFor } from "@/sanity/imageUrl";
 import ArticleVideoPlayer from "./ArticleVideoPlayer";
 
@@ -189,8 +193,40 @@ const components: PortableTextComponents = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ArticleBody({ body }: { body: any[] }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Line Studio-style scroll reveals. Each paragraph, heading, figure,
+  // blockquote, pullquote, and gallery fades + rises into place as the
+  // reader scrolls it into view. Once it's revealed, it stays put — no
+  // re-triggering on scroll-back (that's jarring while re-reading).
+  useGSAP(
+    () => {
+      if (!rootRef.current) return;
+      const targets = rootRef.current.querySelectorAll<HTMLElement>(
+        ".article-paragraph, h2, h3, h4, figure, blockquote, aside"
+      );
+      targets.forEach((el) => {
+        gsap.set(el, { y: 36, opacity: 0 });
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 88%",
+          once: true,
+          onEnter: () => {
+            gsap.to(el, {
+              y: 0,
+              opacity: 1,
+              duration: 0.9,
+              ease: "power3.out",
+            });
+          },
+        });
+      });
+    },
+    { scope: rootRef, dependencies: [body] }
+  );
+
   return (
-    <div className="mx-auto max-w-3xl lg:max-w-4xl">
+    <div ref={rootRef} className="mx-auto max-w-3xl lg:max-w-4xl">
       <PortableText value={body} components={components} />
     </div>
   );

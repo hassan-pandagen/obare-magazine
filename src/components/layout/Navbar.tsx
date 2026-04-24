@@ -352,7 +352,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles..."
+                placeholder="Search Obare"
                 className="w-full bg-transparent font-poppins text-2xl font-bold text-white outline-none placeholder:text-white/30 md:text-3xl"
               />
               <button

@@ -171,13 +171,14 @@ export default function FolderSection({
         <>
           {mediaElement}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40" />
-          {/* Mobile mute toggle — only when there's a video (desktop+video uses split layout above) */}
+          {/* Mobile mute toggle — middle-right so it clears the fixed navbar at top
+             and the title overlay at bottom. Safe zone regardless of scroll position. */}
           {videoSrc && (
             <button
               type="button"
               onClick={toggleMute}
               aria-label={muted ? "Unmute" : "Mute"}
-              className="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-red hover:text-red"
+              className="absolute right-5 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-red hover:text-red"
             >
               {muted ? <MuteIcon /> : <UnmuteIcon />}
             </button>

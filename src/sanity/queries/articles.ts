@@ -73,14 +73,25 @@ export const articleBySlugQuery = groq`
   }
 `;
 
-/** Previous and next articles for navigation */
+/**
+ * Next article for the end-of-article continuation card.
+ *
+ * `next` = the chronologically-newer article.
+ * `loopBack` = the oldest article — used as a fallback when the reader is on
+ * the newest article so the "Next" card always appears (creates a loop back
+ * to the start of the archive, matching thelinestudio.com's endless-scroll feel).
+ */
 export const adjacentArticlesQuery = groq`
 {
-  "prev": *[_type == "article" && publishedAt < $publishedAt] | order(publishedAt desc)[0] {
-    title, slug, category
-  },
   "next": *[_type == "article" && publishedAt > $publishedAt] | order(publishedAt asc)[0] {
-    title, slug, category
+    title, slug, category, excerpt,
+    "coverImage": coverImage { asset, alt },
+    "coverImageMobile": coverImageMobile { asset }
+  },
+  "loopBack": *[_type == "article" && publishedAt < $publishedAt] | order(publishedAt asc)[0] {
+    title, slug, category, excerpt,
+    "coverImage": coverImage { asset, alt },
+    "coverImageMobile": coverImageMobile { asset }
   }
 }
 `;
