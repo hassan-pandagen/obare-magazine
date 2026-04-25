@@ -93,9 +93,20 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10 px-6 py-4 text-center">
+      <div className="flex flex-col items-center gap-1 border-t border-white/10 px-6 py-4 text-center md:flex-row md:justify-between md:gap-4">
         <p className="font-montserrat text-xs text-white/60">
           &copy; 2025 OBARE Magazine. All rights reserved.
+        </p>
+        <p className="font-montserrat text-xs text-white/40">
+          Made by{" "}
+          <a
+            href="https://www.pandacodegen.com"
+            target="_blank"
+            rel="noopener"
+            className="text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline"
+          >
+            www.pandacodegen.com
+          </a>
         </p>
       </div>
 

@@ -45,22 +45,28 @@ export const article = defineType({
       name: "category",
       title: "Category",
       type: "string",
+      description:
+        "FEATURE = default · STORY = when the writing is more narrative · " +
+        "GOING BARE = when the emotional transformation is the main hook · " +
+        "INTERVIEW = when the article is mostly the model's direct voice.",
       options: {
         list: [
-        "Wellness",
-        "Movement & Strength",
-        "Mental Health",
-        "Beauty",
-        "Bare Models",
-        "Features",
-        "Self Improvement",
-        "Inner World",
-        "Travel",
-        "Culture",
-        "Editorial",
-        "About OBARE",
-      ],
+          { title: "Feature", value: "Feature" },
+          { title: "Story", value: "Story" },
+          { title: "Going Bare", value: "Going Bare" },
+          { title: "Interview", value: "Interview" },
+        ],
+        layout: "radio",
       },
+      initialValue: "Feature",
+    }),
+    defineField({
+      name: "modelName",
+      title: "Model Name",
+      type: "string",
+      description:
+        "The name of the person featured in the story (e.g. 'Ashley Rose'). " +
+        "Displayed next to the category as 'CATEGORY | BY [MODEL NAME]'.",
     }),
     defineField({
       name: "publishedAt",
@@ -153,6 +159,12 @@ export const article = defineType({
             }),
             defineField({ name: "alt", type: "string", title: "Alt text (SEO)" }),
             defineField({ name: "caption", type: "string", title: "Caption" }),
+            defineField({
+              name: "credit",
+              type: "string",
+              title: "Photo Credit — optional",
+              description: "Photographer or source attribution (e.g. 'Jane Smith' or 'Getty'). Shown small + italic under the caption.",
+            }),
           ],
         }),
         // Inline video

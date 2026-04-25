@@ -20,14 +20,12 @@ interface NextArticle {
 /**
  * End-of-article continuation block à la thelinestudio.com.
  *
- * Three animated pieces tied to the same ScrollTrigger:
+ * Two animated pieces tied to the same ScrollTrigger:
  *  1. A tall "Next ↓" label with a large animated down-arrow that reveals
  *     as the reader enters this section.
  *  2. A full-width cover-image preview of the next article. The image
  *     scales from 0.85 → 1 and reveals its fill as the user scrolls.
- *  3. An auto-navigate trip-wire: once the reader scrolls past the end
- *     of the preview (i.e. they clearly want "more"), we prefetch and
- *     route to the next article. Clicking the card does the same thing.
+ *  Navigation is click-only — we prefetch on mount so the click feels instant.
  */
 export default function NextArticleCard({ next }: { next: NextArticle }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -37,7 +35,6 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
   const imageFillRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const router = useRouter();
-  const navigatedRef = useRef(false);
 
   const href = `/articles/${next.slug.current}`;
   const coverSrc = next.coverImage?.asset
@@ -133,17 +130,6 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         },
       });
 
-      // Auto-navigate trip-wire — when the bottom of the preview passes
-      // the viewport bottom, the reader has clearly committed to "next".
-      ScrollTrigger.create({
-        trigger: cardRef.current,
-        start: "bottom 85%",
-        onEnter: () => {
-          if (navigatedRef.current) return;
-          navigatedRef.current = true;
-          router.push(href);
-        },
-      });
     },
     { scope: sectionRef, dependencies: [href] }
   );
@@ -167,16 +153,16 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         <svg
           ref={arrowRef}
           viewBox="0 0 40 120"
-          className="h-[80px] w-[24px] shrink-0 text-white md:h-[120px] md:w-[40px] lg:h-[160px] lg:w-[52px]"
+          className="h-[60px] w-[28px] shrink-0 text-white md:h-[90px] md:w-[44px] lg:h-[120px] lg:w-[56px]"
           fill="none"
           stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
+          strokeWidth="9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           aria-hidden
         >
-          <line x1="20" y1="4" x2="20" y2="100" />
-          <polyline points="4,80 20,112 36,80" />
+          <line x1="20" y1="10" x2="20" y2="98" />
+          <polyline points="6,78 20,108 34,78" />
         </svg>
       </div>
 
@@ -232,9 +218,9 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         </div>
       </a>
 
-      {/* Small hint text below — sets expectation that scrolling continues */}
+      {/* Small hint text below */}
       <p className="mx-auto mt-6 max-w-6xl font-montserrat text-[10px] uppercase tracking-[0.3em] text-white/35 md:mt-10 md:text-xs">
-        Keep scrolling &middot; or tap the card
+        Tap the card to continue
       </p>
     </section>
   );

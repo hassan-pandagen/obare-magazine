@@ -54,9 +54,11 @@ interface Props {
   projects: HomeProject[];
   reels: HomeReel[];
   stories: HomeStory[];
+  heroHeadline?: string;
+  heroSubheadline?: string;
 }
 
-export default function HomeClient({ projects, reels, stories }: Props) {
+export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline }: Props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
 
@@ -160,7 +162,7 @@ export default function HomeClient({ projects, reels, stories }: Props) {
       <Navbar />
 
       <main>
-        <Hero />
+        <Hero headline={heroHeadline} subheadline={heroSubheadline} />
         <WhyTravel />
 
         <div ref={stackContainerRef} className="relative">

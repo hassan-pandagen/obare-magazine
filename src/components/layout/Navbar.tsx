@@ -190,7 +190,7 @@ export default function Navbar() {
           isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
-        <div className="flex items-center justify-between px-6 py-3 md:px-10 md:py-5 lg:px-14">
+        <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-5 lg:px-14">
           {/* Logo — uploaded image if available, else OBARE wordmark fallback */}
           <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
             {logo?.url ? (

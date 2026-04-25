@@ -7,7 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero() {
+interface HeroProps {
+  headline?: string;
+  subheadline?: string;
+}
+
+export default function Hero({ headline, subheadline }: HeroProps = {}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
@@ -17,57 +22,102 @@ export default function Hero() {
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({ delay: 2.5 });
+      // Cinematic opening — runs once after the page loader wraps up.
+      // The loader animation takes ~0.85s on first visit, then is skipped
+      // entirely on repeat visits via sessionStorage. So we check the same
+      // key: if the loader already ran this session, start immediately;
+      // otherwise wait just long enough for the loader to slide out.
+      const loaderAlreadyShown =
+        typeof window !== "undefined" &&
+        !!sessionStorage.getItem("obare-loader-shown");
+      // On first visit the loader covers the screen for 0.85s, so the 0.7s
+      // delay means the hero animation is already mid-motion when the loader
+      // slides away — users see the tail-end of the reveal, not a static hero.
+      const openingDelay = loaderAlreadyShown ? 0.1 : 0.7;
+      const tl = gsap.timeline({ delay: openingDelay });
 
-      // Letter stagger reveal — punchier
+      // Background ken-burns — starts slightly zoomed out so the opening has
+      // motion energy even before the letters land. Independent from scroll scrub.
+      if (bgRef.current) {
+        gsap.set(bgRef.current, { scale: 1.08 });
+        gsap.to(bgRef.current, {
+          scale: 1.15,
+          duration: 12,
+          ease: "none",
+          repeat: -1,
+          yoyo: true,
+        });
+      }
+
+      // Letter reveal — mask up from below + rotateX so it reads as "rising
+      // into frame". transformOrigin "bottom" pivots the flip at the baseline.
       const chars = headingRef.current?.querySelectorAll(".char");
-      if (chars) {
-        gsap.set(chars, { y: 200, opacity: 0, rotateX: -90, scale: 1.2 });
+      if (chars && chars.length) {
+        gsap.set(chars, {
+          y: 160,
+          opacity: 0,
+          rotateX: -70,
+          scale: 1.15,
+          clipPath: "inset(100% 0 0 0)",
+        });
         tl.to(chars, {
           y: 0,
           opacity: 1,
           rotateX: 0,
           scale: 1,
-          duration: 1,
-          stagger: 0.06,
+          clipPath: "inset(0% 0 0 0)",
+          duration: 1.1,
+          stagger: 0.07,
           ease: "power4.out",
         });
       }
 
-      // Red underline draws in after letters land
+      // Red underline slashes in from left, slightly overlapping last letter.
       if (underlineRef.current) {
         gsap.set(underlineRef.current, { scaleX: 0, transformOrigin: "left" });
-        tl.to(underlineRef.current, {
-          scaleX: 1,
-          duration: 0.8,
-          ease: "power3.inOut",
-        }, "-=0.3");
+        tl.to(
+          underlineRef.current,
+          {
+            scaleX: 1,
+            duration: 0.7,
+            ease: "power3.inOut",
+          },
+          "-=0.35"
+        );
       }
 
-      // Subtitle fade in
-      gsap.set(subtitleRef.current, { y: 20, opacity: 0 });
-      tl.to(
-        subtitleRef.current,
-        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
-      );
+      // Slogan — word-by-word reveal so the copy reads like a statement
+      // landing, not a paragraph fading.
+      const words = subtitleRef.current?.querySelectorAll(".slogan-word");
+      if (words && words.length) {
+        gsap.set(words, { y: 24, opacity: 0 });
+        tl.to(
+          words,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            stagger: 0.06,
+            ease: "power3.out",
+          },
+          "-=0.4"
+        );
+      } else if (subtitleRef.current) {
+        gsap.set(subtitleRef.current, { y: 20, opacity: 0 });
+        tl.to(
+          subtitleRef.current,
+          { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+          "-=0.4"
+        );
+      }
 
-      // Scroll ticker marquee
+      // Ticker fades in last
       if (tickerRef.current) {
         gsap.set(tickerRef.current, { opacity: 0 });
-        tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.2");
+        tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
       }
 
-      gsap.to(bgRef.current, {
-        scale: 1.1,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-
+      // Scroll-linked parallax (heading drifts up, bg continues zooming)
       gsap.to(headingRef.current, {
         y: -50,
         scrollTrigger: {
@@ -81,7 +131,7 @@ export default function Hero() {
     { scope: sectionRef }
   );
 
-  const headingText = "TEMPORARY";
+  const headingText = (headline ?? "OBARE").toUpperCase();
 
   return (
     <section
@@ -116,11 +166,12 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-start justify-end px-3 pb-[12vh] md:px-10 lg:px-16">
-        {/* TEMPORARY */}
+        {/* Hero wordmark — same font family as the nav logo (Archivo, bold,
+           expanded width) so the two "OBARE" marks read as one identity. */}
         <h1
           ref={headingRef}
-          className="overflow-hidden whitespace-nowrap font-poppins text-[13vw] font-black leading-[0.85] tracking-tight text-white md:text-[16vw] lg:text-[14vw]"
-          style={{ perspective: "800px" }}
+          className="overflow-hidden whitespace-nowrap font-archivo text-[13vw] font-bold leading-[0.85] tracking-[0.05em] text-white md:text-[16vw] lg:text-[14vw]"
+          style={{ perspective: "800px", fontStretch: "125%" }}
         >
           {headingText.split("").map((char, i) => (
             <span
@@ -139,30 +190,50 @@ export default function Hero() {
           className="mt-2 block h-[3px] w-32 bg-red md:h-[4px] md:w-48"
         />
 
-        {/* Subtitle — exactly 2 lines on both mobile and desktop, centered */}
+        {/* Subtitle — editable from Sanity. Line breaks in the Studio field
+           render as <br>. Each word is wrapped so GSAP can stagger them. */}
         <p
           ref={subtitleRef}
-          className="mt-4 w-full text-center font-montserrat text-[13px] font-bold uppercase tracking-[0.15em] text-white md:mt-6 md:text-lg lg:text-xl"
-          style={{ lineHeight: "1.4" }}
+          className="mt-5 w-full text-center font-montserrat text-[15px] font-bold uppercase tracking-[0.18em] text-white md:mt-7 md:text-xl md:tracking-[0.22em] lg:text-2xl"
+          style={{ lineHeight: "1.35" }}
         >
-          My visual universe is surrealistic, colorful,
-          <br />
-          and dark at the same time.
+          {(subheadline ?? "My visual universe is surrealistic, colorful,\nand dark at the same time.")
+            .split(/\r?\n/)
+            .map((line, li, lines) => (
+              <span key={li} className="inline">
+                {line.split(/(\s+)/).map((part, pi) => {
+                  if (/^\s+$/.test(part)) return <span key={pi}>{part}</span>;
+                  return (
+                    <span key={pi} className="slogan-word inline-block will-change-transform">
+                      {part}
+                    </span>
+                  );
+                })}
+                {li < lines.length - 1 && <br />}
+              </span>
+            ))}
         </p>
       </div>
 
-      {/* Scroll ticker — marquee at the very bottom */}
+      {/* Scroll ticker — marquee at the very bottom. Copy pulls from the
+         editorial voice; the ↓ gives it the "keep scrolling" function. */}
       <div
         ref={tickerRef}
-        className="pointer-events-none absolute bottom-4 left-0 right-0 z-10 overflow-hidden"
+        className="pointer-events-none absolute bottom-5 left-0 right-0 z-10 overflow-hidden md:bottom-6"
       >
         <div className="hero-ticker flex whitespace-nowrap">
           {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="flex items-center">
-              <span className="font-archivo text-[10px] font-bold uppercase tracking-[0.4em] text-white/40 md:text-xs">
-                Scroll to explore
+              <span
+                className="font-archivo text-sm font-bold uppercase tracking-[0.35em] text-white/85 md:text-base"
+                style={{ fontStretch: "125%" }}
+              >
+                See What&apos;s Real
               </span>
-              <span className="mx-4 h-1 w-1 rounded-full bg-red md:mx-6" />
+              <span aria-hidden className="ml-3 font-archivo text-sm font-bold text-red md:ml-4 md:text-base">
+                &darr;
+              </span>
+              <span className="mx-5 h-1.5 w-1.5 rounded-full bg-red md:mx-7" />
             </span>
           ))}
         </div>

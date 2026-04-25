@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-red: #E81818;
+  --color-red: #FF381E;
   --color-black: #0A0A0A;
   --color-white: #F5F5F0;
   --color-grey: #888888;
@@ -40,7 +40,10 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-montserrat), sans-serif;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) so descendants can use position: sticky.
+     `overflow-x: hidden` on body would create a scroll container that
+     breaks sticky on the article hero deck animation. */
+  overflow-x: clip;
 }
 
 /* Selection color */
@@ -109,29 +112,23 @@ body {
   border-radius: 3px;
 }
 
-/* Categories marquee */
-@keyframes obare-marquee-anim {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-33.333%); }
-}
-.obare-marquee {
-  animation: obare-marquee-anim 12s linear infinite;
-}
-.obare-marquee:hover {
-  animation-play-state: paused;
-}
+/* Categories marquee — driven by GSAP in src/components/sections/Marquee.tsx.
+   The CSS keyframe approach was removed because browsers can't pause/resume
+   CSS animations without a sub-pixel snap. GSAP handles pausing by setting
+   timeScale to 0, which preserves the exact transform position. */
 
 /* ── Messy editorial body treatment for articles ─────────────────────── */
 
-/* Drop cap on the first paragraph of an article body */
+/* Drop cap on the first paragraph of an article body — compact fit:
+   cap sits tight to the wrapping text with minimal gap, spans ~2 lines. */
 .article-paragraph:first-of-type::first-letter {
   float: left;
   font-family: var(--font-poppins), sans-serif;
   font-weight: 900;
-  font-size: 5.5rem;
-  line-height: 0.85;
-  padding: 0.1em 0.2em 0 0;
-  margin-top: 0.05em;
+  font-size: 2.75rem;
+  line-height: 0.9;
+  padding: 0 0.06em 0 0;
+  margin-top: 0.15em;
   color: var(--color-red);
 }
 

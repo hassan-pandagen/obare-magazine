@@ -25,6 +25,7 @@ interface ArticleCard {
   title: string;
   slug: { current: string };
   category: string;
+  modelName?: string;
   publishedAt: string;
   excerpt?: string;
   coverImage?: { asset: unknown; alt?: string };
@@ -178,18 +179,29 @@ function ArticleCard({ article }: { article: ArticleCard }) {
         {article.category && (
           <span className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
             {article.category}
+            {article.modelName && (
+              <span className="ml-2 font-normal text-white/70">| By {article.modelName}</span>
+            )}
           </span>
         )}
       </div>
 
-      {/* Meta */}
+      {/* Meta — date is hidden from the reader (client preference) but kept
+          in the DOM as a semantic <time> element so Google, Google News,
+          social crawlers, and screen readers still pick up the publish date. */}
       <div className="mt-5 flex flex-col flex-1">
         <p className="font-montserrat text-[10px] text-white/35">
-          {article.publishedAt ? formatDate(article.publishedAt) : ""}
-          {article.authors?.[0] && (
-            <> &middot; {article.authors[0].name}</>
-          )}
+          {article.authors?.[0]?.name ?? ""}
         </p>
+        {article.publishedAt && (
+          <time
+            dateTime={article.publishedAt}
+            className="sr-only"
+            itemProp="datePublished"
+          >
+            {formatDate(article.publishedAt)}
+          </time>
+        )}
         <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white underline decoration-transparent decoration-2 underline-offset-[6px] transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
           <RedEmphasis>{article.title}</RedEmphasis>
         </h2>

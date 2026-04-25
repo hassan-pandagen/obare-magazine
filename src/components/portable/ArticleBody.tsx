@@ -90,9 +90,20 @@ const components: PortableTextComponents = {
               className="w-full object-cover shadow-[0_20px_50px_rgba(0,0,0,0.5)] md:rounded-sm"
             />
           </picture>
-          {value.caption && (
-            <figcaption className="mt-3 px-6 font-montserrat text-xs italic text-white/50 md:px-0">
-              {value.caption}
+          {(value.caption || value.credit) && (
+            <figcaption className="mt-3 flex flex-col gap-1 px-6 md:px-0">
+              {value.caption && (
+                <span className="font-montserrat text-xs italic text-white/50">
+                  {value.caption}
+                </span>
+              )}
+              {value.credit && (
+                // Editorial credit line — tiny, uppercase, tracked, right-aligned.
+                // Reads like a photographer's chop without competing with the caption.
+                <span className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 md:text-[10px]">
+                  Photo &middot; {value.credit}
+                </span>
+              )}
             </figcaption>
           )}
         </figure>

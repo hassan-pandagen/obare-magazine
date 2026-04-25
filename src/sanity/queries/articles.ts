@@ -5,6 +5,7 @@ export const articleCardFields = groq`
   title,
   slug,
   category,
+  modelName,
   publishedAt,
   excerpt,
   "coverImage": coverImage { asset, alt },
@@ -33,6 +34,7 @@ export const articleBySlugQuery = groq`
     title,
     slug,
     category,
+    modelName,
     publishedAt,
     excerpt,
     "coverImage": coverImage { asset, alt, caption },
@@ -46,7 +48,8 @@ export const articleBySlugQuery = groq`
         ...,
         "url": asset->url,
         "mobileUrl": imageMobile.asset->url,
-        "dimensions": asset->metadata.dimensions
+        "dimensions": asset->metadata.dimensions,
+        credit
       },
       _type == "inlineVideo" => {
         ...,

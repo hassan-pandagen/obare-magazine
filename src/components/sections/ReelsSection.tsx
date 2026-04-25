@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { optimizeImg } from "@/lib/sanityImg";
 import { RedEmphasis } from "@/lib/redEmphasis";
+import ReelModal from "@/components/sections/ReelModal";
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -323,102 +324,5 @@ function MobileSwiperReel({
         </div>
       )}
     </button>
-  );
-}
-
-/* =============== MODAL =============== */
-
-function ReelModal({ reel, onClose }: { reel: Reel; onClose: () => void }) {
-  // Swipe-down-to-dismiss (iOS-style). Track touch start Y, compare against
-  // current Y on move; if dragged ≥ 90px downward we translate the card with
-  // the finger, then close on release.
-  const frameRef = useRef<HTMLDivElement>(null);
-  const dragYRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onEsc);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onEsc);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [onClose]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragYRef.current = e.touches[0].clientY;
-  };
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragYRef.current === null || !frameRef.current) return;
-    const delta = e.touches[0].clientY - dragYRef.current;
-    if (delta > 0) {
-      // Only track downward drag. Slight resistance after 200px so it feels physical.
-      const eased = delta > 200 ? 200 + (delta - 200) * 0.35 : delta;
-      frameRef.current.style.transform = `translateY(${eased}px)`;
-      frameRef.current.style.opacity = String(Math.max(0.4, 1 - delta / 600));
-    }
-  };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (dragYRef.current === null || !frameRef.current) return;
-    const delta = e.changedTouches[0].clientY - dragYRef.current;
-    dragYRef.current = null;
-    if (delta > 90) {
-      onClose();
-    } else {
-      // Snap back
-      frameRef.current.style.transition = "transform 0.25s ease, opacity 0.25s ease";
-      frameRef.current.style.transform = "translateY(0)";
-      frameRef.current.style.opacity = "1";
-      setTimeout(() => {
-        if (frameRef.current) frameRef.current.style.transition = "";
-      }, 260);
-    }
-  };
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-5 backdrop-blur-md md:p-10"
-      onClick={onClose}
-    >
-      {/* Grabber pill — mobile only, signals "swipe down to close" */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-4 h-1 w-12 -translate-x-1/2 rounded-full bg-white/30 md:hidden"
-      />
-
-      {/* Desktop-only close button — desktop has no swipe affordance */}
-      <button
-        onClick={onClose}
-        className="absolute right-6 top-6 z-10 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-red md:flex"
-        aria-label="Close"
-      >
-        <span className="text-2xl leading-none">&times;</span>
-      </button>
-
-      <div
-        ref={frameRef}
-        className="relative h-full max-h-[90vh] overflow-hidden rounded-xl bg-black will-change-transform"
-        style={{ aspectRatio: "9 / 16" }}
-        onClick={(e) => e.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <video
-          src={reel.videoSrc}
-          poster={optimizeImg(reel.posterSrc, { w: 380 })}
-          autoPlay
-          loop
-          controls
-          playsInline
-          className="h-full w-full object-cover"
-        >
-          <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
-        </video>
-      </div>
-    </div>
   );
 }

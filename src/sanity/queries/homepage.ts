@@ -57,6 +57,20 @@ export const homepageReelsQuery = groq`
     category,
     "videoUrl": videoFile.asset->url,
     "posterUrl": posterImage.asset->url,
+    "posterAlt": posterImage.alt,
+    "linkedSlug": linkedArticle->slug.current,
+  }
+`;
+
+/** All reels — used by the /reels index page */
+export const allReelsQuery = groq`
+  *[_type == "reel"] | order(order asc) {
+    _id,
+    title,
+    category,
+    "videoUrl": videoFile.asset->url,
+    "posterUrl": posterImage.asset->url,
+    "posterAlt": posterImage.alt,
     "linkedSlug": linkedArticle->slug.current,
   }
 `;

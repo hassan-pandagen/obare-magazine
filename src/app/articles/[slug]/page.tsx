@@ -5,6 +5,7 @@ import { urlFor } from "@/sanity/imageUrl";
 import { RedEmphasis } from "@/lib/redEmphasis";
 import ArticleBody from "@/components/portable/ArticleBody";
 import NextArticleCard from "@/components/portable/NextArticleCard";
+import HeroDeckBox from "@/components/portable/HeroDeckBox";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -36,48 +37,102 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       <Navbar />
 
       <main className="bg-black text-white">
-        {/* ── Hero ──────────────────────────────────────────────────────── */}
-        <section className="relative w-full px-4 pb-8 pt-24 md:px-10 md:pb-12 md:pt-28 lg:px-14">
-          {/* Outer container — shows the cover image cleanly, no border */}
-          <div className="relative w-full overflow-hidden bg-black shadow-[0_20px_80px_rgba(0,0,0,0.5)]" style={{ minHeight: "75vh" }}>
-            {/* Cover media (full-bleed, natural colors) */}
-            {article.coverVideo ? (
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
+        {/* ── Hero — sticky deck: pins to viewport top while body slides up over it ── */}
+        <section
+          className="sticky top-0 z-0 w-full overflow-hidden bg-black"
+          style={{ height: "100vh", minHeight: "600px" }}
+        >
+          {/* Cover media — fills the entire viewport, no borders, no padding */}
+          {article.coverVideo ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            >
+              {/* Mobile source first so the browser picks it before falling through */}
+              {article.coverVideoMobile && (
+                <source src={article.coverVideoMobile} media="(max-width: 767px)" type="video/mp4" />
+              )}
+              <source src={article.coverVideo} type="video/mp4" />
+              <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+            </video>
+          ) : coverSrc ? (
+            <picture className="absolute inset-0 h-full w-full">
+              {coverMobileSrc && (
+                <source media="(max-width: 767px)" srcSet={coverMobileSrc} />
+              )}
+              <img
+                src={coverSrc}
+                alt={article.coverImage?.alt ?? article.title}
                 className="absolute inset-0 h-full w-full object-cover"
-              >
-                {/* Mobile source first so the browser picks it before falling through */}
-                {article.coverVideoMobile && (
-                  <source src={article.coverVideoMobile} media="(max-width: 767px)" type="video/mp4" />
-                )}
-                <source src={article.coverVideo} type="video/mp4" />
-                <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
-              </video>
-            ) : coverSrc ? (
-              <picture className="absolute inset-0 h-full w-full">
-                {coverMobileSrc && (
-                  <source media="(max-width: 767px)" srcSet={coverMobileSrc} />
-                )}
-                <img
-                  src={coverSrc}
-                  alt={article.coverImage?.alt ?? article.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </picture>
-            ) : (
-              <div className="absolute inset-0 bg-zinc-900" />
-            )}
+              />
+            </picture>
+          ) : (
+            <div className="absolute inset-0 bg-zinc-900" />
+          )}
 
-            {/* ========== INNER RED VIEWFINDER BOX — flush right & bottom, offset top & left ========== */}
-            <div className="absolute right-0 bottom-0 top-8 left-[12%] md:top-12 md:left-[18%] lg:top-16 lg:left-[22%]">
-              <div className="relative h-full w-full overflow-hidden border-[3px] border-red">
-                {/* Red tint on just this inner box */}
-                <div className="pointer-events-none absolute inset-0 bg-red/40 mix-blend-multiply" />
-                {/* Dark gradient so chrome reads */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
+          {/* Same global photo darken as homepage hero (Hero.tsx). Applied at section level
+              so it darkens the photo on the LEFT (outside the deck box) too. */}
+          <div className="pointer-events-none absolute inset-0 bg-black/30" />
+
+          {/* ========== RED VIEWFINDER DECK BOX — rotates as one unit on scroll.
+              All three layers (cloned photo + darken + red multiply) live INSIDE the rotating
+              wrapper so multiply has a backdrop within its own stacking context (transform creates
+              a new stacking context that isolates mix-blend-mode from outer ancestors).
+              The cloned photo is sized to the full viewport with negative offsets matching the
+              deck box's position, so at rest it aligns pixel-for-pixel with the main section
+              photo. As the box rotates, photo + red wash + chrome rotate together. ========== */}
+          <HeroDeckBox className="absolute right-0 bottom-0 top-24 left-[12%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
+              <div className="relative h-full w-full">
+                {/* Cloned photo backdrop — extends out of the deck box up & left so it aligns
+                    with the main section photo. overflow-hidden on the deck box clips it back. */}
+                <div className="pointer-events-none absolute h-screen w-screen -top-24 left-[-12vw] md:-top-28 md:left-[-18vw] lg:-top-32 lg:left-[-22vw]">
+                  {article.coverVideo ? (
+                    <video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="absolute inset-0 h-full w-full object-cover"
+                    >
+                      {article.coverVideoMobile && (
+                        <source src={article.coverVideoMobile} media="(max-width: 767px)" type="video/mp4" />
+                      )}
+                      <source src={article.coverVideo} type="video/mp4" />
+                      <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+                    </video>
+                  ) : coverSrc ? (
+                    <picture className="absolute inset-0 h-full w-full">
+                      {coverMobileSrc && (
+                        <source media="(max-width: 767px)" srcSet={coverMobileSrc} />
+                      )}
+                      <img
+                        src={coverSrc}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    </picture>
+                  ) : (
+                    <div className="absolute inset-0 bg-zinc-900" />
+                  )}
+                  {/* Match the section's bg-black/30 so multiply backdrop is identical inside and out. */}
+                  <div className="absolute inset-0 bg-black/30" />
+                </div>
+                {/* Red multiply — same recipe as homepage hero, blends with the cloned photo above. */}
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{ mixBlendMode: "multiply" }}
+                >
+                  <img
+                    src="/images/red-accent.webp"
+                    alt=""
+                    loading="eager"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
 
                 {/* Camera UI chrome (inside the red box) */}
                 <div className="pointer-events-none absolute inset-0 text-white">
@@ -105,6 +160,11 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   {article.category && (
                     <span className="mb-3 block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-red md:text-xs">
                       {article.category}
+                      {article.modelName && (
+                        <span className="ml-3 font-normal text-white/70">
+                          | By {article.modelName}
+                        </span>
+                      )}
                     </span>
                   )}
                   <h1
@@ -125,51 +185,60 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                     viewBox="0 0 40 140"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="4"
-                    strokeLinecap="square"
-                    strokeLinejoin="miter"
+                    strokeWidth="9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="h-[100px] w-[28px] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-colors group-hover:text-white md:h-[140px] md:w-[40px] lg:h-[180px] lg:w-[52px]"
                     aria-hidden
                   >
-                    <line x1="20" y1="4" x2="20" y2="120" />
-                    <polyline points="4,100 20,132 36,100" />
+                    <line x1="20" y1="10" x2="20" y2="118" />
+                    <polyline points="6,98 20,128 34,98" />
                   </svg>
                 </a>
               </div>
-            </div>
-          </div>
-
-          {/* Author + date below the frame */}
-          {article.authors && article.authors.length > 0 && (
-            <div className="mt-6 flex flex-wrap items-center gap-4 px-2 md:mt-8">
-              {article.authors.map(
-                (
-                  a: { name: string; role?: string; photo?: string },
-                  i: number
-                ) => (
-                  <div key={i} className="flex items-center gap-2">
-                    {a.photo && (
-                      <img src={a.photo} alt={a.name} className="h-8 w-8 rounded-full object-cover" />
-                    )}
-                    <span className="font-montserrat text-xs text-white/70">
-                      {a.name}
-                      {a.role && <span className="text-white/40"> · {a.role}</span>}
-                    </span>
-                  </div>
-                )
-              )}
-              {article.publishedAt && (
-                <span className="font-montserrat text-xs text-white/35">
-                  {new Date(article.publishedAt).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-              )}
-            </div>
-          )}
+            </HeroDeckBox>
         </section>
+
+        {/* Everything below the hero slides up over the pinned hero like a deck. */}
+        <div className="relative z-10 bg-black">
+
+        {/* ── Author strip — sits directly under the full-bleed hero ───── */}
+        {article.authors && article.authors.length > 0 && (
+          <div className="flex flex-wrap items-center gap-4 border-b border-white/10 px-6 py-5 md:px-14 md:py-6 lg:px-20">
+            {article.authors.map(
+              (
+                a: { name: string; role?: string; photo?: string },
+                i: number
+              ) => (
+                <div key={i} className="flex items-center gap-2">
+                  {a.photo && (
+                    <img src={a.photo} alt={a.name} className="h-8 w-8 rounded-full object-cover" />
+                  )}
+                  <span className="font-montserrat text-xs text-white/70">
+                    {a.name}
+                    {a.role && <span className="text-white/40"> · {a.role}</span>}
+                  </span>
+                </div>
+              )
+            )}
+            {article.publishedAt && (
+              // Hidden but SEO-active — keeps published-time signals for
+              // Google, Google News, and screen readers without showing
+              // a date to the reader, per client preference.
+              <time
+                dateTime={article.publishedAt}
+                className="sr-only"
+                itemProp="datePublished"
+              >
+                {new Date(article.publishedAt).toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </time>
+            )}
+          </div>
+        )}
 
         {/* ── Body ──────────────────────────────────────────────────────── */}
         <section id="article-body" className="relative overflow-hidden px-6 py-16 md:px-14 lg:px-20">
@@ -189,7 +258,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
             className="pointer-events-none absolute left-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 lg:block"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg) translateY(50%)" }}
           >
-            In the Magazine
+            Go Bare
           </span>
           <span
             aria-hidden
@@ -235,6 +304,8 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
             </a>
           </section>
         )}
+
+        </div>
       </main>
 
       <Footer />

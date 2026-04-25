@@ -12,6 +12,10 @@ import HomeClient, {
 export const revalidate = 60;
 
 interface SettingsResult {
+  heroMedia?: {
+    headline?: string;
+    subheadline?: string;
+  };
   homepageProjects?: Array<{
     title: string;
     subtitle?: string;
@@ -95,5 +99,13 @@ export default async function Home() {
     })
   );
 
-  return <HomeClient projects={projects} reels={reels} stories={stories} />;
+  return (
+    <HomeClient
+      projects={projects}
+      reels={reels}
+      stories={stories}
+      heroHeadline={settings?.heroMedia?.headline}
+      heroSubheadline={settings?.heroMedia?.subheadline}
+    />
+  );
 }
