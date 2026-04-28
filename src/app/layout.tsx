@@ -3,7 +3,7 @@
  * Built by Panda Code Gen — https://www.pandacodegen.com/
  */
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins, Montserrat, Archivo } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -54,6 +54,16 @@ export const metadata: Metadata = {
     description: "The magazine that's real.",
     type: "website",
   },
+};
+
+// Without this, mobile browsers fall back to a ~980px desktop emulation
+// viewport — the page renders at desktop width, gets shrunk to fit, and the
+// user can pinch-zoom out into empty space. Also breaks the mobile-vs-desktop
+// breakpoint detection in HomeClient because window.innerWidth reads 980.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
