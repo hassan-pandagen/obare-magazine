@@ -40,10 +40,12 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-montserrat), sans-serif;
-  /* `clip` (not `hidden`) so descendants can use position: sticky.
-     `overflow-x: hidden` on body would create a scroll container that
-     breaks sticky on the article hero deck animation. */
-  overflow-x: clip;
+  /* Body overflow propagates to the viewport per CSS spec, so `hidden`
+     here clips horizontal overflow without stopping sticky descendants
+     (rotated decks). `overflow-x: clip` was tried and silently fell
+     back to `visible` on some Android browsers, causing the page to
+     scroll sideways from the rotated cards. */
+  overflow-x: hidden;
 }
 
 /* Selection color */
