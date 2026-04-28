@@ -179,7 +179,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
           {projects.map((project, i) => (
             <section
               key={project.id}
-              className="folder-section sticky top-0 h-[110vh] w-full md:h-[130vh]"
+              className="folder-section sticky top-0 h-[110vh] w-full overflow-x-hidden md:h-[130vh]"
               style={{ zIndex: i + 10 }}
             >
               <FolderSection
