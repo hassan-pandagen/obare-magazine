@@ -147,11 +147,21 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
                 start: "top bottom",
                 end: "top top",
                 scrub: 0.3,
+                // Recompute start/end after fonts/images load and after the
+                // mobile URL bar finishes its first collapse. Without this,
+                // mobile triggers were locking in stale positions and the
+                // rotation appeared to never run.
+                invalidateOnRefresh: true,
               },
             }
           );
         }
       });
+
+      // After all triggers are wired, refresh on the next frame so positions
+      // reflect post-loader, post-font-swap layout. Critical on mobile where
+      // the loader's clipPath unmount briefly shifts the document height.
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     },
     { scope: stackContainerRef, dependencies: [isLoaded, projects.length] }
   );

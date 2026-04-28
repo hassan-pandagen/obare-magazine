@@ -8,6 +8,11 @@ import Lenis from "lenis";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// iOS Safari fires resize events when the URL bar collapses/expands during
+// scroll. Without this, ScrollTrigger refreshes mid-scroll and pinned/scrubbed
+// animations stutter or appear to not run at all on mobile.
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 export default function GSAPProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
@@ -20,9 +25,11 @@ export default function GSAPProvider({ children }: { children: React.ReactNode }
       window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
 
     if (isMobile) {
-      // Still need ScrollTrigger to work with native scroll on mobile
+      // Native scroll on mobile. Refresh once layout/fonts/images settle so
+      // ScrollTrigger's stored start/end positions match the final document.
       ScrollTrigger.normalizeScroll(false);
-      return;
+      const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+      return () => window.clearTimeout(refreshId);
     }
 
     const lenis = new Lenis({
