@@ -18,6 +18,12 @@
 /* Smooth scroll handled by Lenis — disable native */
 html {
   scroll-behavior: auto;
+  /* Defense in depth: clip horizontal overflow at the html level too.
+     On some Android browsers, transformed/rotated descendants of body
+     can extend the viewport beyond what `body { overflow-x: hidden }`
+     can clip on its own. */
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 html.lenis, html.lenis body {
@@ -46,6 +52,8 @@ body {
      back to `visible` on some Android browsers, causing the page to
      scroll sideways from the rotated cards. */
   overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
 }
 
 /* Selection color */
