@@ -13,6 +13,7 @@ import FolderSection from "@/components/sections/FolderSection";
 import ReelsSection from "@/components/sections/ReelsSection";
 import Marquee from "@/components/sections/Marquee";
 import EditorialGrid from "@/components/sections/EditorialGrid";
+import DebugOverlay from "@/components/DebugOverlay";
 
 export interface HomeProject {
   id: string;
@@ -168,6 +169,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
 
   return (
     <>
+      <DebugOverlay />
       {!isLoaded && <Loader onComplete={handleLoadComplete} />}
       <Navbar />
 
