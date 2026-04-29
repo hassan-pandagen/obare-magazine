@@ -72,7 +72,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
 
       const sections = gsap.utils.toArray<HTMLElement>(".folder-section");
 
-      const isMobile = window.innerWidth < 768;
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
       const tiltAngle = 14;
       const tiltOrigin = "0% 0%";
 
@@ -101,7 +101,13 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
         // layout-change remounts (mobile ↔ desktop) still find the right element.
         const hasInitialVideo = section.querySelector<HTMLVideoElement>(".folder-video");
 
-        if (card) gsap.set(card, { force3D: true, willChange: "transform" });
+        if (card) {
+          if (isMobile) {
+            gsap.set(card, { force3D: true, willChange: "transform", rotationZ: 0, x: 0, y: 0 });
+          } else {
+            gsap.set(card, { force3D: true, willChange: "transform" });
+          }
+        }
 
         if (hasInitialVideo) {
           const getVideo = () => section.querySelector<HTMLVideoElement>(".folder-video");

@@ -148,7 +148,7 @@ export default function FolderSection({
   return (
     <div
       ref={cardRef}
-      className="folder-card relative h-screen w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
+      className="folder-card relative h-[100svh] w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
       style={{ borderRadius: "24px 24px 0 0" }}
     >
       {isDesktop && videoSrc ? (
