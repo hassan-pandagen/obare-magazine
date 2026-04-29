@@ -249,7 +249,6 @@ export default function ArticleVideoPlayer({
             onLoadedData={onMetadata}
             onCanPlay={onMetadata}
             preload="metadata"
-            controls={playing}
             onEnded={close}
             className={
               expanded
@@ -271,8 +270,7 @@ export default function ArticleVideoPlayer({
               aria-label="Play video"
               className="group absolute inset-0 flex items-center justify-center"
             >
-              <div className="absolute inset-0 bg-red/40 mix-blend-multiply transition-opacity duration-300 group-hover:bg-red/55" />
-              <div className="absolute inset-0 bg-black/15" />
+              <div className="absolute inset-0 bg-black/30 transition-opacity duration-300 group-hover:bg-black/20" />
 
               <Bracket position="tl" />
               <Bracket position="tr" />

@@ -115,7 +115,8 @@ export default function EditorialGrid({
           modules={[Pagination, Navigation, Autoplay]}
           spaceBetween={16}
           slidesPerView={1.1}
-          centeredSlides={true}
+          centeredSlides={false}
+          initialSlide={0}
           pagination={{ clickable: true }}
           autoplay={{ delay: 2500, disableOnInteraction: false }}
           speed={500}
