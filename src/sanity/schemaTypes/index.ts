@@ -1,4 +1,5 @@
 import { article } from "./article";
+import { category } from "./category";
 import { page } from "./page";
 import { reel } from "./reel";
 import { event } from "./event";
@@ -10,6 +11,7 @@ import { linksPage } from "./linksPage";
 
 export const schemaTypes = [
   article,
+  category,
   page,
   reel,
   event,

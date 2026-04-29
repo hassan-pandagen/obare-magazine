@@ -11,6 +11,11 @@ export const structure: StructureResolver = (S) =>
         .child(S.documentTypeList("article").title("Articles")),
 
       S.listItem()
+        .title("Categories")
+        .schemaType("category")
+        .child(S.documentTypeList("category").title("Categories")),
+
+      S.listItem()
         .title("Reels")
         .schemaType("reel")
         .child(S.documentTypeList("reel").title("Reels")),

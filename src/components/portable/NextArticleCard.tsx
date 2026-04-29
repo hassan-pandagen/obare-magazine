@@ -152,17 +152,16 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
 
         <svg
           ref={arrowRef}
-          viewBox="0 0 40 120"
-          className="h-[60px] w-[28px] shrink-0 text-white transition-colors duration-300 group-hover:text-red md:h-[90px] md:w-[44px] lg:h-[120px] lg:w-[56px]"
+          viewBox="0 0 60 160"
+          className="h-[60px] w-[38px] shrink-0 text-white transition-colors duration-300 group-hover:text-red md:h-[90px] md:w-[56px] lg:h-[120px] lg:w-[74px]"
           fill="none"
           stroke="currentColor"
-          strokeWidth="9"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden
         >
-          <line x1="20" y1="10" x2="20" y2="98" />
-          <polyline points="6,78 20,108 34,78" />
+          <polyline points="30,10 30,118 2,88 30,118 58,88" />
         </svg>
       </a>
 

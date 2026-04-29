@@ -58,25 +58,24 @@ export default function ShareButton({ title }: { title: string }) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex justify-center">
+      {/* Pill button — "SHARE THIS ARTICLE" style */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 font-montserrat text-[10px] font-bold uppercase tracking-[0.25em] text-white/50 transition-colors hover:text-white"
         aria-label="Share article"
+        className="flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-7 py-3 font-montserrat text-[11px] font-bold uppercase tracking-[0.3em] text-white transition-all hover:border-white/60 hover:bg-white/5"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
           <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
         </svg>
-        Share
+        Share This Article
       </button>
 
       {open && (
         <>
-          {/* Backdrop */}
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          {/* Dropdown */}
-          <div className="absolute right-0 top-8 z-50 min-w-[170px] overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-2xl">
+          <div className="absolute left-1/2 top-14 z-50 w-52 -translate-x-1/2 overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-2xl">
             {platforms.map((p) => (
               <a
                 key={p.label}

@@ -22,6 +22,7 @@ const DEPARTMENTS = [
   { label: "Advertising", value: "advertising" },
   { label: "Events", value: "events" },
   { label: "Partnerships", value: "partnerships" },
+  { label: "Modeling", value: "modeling" },
   { label: "Other", value: "other" },
 ];
 

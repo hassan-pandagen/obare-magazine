@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-red: #FF381E;
+  --color-red: #FF391E;
   --color-black: #0A0A0A;
   --color-white: #F5F5F0;
   --color-grey: #888888;
@@ -18,10 +18,10 @@
 /* Smooth scroll handled by Lenis — disable native */
 html {
   scroll-behavior: auto;
-  /* Do NOT set `overflow-x: hidden` here — it breaks `position: sticky`
-     on descendants, killing the homepage folder-card deck stack. The
-     rotated-card horizontal overflow is clipped at the .folder-section
-     level (overflow-x: hidden in HomeClient) so it never reaches html. */
+  /* overflow-x: clip does NOT create a scroll container (unlike hidden),
+     so position: sticky on descendants still works. This is the safe way
+     to cut horizontal overflow on mobile without breaking the deck stack. */
+  overflow-x: clip;
 }
 
 html.lenis, html.lenis body {
@@ -44,12 +44,6 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-montserrat), sans-serif;
-  /* Body overflow propagates to the viewport per CSS spec, so `hidden`
-     here clips horizontal overflow without stopping sticky descendants
-     (rotated decks). `overflow-x: clip` was tried and silently fell
-     back to `visible` on some Android browsers, causing the page to
-     scroll sideways from the rotated cards. */
-  overflow-x: hidden;
 }
 
 /* Selection color */

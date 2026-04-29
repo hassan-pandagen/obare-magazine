@@ -46,16 +46,33 @@ export const article = defineType({
       title: "Category",
       type: "string",
       description:
-        "FEATURE = default · STORY = when the writing is more narrative · " +
+        "Use them based on structure: FEATURE = default · STORY = when the writing is more narrative · " +
         "GOING BARE = when the emotional transformation is the main hook · " +
-        "INTERVIEW = when the article is mostly the model's direct voice.",
+        "INTERVIEW = when the article is mostly the model's direct voice. " +
+        "Add new categories in the Categories section of the Studio.",
       options: {
-        list: [
-          { title: "Feature", value: "Feature" },
-          { title: "Story", value: "Story" },
-          { title: "Going Bare", value: "Going Bare" },
-          { title: "Interview", value: "Interview" },
-        ],
+        list: async () => {
+          const { createClient } = await import("@sanity/client");
+          const client = createClient({
+            projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ?? "",
+            dataset: process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production",
+            useCdn: false,
+            apiVersion: "2024-01-01",
+          });
+          const cats: { title: string }[] = await client.fetch(
+            `*[_type == "category"] | order(title asc) { title }`
+          );
+          if (cats.length > 0) {
+            return cats.map((c) => ({ title: c.title, value: c.title }));
+          }
+          // Fallback if no categories created yet
+          return [
+            { title: "Feature", value: "Feature" },
+            { title: "Story", value: "Story" },
+            { title: "Going Bare", value: "Going Bare" },
+            { title: "Interview", value: "Interview" },
+          ];
+        },
         layout: "radio",
       },
       initialValue: "Feature",

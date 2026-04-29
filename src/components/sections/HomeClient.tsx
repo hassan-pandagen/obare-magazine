@@ -179,7 +179,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
       <main>
         <Hero headline={heroHeadline} subheadline={heroSubheadline} />
 
-        <div ref={stackContainerRef} className="relative">
+        <div ref={stackContainerRef} className="relative" style={{ overflowX: "clip" }}>
           {projects.map((project, i) => (
             <section
               key={project.id}

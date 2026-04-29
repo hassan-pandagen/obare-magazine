@@ -84,8 +84,7 @@ export default function SubmissionsClient({
               <span className="text-red">Our Platform.</span>
             </h1>
             <p className="mt-8 max-w-lg font-montserrat text-base leading-relaxed text-white/55 md:text-lg">
-              OBARE is always looking for photographers, videographers, writers, and creatives who
-              have something real to say. Pitch us. Show us.
+              We are always looking for photographers, models, and writers to share with our community.
             </p>
           </div>
         </section>

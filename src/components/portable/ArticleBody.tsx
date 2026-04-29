@@ -1,12 +1,121 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { urlFor } from "@/sanity/imageUrl";
 import ArticleVideoPlayer from "./ArticleVideoPlayer";
+
+function InlineReel({ src, poster, caption }: { src: string; poster?: string; caption?: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [paused, setPaused] = useState(true);
+  const [muted, setMuted] = useState(true);
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const hideTimer = useRef<number | null>(null);
+
+  const showControls = () => {
+    setControlsVisible(true);
+    if (hideTimer.current) window.clearTimeout(hideTimer.current);
+    hideTimer.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
+  const handleTap = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {});
+      setPaused(false);
+    } else {
+      v.pause();
+      setPaused(true);
+    }
+    showControls();
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
+    showControls();
+  };
+
+  // Auto-pause when scrolled out of view
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (!entry.isIntersecting) { v.pause(); setPaused(true); } },
+      { threshold: 0.2 }
+    );
+    obs.observe(v);
+    return () => { obs.disconnect(); if (hideTimer.current) window.clearTimeout(hideTimer.current); };
+  }, []);
+
+  return (
+    <figure className="my-10 flex flex-col items-center">
+      <div
+        className="relative w-full max-w-xs cursor-pointer overflow-hidden rounded-xl bg-black"
+        style={{ aspectRatio: "9/16" }}
+        onClick={handleTap}
+      >
+        <video
+          ref={videoRef}
+          src={src}
+          poster={poster}
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover"
+        />
+
+        {/* Center play/pause controls */}
+        <div
+          className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${controlsVisible || paused ? "opacity-100" : "opacity-0"}`}
+        >
+          <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md">
+            {paused ? (
+              <svg width="28" height="32" viewBox="0 0 14 16" fill="currentColor" className="ml-1">
+                <path d="M0 0L14 8L0 16V0Z" />
+              </svg>
+            ) : (
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="0.5" />
+                <rect x="14" y="4" width="4" height="16" rx="0.5" />
+              </svg>
+            )}
+          </div>
+        </div>
+
+        {/* Mute button — bottom right, always visible */}
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute" : "Mute"}
+          className="pointer-events-auto absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-red hover:text-red"
+        >
+          {muted ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+          )}
+        </button>
+      </div>
+      {caption && (
+        <figcaption className="mt-3 font-montserrat text-xs italic text-white/40">{caption}</figcaption>
+      )}
+    </figure>
+  );
+}
 
 const components: PortableTextComponents = {
   block: {
@@ -124,27 +233,10 @@ const components: PortableTextComponents = {
       );
     },
 
-    // Inline reel (9:16 portrait)
+    // Inline reel (9:16 portrait) — Instagram-style tap controls
     inlineReel: ({ value }) => {
       if (!value?.fileUrl) return null;
-      return (
-        <figure className="my-10 flex flex-col items-center">
-          <div className="w-full max-w-xs overflow-hidden rounded-xl" style={{ aspectRatio: "9/16" }}>
-            <video
-              src={value.fileUrl}
-              poster={value.posterUrl}
-              controls
-              playsInline
-              className="h-full w-full object-cover"
-            />
-          </div>
-          {value.caption && (
-            <figcaption className="mt-3 font-montserrat text-xs text-white/40">
-              {value.caption}
-            </figcaption>
-          )}
-        </figure>
-      );
+      return <InlineReel src={value.fileUrl} poster={value.posterUrl} caption={value.caption} />;
     },
 
     // Image gallery — contained to column width on desktop with collage-style tile tilts
