@@ -101,13 +101,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
         // layout-change remounts (mobile ↔ desktop) still find the right element.
         const hasInitialVideo = section.querySelector<HTMLVideoElement>(".folder-video");
 
-        if (card) {
-          if (isMobile) {
-            gsap.set(card, { force3D: true, willChange: "transform", rotationZ: 0, x: 0, y: 0 });
-          } else {
-            gsap.set(card, { force3D: true, willChange: "transform" });
-          }
-        }
+        if (card) gsap.set(card, { force3D: true, willChange: "transform" });
 
         if (hasInitialVideo) {
           const getVideo = () => section.querySelector<HTMLVideoElement>(".folder-video");
@@ -141,10 +135,11 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
           }
         }
 
-        if (card && i > 0 && !isMobile) {
+        if (card && i > 0) {
+          const angle = isMobile ? 6 : tiltAngle;
           gsap.fromTo(
             card,
-            { rotationZ: tiltAngle, transformOrigin: tiltOrigin, force3D: true },
+            { rotationZ: angle, transformOrigin: tiltOrigin, force3D: true },
             {
               rotationZ: 0,
               ease: "none",

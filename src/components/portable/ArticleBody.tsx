@@ -22,15 +22,17 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
   };
 
   const handleTap = () => {
+    setControlsVisible((c) => !c);
+    if (hideTimer.current) window.clearTimeout(hideTimer.current);
+    hideTimer.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) {
-      v.play().catch(() => {});
-      setPaused(false);
-    } else {
-      v.pause();
-      setPaused(true);
-    }
+    if (v.paused) { v.play().catch(() => {}); setPaused(false); }
+    else { v.pause(); setPaused(true); }
     showControls();
   };
 
@@ -43,7 +45,6 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
     showControls();
   };
 
-  // Auto-pause when scrolled out of view
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -72,11 +73,16 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
           className="h-full w-full object-cover"
         />
 
-        {/* Center play/pause controls */}
+        {/* Instagram-style controls — tap to show, auto-hide after 2.5s */}
         <div
-          className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${controlsVisible || paused ? "opacity-100" : "opacity-0"}`}
+          className={`pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${controlsVisible || paused ? "opacity-100" : "opacity-0"}`}
         >
-          <div className="flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md">
+          <button
+            type="button"
+            onClick={togglePlay}
+            aria-label={paused ? "Play" : "Pause"}
+            className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-white/20 ${controlsVisible || paused ? "pointer-events-auto" : ""}`}
+          >
             {paused ? (
               <svg width="28" height="32" viewBox="0 0 14 16" fill="currentColor" className="ml-1">
                 <path d="M0 0L14 8L0 16V0Z" />
@@ -87,28 +93,26 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
                 <rect x="14" y="4" width="4" height="16" rx="0.5" />
               </svg>
             )}
-          </div>
+          </button>
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-white/20 ${controlsVisible || paused ? "pointer-events-auto" : ""}`}
+          >
+            {muted ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </button>
         </div>
-
-        {/* Mute button — bottom right, always visible */}
-        <button
-          type="button"
-          onClick={toggleMute}
-          aria-label={muted ? "Unmute" : "Mute"}
-          className="pointer-events-auto absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-red hover:text-red"
-        >
-          {muted ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-            </svg>
-          )}
-        </button>
       </div>
       {caption && (
         <figcaption className="mt-3 font-montserrat text-xs italic text-white/40">{caption}</figcaption>

@@ -27,6 +27,22 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
   const [activeReel, setActiveReel] = useState<Reel | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
+  // Pause all videos when the section scrolls out of view
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          section.querySelectorAll<HTMLVideoElement>("video").forEach((v) => v.pause());
+        }
+      },
+      { threshold: 0 }
+    );
+    obs.observe(section);
+    return () => obs.disconnect();
+  }, []);
+
   useGSAP(
     () => {
       if (!sectionRef.current || !desktopGridRef.current) return;

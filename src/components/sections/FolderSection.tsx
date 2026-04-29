@@ -195,17 +195,6 @@ export default function FolderSection({
             >
               {mediaElement}
 
-              {/* Mute / unmute toggle (only shown when there's a video) */}
-              {videoSrc && (
-                <button
-                  type="button"
-                  onClick={toggleMute}
-                  aria-label={muted ? "Unmute" : "Mute"}
-                  className="absolute bottom-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-all hover:border-red hover:text-red"
-                >
-                  {muted ? <MuteIcon /> : <UnmuteIcon />}
-                </button>
-              )}
             </div>
           </div>
         </div>
