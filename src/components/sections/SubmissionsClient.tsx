@@ -25,15 +25,9 @@ export default function SubmissionsClient({
   heroBgImageMobile?: string;
   heroBgAlt?: string;
 }) {
+  const EMPTY_FORM = { name: "", email: "", instagram: "", category: "", subject: "", message: "" };
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    instagram: "",
-    category: "",
-    subject: "",
-    message: "",
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
 
   const update = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -43,6 +37,7 @@ export default function SubmissionsClient({
     e.preventDefault();
     setStatus("sending");
     await new Promise((r) => setTimeout(r, 900));
+    setForm(EMPTY_FORM);
     setStatus("sent");
   };
 
@@ -211,7 +206,7 @@ export default function SubmissionsClient({
                       within 2–3 weeks.
                     </p>
                     <button
-                      onClick={() => setStatus("idle")}
+                      onClick={() => { setForm(EMPTY_FORM); setStatus("idle"); }}
                       className="mt-8 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/40 underline hover:text-white"
                     >
                       Submit another

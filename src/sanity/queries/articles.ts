@@ -99,6 +99,11 @@ export const adjacentArticlesQuery = groq`
 }
 `;
 
+/** All distinct non-null categories, alphabetically sorted */
+export const articleCategoriesQuery = groq`
+  array::unique(*[_type == "article" && defined(category)].category) | order(@)
+`;
+
 /** Featured articles for homepage */
 export const featuredArticlesQuery = groq`
   *[_type == "article" && featured == true] | order(publishedAt desc)[0...4] {

@@ -178,14 +178,8 @@ export default function FooterCTA() {
               </>
             )}
             <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-              Get Started Now
+              Get Featured
             </span>
-          </a>
-          <a
-            href="/contact"
-            className="inline-flex items-center justify-center rounded-full border border-black bg-transparent px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-black hover:text-white"
-          >
-            Contact Us
           </a>
         </div>
 

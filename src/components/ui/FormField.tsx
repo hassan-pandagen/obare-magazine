@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import React, { forwardRef, useState, useRef, useEffect } from "react";
 
 /**
  * Shared form field primitives in the OBARE submissions style:
@@ -52,16 +52,89 @@ export const Textarea = forwardRef<
   );
 });
 
-export const Select = forwardRef<
-  HTMLSelectElement,
-  React.SelectHTMLAttributes<HTMLSelectElement>
->(function Select({ className = "", children, ...props }, ref) {
+// Custom Select — fully styled, no native browser dropdown popup
+export function Select({
+  name,
+  value,
+  onChange,
+  required,
+  children,
+}: {
+  name?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Collect options from children
+  const options: { value: string; label: string; disabled?: boolean }[] = [];
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === "option") {
+      const p = child.props as { value: string; children: string; disabled?: boolean };
+      options.push({ value: p.value, label: p.children, disabled: p.disabled });
+    }
+  });
+
+  const selected = options.find((o) => o.value === value);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const pick = (val: string) => {
+    setOpen(false);
+    if (onChange) {
+      const fake = { target: { name: name ?? "", value: val } } as React.ChangeEvent<HTMLSelectElement>;
+      onChange(fake);
+    }
+  };
+
   return (
-    <select ref={ref} className={`${baseInputCls} bg-black ${className}`} {...props}>
-      {children}
-    </select>
+    <div ref={ref} className="relative w-full">
+      {/* Hidden real select for form validation */}
+      <select name={name} value={value} onChange={onChange} required={required} className="sr-only" aria-hidden tabIndex={-1}>
+        {children}
+      </select>
+
+      {/* Trigger */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`${baseInputCls} flex w-full items-center justify-between pr-6 text-left ${!selected || selected.disabled ? "text-white/50" : "text-white"}`}
+      >
+        <span>{selected && !selected.disabled ? selected.label : "Select a category"}</span>
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}>
+          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {/* Dropdown list */}
+      {open && (
+        <ul className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border border-white/10 bg-zinc-900 shadow-xl">
+          {options.filter((o) => !o.disabled).map((o) => (
+            <li key={o.value}>
+              <button
+                type="button"
+                onClick={() => pick(o.value)}
+                className={`w-full px-4 py-3 text-left font-montserrat text-sm transition-colors hover:bg-white/5 hover:text-white ${value === o.value ? "text-red" : "text-white/70"}`}
+              >
+                {o.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
-});
+}
 
 export function Checkbox({
   label,

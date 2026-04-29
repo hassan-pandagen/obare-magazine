@@ -51,8 +51,7 @@ export default function NewsletterPage() {
                 Stay in the know.
               </h1>
               <p className="mx-auto mt-6 max-w-md font-montserrat text-base leading-relaxed text-white/60">
-                New stories, events, and cultural dispatches delivered weekly. No fluff.
-                No spam. Just OBARE.
+                New Bare models and features, delivered without the fluff.
               </p>
 
               <form onSubmit={submit} className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">

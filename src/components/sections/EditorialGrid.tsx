@@ -91,7 +91,7 @@ export default function EditorialGrid({
           </p>
         )}
         <div className="mt-5 flex items-center gap-2 font-archivo text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-red" style={{ fontStretch: "125%" }}>
-          Read Full Story
+          Full Story
           <span className="inline-block transition-transform duration-300 group-hover:translate-x-2">
             &rarr;
           </span>
@@ -106,7 +106,7 @@ export default function EditorialGrid({
         ref={headingRef}
         className="mb-12 text-center font-poppins text-[8vw] font-black uppercase tracking-wide text-white md:mb-16 md:text-[5vw]"
       >
-        <span className="text-red">Featured</span> Stories
+        <span className="text-red">Most</span> Popular
       </h2>
 
       {/* Mobile: Swiper carousel */}

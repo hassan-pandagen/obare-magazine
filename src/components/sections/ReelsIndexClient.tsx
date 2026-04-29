@@ -75,8 +75,7 @@ export default function ReelsIndexClient({ reels }: { reels: ReelItem[] }) {
             The Moving <span className="text-red">Picture</span>
           </h1>
           <p className="mt-6 max-w-xl font-montserrat text-sm leading-relaxed text-white/55 md:text-base">
-            Every reel in the OBARE archive. Short films, behind-the-lens cuts, and
-            the stories we couldn&apos;t tell in words alone.
+            A closer look at the women and the moments behind creating our imagery.
           </p>
         </section>
 

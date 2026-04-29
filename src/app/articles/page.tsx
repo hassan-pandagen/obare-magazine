@@ -1,24 +1,9 @@
 import { serverClient } from "@/sanity/client";
-import { allArticlesQuery } from "@/sanity/queries/articles";
+import { allArticlesQuery, articleCategoriesQuery } from "@/sanity/queries/articles";
 import { urlFor } from "@/sanity/imageUrl";
 import { RedEmphasis } from "@/lib/redEmphasis";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-
-const CATEGORIES = [
-  "All",
-  "Wellness",
-  "Movement & Strength",
-  "Mental Health",
-  "Beauty",
-  "Bare Models",
-  "Features",
-  "Self Improvement",
-  "Inner World",
-  "Travel",
-  "Culture",
-  "Editorial",
-];
 
 interface ArticleCard {
   _id: string;
@@ -49,7 +34,11 @@ export default async function ArticlesPage({
   searchParams: Promise<{ category?: string; q?: string }>;
 }) {
   const params = await searchParams;
-  const articles: ArticleCard[] = await serverClient.fetch(allArticlesQuery);
+  const [articles, rawCategories]: [ArticleCard[], string[]] = await Promise.all([
+    serverClient.fetch(allArticlesQuery),
+    serverClient.fetch(articleCategoriesQuery),
+  ]);
+  const CATEGORIES = ["All", ...rawCategories.filter(Boolean)];
 
   const activeCategory = params.category ?? "All";
   const searchQuery = (params.q ?? "").toLowerCase();
@@ -211,7 +200,7 @@ function ArticleCard({ article }: { article: ArticleCard }) {
           </p>
         )}
         <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
-          Read →
+          Full Story →
         </span>
       </div>
     </a>

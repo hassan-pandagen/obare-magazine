@@ -31,18 +31,33 @@ export default function HeroDeckBox({
       const section = ref.current.closest<HTMLElement>("section");
       if (!section) return;
 
-      gsap.set(ref.current, { transformOrigin: "100% 0%" });
+      // Pivot from bottom-left so the box tilts upward (left stays anchored, right lifts)
+      gsap.set(ref.current, { transformOrigin: "0% 100%" });
+
+      // Counter-rotate the cloned photo child so it stays flat while the box tilts
+      const photoEl = ref.current.querySelector<HTMLElement>("[data-counter-rotate]");
+
+      const st = {
+        trigger: section,
+        start: "top top",
+        end: "+=80%",
+        scrub: 0.5,
+      };
 
       gsap.to(ref.current, {
-        rotationZ: 14,
+        rotationZ: 8,
         ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "+=80%",
-          scrub: 0.5,
-        },
+        scrollTrigger: st,
       });
+
+      if (photoEl) {
+        gsap.set(photoEl, { transformOrigin: "0% 100%" });
+        gsap.to(photoEl, {
+          rotationZ: -8,
+          ease: "none",
+          scrollTrigger: st,
+        });
+      }
     },
     { scope: ref }
   );

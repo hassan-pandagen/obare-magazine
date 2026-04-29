@@ -6,6 +6,7 @@ import { RedEmphasis } from "@/lib/redEmphasis";
 import ArticleBody from "@/components/portable/ArticleBody";
 import NextArticleCard from "@/components/portable/NextArticleCard";
 import HeroDeckBox from "@/components/portable/HeroDeckBox";
+import ShareButton from "@/components/portable/ShareButton";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -77,26 +78,23 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
               so it darkens the photo on the LEFT (outside the deck box) too. */}
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
-          {/* ========== RED VIEWFINDER DECK BOX — rotates as one unit on scroll.
-              All three layers (cloned photo + darken + red multiply) live INSIDE the rotating
-              wrapper so multiply has a backdrop within its own stacking context (transform creates
-              a new stacking context that isolates mix-blend-mode from outer ancestors).
-              The cloned photo is sized to the full viewport with negative offsets matching the
-              deck box's position, so at rest it aligns pixel-for-pixel with the main section
-              photo. As the box rotates, photo + red wash + chrome rotate together. ========== */}
-          <HeroDeckBox className="absolute right-0 bottom-0 top-24 left-[12%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
+          {/* Static clip mask — same bounds as the deck box but never rotates.
+              Clips the rotating child to its rectangle without creating a new
+              stacking context (no transform here), so mix-blend-mode on the red
+              image blends against the real cover photo behind the section. */}
+          <div className="absolute right-0 bottom-0 top-24 left-[12%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
+            {/* HeroDeckBox — only the red overlay + chrome + headline rotate on scroll */}
+            <HeroDeckBox className="absolute inset-0">
               <div className="relative h-full w-full">
-                {/* Cloned photo backdrop — extends out of the deck box up & left so it aligns
-                    with the main section photo. overflow-hidden on the deck box clips it back. */}
-                <div className="pointer-events-none absolute h-screen w-screen -top-24 left-[-12vw] md:-top-28 md:left-[-18vw] lg:-top-32 lg:left-[-22vw]">
+                {/* Cloned photo — counter-rotated to stay flat while the box rotates.
+                    Provides the backdrop for mix-blend-mode multiply on the red layer. */}
+                <div
+                  className="pointer-events-none absolute h-screen w-screen -top-24 left-[-12vw] md:-top-28 md:left-[-18vw] lg:-top-32 lg:left-[-22vw]"
+                  style={{ transformOrigin: "calc(100% + 12vw) 0%", rotate: "0deg" }}
+                  data-counter-rotate
+                >
                   {article.coverVideo ? (
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="absolute inset-0 h-full w-full object-cover"
-                    >
+                    <video autoPlay muted loop playsInline className="absolute inset-0 h-full w-full object-cover">
                       {article.coverVideoMobile && (
                         <source src={article.coverVideoMobile} media="(max-width: 767px)" type="video/mp4" />
                       )}
@@ -105,26 +103,16 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                     </video>
                   ) : coverSrc ? (
                     <picture className="absolute inset-0 h-full w-full">
-                      {coverMobileSrc && (
-                        <source media="(max-width: 767px)" srcSet={coverMobileSrc} />
-                      )}
-                      <img
-                        src={coverSrc}
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
+                      {coverMobileSrc && <source media="(max-width: 767px)" srcSet={coverMobileSrc} />}
+                      <img src={coverSrc} alt="" className="absolute inset-0 h-full w-full object-cover" />
                     </picture>
                   ) : (
                     <div className="absolute inset-0 bg-zinc-900" />
                   )}
-                  {/* Match the section's bg-black/30 so multiply backdrop is identical inside and out. */}
                   <div className="absolute inset-0 bg-black/30" />
                 </div>
-                {/* Red multiply — same recipe as homepage hero, blends with the cloned photo above. */}
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{ mixBlendMode: "multiply" }}
-                >
+                {/* Red multiply — blends with the cloned photo for the transparent tinted look */}
+                <div className="pointer-events-none absolute inset-0" style={{ mixBlendMode: "multiply" }}>
                   <img
                     src="/images/red-accent.webp"
                     alt=""
@@ -134,7 +122,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   />
                 </div>
 
-                {/* Camera UI chrome (inside the red box) */}
+                {/* Camera UI chrome */}
                 <div className="pointer-events-none absolute inset-0 text-white">
                   <div className="absolute left-4 top-4 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:left-6 md:top-6 md:text-xs">
                     <span className="inline-block h-2 w-2 rounded-full bg-red" />
@@ -155,7 +143,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   </div>
                 </div>
 
-                {/* Headline at top */}
+                {/* Headline */}
                 <div className="absolute left-0 right-0 top-14 px-6 md:top-20 md:px-10 lg:top-24 lg:px-14">
                   {article.category && (
                     <span className="mb-3 block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-red md:text-xs">
@@ -169,17 +157,17 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   )}
                   <h1
                     className="font-poppins font-black uppercase leading-[0.9] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)] max-w-[85%]"
-                    style={{ fontSize: "clamp(2.25rem, 5.5vw, 5.5rem)" }}
+                    style={{ fontSize: "clamp(1.75rem, 4vw, 4rem)" }}
                   >
                     <RedEmphasis>{article.title}</RedEmphasis>
                   </h1>
                 </div>
 
-                {/* Big pointy scroll-down arrow — left side inside red box */}
+                {/* Scroll-down arrow */}
                 <a
                   href="#article-body"
                   aria-label="Scroll to article"
-                  className="group absolute bottom-16 left-6 md:bottom-20 md:left-10 lg:bottom-24 lg:left-14"
+                  className="group absolute bottom-16 left-6 outline-none focus:outline-none md:bottom-20 md:left-10 lg:bottom-24 lg:left-14"
                 >
                   <svg
                     viewBox="0 0 40 140"
@@ -197,15 +185,17 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                 </a>
               </div>
             </HeroDeckBox>
+          </div>
         </section>
 
         {/* Everything below the hero slides up over the pinned hero like a deck. */}
         <div className="relative z-10 bg-black">
 
         {/* ── Author strip — sits directly under the full-bleed hero ───── */}
-        {article.authors && article.authors.length > 0 && (
-          <div className="flex flex-wrap items-center gap-4 border-b border-white/10 px-6 py-5 md:px-14 md:py-6 lg:px-20">
-            {article.authors.map(
+        <div className="flex flex-wrap items-center gap-4 border-b border-white/10 px-6 py-5 md:px-14 md:py-6 lg:px-20">
+          {/* Authors — left side */}
+          <div className="flex flex-wrap items-center gap-4">
+            {article.authors && article.authors.length > 0 && article.authors.map(
               (
                 a: { name: string; role?: string; photo?: string },
                 i: number
@@ -222,23 +212,20 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
               )
             )}
             {article.publishedAt && (
-              // Hidden but SEO-active — keeps published-time signals for
-              // Google, Google News, and screen readers without showing
-              // a date to the reader, per client preference.
-              <time
-                dateTime={article.publishedAt}
-                className="sr-only"
-                itemProp="datePublished"
-              >
-                {new Date(article.publishedAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
+              <time dateTime={article.publishedAt} className="sr-only" itemProp="datePublished">
+                {new Date(article.publishedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
               </time>
             )}
           </div>
-        )}
+
+          {/* Share — center */}
+          <div className="flex flex-1 justify-center">
+            <ShareButton title={article.title} />
+          </div>
+
+          {/* Spacer to balance the authors on the left */}
+          <div className="hidden flex-1 md:block" />
+        </div>
 
         {/* ── Body ──────────────────────────────────────────────────────── */}
         <section id="article-body" className="relative overflow-hidden px-6 py-16 md:px-14 lg:px-20">

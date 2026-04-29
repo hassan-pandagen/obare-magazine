@@ -204,27 +204,65 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
 function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const hideTimerRef = useRef<number | null>(null);
 
-  // Play only on hover — never autoplay all 4 simultaneously
+  const showControls = () => {
+    setControlsVisible(true);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
   const handleMouseEnter = () => {
     videoRef.current?.play().catch(() => {});
+    setIsPaused(false);
   };
   const handleMouseLeave = () => {
     const v = videoRef.current;
     if (!v) return;
     v.pause();
     v.currentTime = 0;
+    setIsPaused(true);
+    setControlsVisible(false);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
   };
+
+  const handleCardClick = () => {
+    setControlsVisible((v) => !v);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) { v.play().catch(() => {}); setIsPaused(false); }
+    else { v.pause(); setIsPaused(true); }
+    showControls();
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
+    showControls();
+  };
+
+  useEffect(() => () => { if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current); }, []);
 
   return (
     <div ref={itemRef} className="reel-item-desktop">
-      <button
-        onClick={onOpen}
+      <div
+        className="relative w-full overflow-hidden rounded-xl bg-zinc-900 cursor-pointer"
+        style={{ aspectRatio: "9 / 16" }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="group relative block w-full overflow-hidden rounded-xl bg-zinc-900"
-        style={{ aspectRatio: "9 / 16" }}
-        aria-label={`Play ${reel.title}`}
+        onClick={handleCardClick}
       >
         <video
           ref={videoRef}
@@ -234,26 +272,63 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
           loop
           playsInline
           preload="none"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+          className="absolute inset-0 h-full w-full object-cover"
         >
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
         </video>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-        <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
+        <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.25em] text-white backdrop-blur-sm">
           {reel.category}
         </span>
-        <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-500 group-hover:bg-red group-hover:scale-110">
-          <svg
-            width="14"
-            height="16"
-            viewBox="0 0 14 16"
-            fill="white"
-            className="ml-1"
+
+        {/* Instagram-style controls — appear on click, auto-hide after 2.5s */}
+        <div
+          className={`pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${controlsVisible ? "opacity-100" : "opacity-0"}`}
+        >
+          <button
+            type="button"
+            onClick={togglePlay}
+            aria-label={isPaused ? "Play" : "Pause"}
+            className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${controlsVisible ? "pointer-events-auto" : ""}`}
           >
-            <path d="M0 0L14 8L0 16V0Z" />
-          </svg>
+            {isPaused ? (
+              <svg width="24" height="28" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z" /></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="0.5" /><rect x="14" y="4" width="4" height="16" rx="0.5" />
+              </svg>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? "Unmute" : "Mute"}
+            className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${controlsVisible ? "pointer-events-auto" : ""}`}
+          >
+            {muted ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </button>
         </div>
-      </button>
+
+        {/* Expand to fullscreen */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onOpen(); }}
+          className="absolute bottom-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-sm transition-all hover:bg-red hover:text-white"
+          aria-label="Open fullscreen"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+        </button>
+      </div>
       <a
         href={reel.href}
         className="group/title mt-4 inline-flex items-baseline gap-2 font-poppins text-lg font-black uppercase leading-tight text-white transition-colors hover:text-red xl:text-xl"
@@ -279,30 +354,59 @@ function MobileSwiperReel({
   onOpen: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const hideTimerRef = useRef<number | null>(null);
 
-  // Play the video only for the active slide; pause + reset others so audio
-  // never plays over the one the user is looking at.
+  const showControls = () => {
+    setControlsVisible(true);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (isActive) {
-      v.play().catch(() => {});
-    } else {
-      v.pause();
-      v.currentTime = 0;
-    }
+    if (isActive) { v.play().catch(() => {}); setIsPaused(false); }
+    else { v.pause(); v.currentTime = 0; setControlsVisible(false); }
   }, [isActive]);
 
+  useEffect(() => () => { if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current); }, []);
+
+  const handleTap = () => {
+    setControlsVisible((c) => !c);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
+  };
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) { v.play().catch(() => {}); setIsPaused(false); }
+    else { v.pause(); setIsPaused(true); }
+    showControls();
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setMuted(v.muted);
+    showControls();
+  };
+
   return (
-    <button
-      onClick={onOpen}
-      className="group relative block w-full overflow-hidden rounded-2xl bg-zinc-900 transition-[opacity,transform] duration-500"
+    <div
+      onClick={handleTap}
+      className="relative w-full overflow-hidden rounded-2xl bg-zinc-900 transition-[opacity,transform] duration-500 cursor-pointer"
       style={{
         aspectRatio: "9 / 16",
         opacity: isActive ? 1 : 0.55,
         transform: isActive ? "scale(1)" : "scale(0.92)",
       }}
-      aria-label={`Play ${reel.title}`}
     >
       <video
         ref={videoRef}
@@ -317,16 +421,56 @@ function MobileSwiperReel({
         <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
       </video>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10" />
-      <span className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm">
+      <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm">
         {reel.category}
       </span>
-      {isActive && (
-        <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-red/90 shadow-lg shadow-red/30">
-          <svg width="14" height="16" viewBox="0 0 14 16" fill="white" className="ml-0.5">
-            <path d="M0 0L14 8L0 16V0Z" />
-          </svg>
-        </div>
-      )}
-    </button>
+
+      {/* Instagram-style controls — tap to show, auto-hide after 2.5s */}
+      <div className={`pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${controlsVisible ? "opacity-100" : "opacity-0"}`}>
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={isPaused ? "Play" : "Pause"}
+          className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${controlsVisible ? "pointer-events-auto" : ""}`}
+        >
+          {isPaused ? (
+            <svg width="24" height="28" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z" /></svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" rx="0.5" /><rect x="14" y="4" width="4" height="16" rx="0.5" />
+            </svg>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute" : "Mute"}
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${controlsVisible ? "pointer-events-auto" : ""}`}
+        >
+          {muted ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Expand button */}
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onOpen(); }}
+        className="absolute bottom-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-sm transition-all hover:bg-red hover:text-white"
+        aria-label="Open fullscreen"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+      </button>
+
+    </div>
   );
 }

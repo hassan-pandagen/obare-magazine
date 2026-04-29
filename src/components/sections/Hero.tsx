@@ -22,24 +22,12 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
 
   useGSAP(
     () => {
-      // Cinematic opening — runs once after the page loader wraps up.
-      // The loader animation takes ~0.85s on first visit, then is skipped
-      // entirely on repeat visits via sessionStorage. So we check the same
-      // key: if the loader already ran this session, start immediately;
-      // otherwise wait just long enough for the loader to slide out.
       const loaderAlreadyShown =
         typeof window !== "undefined" &&
         !!sessionStorage.getItem("obare-loader-shown");
-      // On first visit the loader covers the screen for 0.85s, so the 0.7s
-      // delay means the hero animation is already mid-motion when the loader
-      // slides away — users see the tail-end of the reveal, not a static hero.
       const openingDelay = loaderAlreadyShown ? 0.1 : 0.7;
       const tl = gsap.timeline({ delay: openingDelay });
 
-      // Background ken-burns — subtle drift only. Earlier values (1.08 → 1.15)
-      // cropped the hero image so much that only the model's eyes were visible
-      // on most screens. Keep base at 1.0 and animate just enough to read as
-      // motion without losing the framing.
       if (bgRef.current) {
         gsap.set(bgRef.current, { scale: 1.0 });
         gsap.to(bgRef.current, {
@@ -51,8 +39,6 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
         });
       }
 
-      // Letter reveal — mask up from below + rotateX so it reads as "rising
-      // into frame". transformOrigin "bottom" pivots the flip at the baseline.
       const chars = headingRef.current?.querySelectorAll(".char");
       if (chars && chars.length) {
         gsap.set(chars, {
@@ -74,34 +60,21 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
         });
       }
 
-      // Red underline slashes in from left, slightly overlapping last letter.
       if (underlineRef.current) {
         gsap.set(underlineRef.current, { scaleX: 0, transformOrigin: "left" });
         tl.to(
           underlineRef.current,
-          {
-            scaleX: 1,
-            duration: 0.7,
-            ease: "power3.inOut",
-          },
+          { scaleX: 1, duration: 0.7, ease: "power3.inOut" },
           "-=0.35"
         );
       }
 
-      // Slogan — word-by-word reveal so the copy reads like a statement
-      // landing, not a paragraph fading.
       const words = subtitleRef.current?.querySelectorAll(".slogan-word");
       if (words && words.length) {
         gsap.set(words, { y: 24, opacity: 0 });
         tl.to(
           words,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            stagger: 0.06,
-            ease: "power3.out",
-          },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.06, ease: "power3.out" },
           "-=0.4"
         );
       } else if (subtitleRef.current) {
@@ -113,13 +86,11 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
         );
       }
 
-      // Ticker fades in last
       if (tickerRef.current) {
         gsap.set(tickerRef.current, { opacity: 0 });
         tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
       }
 
-      // Scroll-linked parallax (heading drifts up, bg continues zooming)
       gsap.to(headingRef.current, {
         y: -50,
         scrollTrigger: {
@@ -140,14 +111,14 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Background image — responsive via CSS media query */}
+      {/* Background image */}
       <div
         ref={bgRef}
         className="hero-bg-responsive absolute inset-0 bg-cover bg-center"
       />
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Red accent — tight strip at bottom */}
+      {/* Red accent */}
       <div
         className="absolute bottom-0 left-0 right-0 z-[5]"
         style={{
@@ -168,8 +139,6 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
 
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-start justify-end px-3 pb-[12vh] md:px-10 lg:px-16">
-        {/* Hero wordmark — same font family as the nav logo (Archivo, bold,
-           expanded width) so the two "OBARE" marks read as one identity. */}
         <h1
           ref={headingRef}
           className="overflow-hidden whitespace-nowrap font-archivo text-[13vw] font-bold leading-[0.85] tracking-[0.05em] text-white md:text-[16vw] lg:text-[14vw]"
@@ -186,14 +155,11 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
           ))}
         </h1>
 
-        {/* Red underline — draws in left to right after letters land */}
         <span
           ref={underlineRef}
           className="mt-2 block h-[3px] w-32 bg-red md:h-[4px] md:w-48"
         />
 
-        {/* Subtitle — editable from Sanity. Line breaks in the Studio field
-           render as <br>. Each word is wrapped so GSAP can stagger them. */}
         <p
           ref={subtitleRef}
           className="mt-5 w-full text-center font-montserrat text-[15px] font-bold uppercase tracking-[0.18em] text-white md:mt-7 md:text-xl md:tracking-[0.22em] lg:text-2xl"
@@ -217,8 +183,7 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
         </p>
       </div>
 
-      {/* Scroll ticker — marquee at the very bottom. Copy pulls from the
-         editorial voice; the ↓ gives it the "keep scrolling" function. */}
+      {/* Scroll ticker */}
       <div
         ref={tickerRef}
         className="pointer-events-none absolute bottom-5 left-0 right-0 z-10 overflow-hidden md:bottom-6"
@@ -240,7 +205,6 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
           ))}
         </div>
       </div>
-
     </section>
   );
 }

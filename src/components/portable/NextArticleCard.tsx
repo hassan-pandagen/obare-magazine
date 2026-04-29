@@ -140,11 +140,11 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
       className="relative w-full overflow-hidden bg-black px-6 pt-24 pb-12 md:px-14 md:pt-32 md:pb-16 lg:px-20"
       aria-label={`Next article: ${next.title}`}
     >
-      {/* Top rule + eyebrow label + arrow */}
-      <div className="mx-auto flex max-w-6xl items-start justify-between gap-6">
+      {/* Top rule + eyebrow label + arrow — full row is a link */}
+      <a href={href} className="group mx-auto flex max-w-6xl items-start justify-between gap-6">
         <span
           ref={nextLabelRef}
-          className="block font-poppins font-black uppercase leading-[0.9] text-white"
+          className="block font-poppins font-black uppercase leading-[0.9] text-white transition-colors duration-300 group-hover:text-red"
           style={{ fontSize: "clamp(3rem, 9vw, 8rem)" }}
         >
           Next
@@ -153,7 +153,7 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         <svg
           ref={arrowRef}
           viewBox="0 0 40 120"
-          className="h-[60px] w-[28px] shrink-0 text-white md:h-[90px] md:w-[44px] lg:h-[120px] lg:w-[56px]"
+          className="h-[60px] w-[28px] shrink-0 text-white transition-colors duration-300 group-hover:text-red md:h-[90px] md:w-[44px] lg:h-[120px] lg:w-[56px]"
           fill="none"
           stroke="currentColor"
           strokeWidth="9"
@@ -164,7 +164,7 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
           <line x1="20" y1="10" x2="20" y2="98" />
           <polyline points="6,78 20,108 34,78" />
         </svg>
-      </div>
+      </a>
 
       {/* Preview card — clickable + parallax + GSAP scroll-scrub */}
       <a
