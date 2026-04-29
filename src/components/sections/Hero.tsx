@@ -36,13 +36,15 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       const openingDelay = loaderAlreadyShown ? 0.1 : 0.7;
       const tl = gsap.timeline({ delay: openingDelay });
 
-      // Background ken-burns — starts slightly zoomed out so the opening has
-      // motion energy even before the letters land. Independent from scroll scrub.
+      // Background ken-burns — subtle drift only. Earlier values (1.08 → 1.15)
+      // cropped the hero image so much that only the model's eyes were visible
+      // on most screens. Keep base at 1.0 and animate just enough to read as
+      // motion without losing the framing.
       if (bgRef.current) {
-        gsap.set(bgRef.current, { scale: 1.08 });
+        gsap.set(bgRef.current, { scale: 1.0 });
         gsap.to(bgRef.current, {
-          scale: 1.15,
-          duration: 12,
+          scale: 1.04,
+          duration: 14,
           ease: "none",
           repeat: -1,
           yoyo: true,

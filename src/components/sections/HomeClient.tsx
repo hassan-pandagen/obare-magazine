@@ -8,7 +8,6 @@ import Navbar from "@/components/layout/Navbar";
 import Loader from "@/components/layout/Loader";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
-import WhyTravel from "@/components/sections/WhyTravel";
 import FolderSection from "@/components/sections/FolderSection";
 import ReelsSection from "@/components/sections/ReelsSection";
 import Marquee from "@/components/sections/Marquee";
@@ -74,7 +73,11 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
       const sections = gsap.utils.toArray<HTMLElement>(".folder-section");
 
       const isMobile = window.innerWidth < 768;
-      const tiltAngle = isMobile ? 8 : 14;
+      const tiltAngle = isMobile ? 4 : 14;
+      // Mobile uses top-center pivot — the corner-pivot swings the bottom of
+      // the card off-screen on narrow viewports and leaves a black wedge.
+      // Top-center keeps both edges balanced inside the viewport.
+      const tiltOrigin = isMobile ? "50% 0%" : "0% 0%";
 
       const playOnly = (target: HTMLVideoElement | null) => {
         sections.forEach((s) => {
@@ -138,7 +141,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
         if (card && i > 0) {
           gsap.fromTo(
             card,
-            { rotationZ: tiltAngle, transformOrigin: "0% 0%", force3D: true },
+            { rotationZ: tiltAngle, transformOrigin: tiltOrigin, force3D: true },
             {
               rotationZ: 0,
               ease: "none",
@@ -175,7 +178,6 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
 
       <main>
         <Hero headline={heroHeadline} subheadline={heroSubheadline} />
-        <WhyTravel />
 
         <div ref={stackContainerRef} className="relative">
           {projects.map((project, i) => (

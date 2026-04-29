@@ -34,6 +34,14 @@ export default function DebugOverlay() {
       }
       out.push(`docH: ${document.documentElement.scrollHeight} scrollY: ${Math.round(window.scrollY)}`);
       out.push(`sections: ${sections.length}`);
+
+      // Confirm which layout branch the FolderSection chose. The desktop+video
+      // variant uses a CSS grid — if we find one of those on a narrow screen,
+      // matchMedia is misreporting and we're in the wrong branch.
+      const mqDesktop = window.matchMedia("(min-width: 768px)").matches;
+      const splitGrids = document.querySelectorAll(".folder-card .grid").length;
+      const fullBleeds = sections.length - splitGrids;
+      out.push(`mq(min-w:768)=${mqDesktop} | layout: ${splitGrids}=desktop-split, ${fullBleeds}=mobile-full`);
       out.push("");
 
       out.push("=== SECTIONS (first 3) ===");

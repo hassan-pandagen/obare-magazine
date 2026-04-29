@@ -210,63 +210,30 @@ export default function Navbar() {
             )}
           </a>
 
-          {/* Desktop nav — slash-separated with red active dot */}
-          <div className="hidden items-center gap-0 md:flex">
-            {NAV_LINKS.map((link, i) => {
-              const isActive = link.href ? pathname === link.href : false;
-              const cls = cn(
-                "group relative flex items-center gap-2 px-2 font-archivo text-[13px] font-bold uppercase tracking-[0.04em] transition-colors",
-                isActive ? "text-red" : "text-white/80 hover:text-white"
-              );
-              const inner = (
-                <>
-                  {isActive && <span className="h-1.5 w-1.5 rounded-full bg-red" />}
-                  {link.label}
-                </>
-              );
-              return (
-                <div key={link.label} className="flex items-center">
-                  {link.modal ? (
-                    <button
-                      type="button"
-                      onClick={() => setOpenModal(link.modal!)}
-                      className={cls}
-                      style={{ fontStretch: "125%" }}
-                    >
-                      {inner}
-                    </button>
-                  ) : (
-                    <a href={link.href} className={cls} style={{ fontStretch: "125%" }}>
-                      {inner}
-                    </a>
-                  )}
-                  {i < NAV_LINKS.length - 1 && (
-                    <span className="font-archivo text-sm text-white/30">/</span>
-                  )}
-                </div>
-              );
-            })}
+          {/* Right-side controls — search + hamburger. The inline desktop link
+             list was removed in favour of a single hamburger trigger so the
+             top of the page stays minimal (per editorial-mag art direction);
+             the same fullscreen menu now opens on every breakpoint. */}
+          <div className="relative z-50 flex items-center gap-3">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
-              className="ml-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red md:h-10 md:w-10"
             >
               <SearchIcon />
             </button>
+            <button
+              className="flex h-10 w-10 flex-col items-center justify-center gap-[7px]"
+              onClick={() => setIsMobileOpen((prev) => !prev)}
+              aria-label="Toggle menu"
+            >
+              <span ref={hamburgerTopRef} className="block h-[3px] w-8 origin-center bg-white" />
+              <span ref={hamburgerBotRef} className="block h-[3px] w-8 origin-center bg-white" />
+              {/* Unused in the 2-bar design; kept so GSAP refs resolve cleanly. */}
+              <span ref={hamburgerMidRef} className="hidden" />
+            </button>
           </div>
-
-          {/* Hamburger — two thick bars, matches client reference */}
-          <button
-            className="relative z-50 flex h-10 w-10 flex-col items-center justify-center gap-[7px] md:hidden"
-            onClick={() => setIsMobileOpen((prev) => !prev)}
-            aria-label="Toggle menu"
-          >
-            <span ref={hamburgerTopRef} className="block h-[3px] w-8 origin-center bg-white" />
-            <span ref={hamburgerBotRef} className="block h-[3px] w-8 origin-center bg-white" />
-            {/* Unused in the 2-bar design; kept so GSAP refs resolve cleanly. */}
-            <span ref={hamburgerMidRef} className="hidden" />
-          </button>
         </div>
       </nav>
 

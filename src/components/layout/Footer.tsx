@@ -95,7 +95,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="flex flex-col items-center gap-1 border-t border-white/10 px-6 py-4 text-center md:flex-row md:justify-between md:gap-4">
         <p className="font-montserrat text-xs text-white/60">
-          &copy; 2025 OBARE Magazine. All rights reserved.
+          &copy; 2026 OBARE Magazine. All rights reserved.
         </p>
         <p className="font-montserrat text-xs text-white/40">
           Made by{" "}

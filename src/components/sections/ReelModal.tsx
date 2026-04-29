@@ -6,6 +6,9 @@ import { optimizeImg } from "@/lib/sanityImg";
 export interface ReelModalReel {
   videoSrc: string;
   posterSrc: string;
+  title?: string;
+  category?: string;
+  href?: string;
 }
 
 /**
@@ -144,23 +147,23 @@ export default function ReelModal({
   return (
     <div
       ref={backdropRef}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-5 backdrop-blur-md md:p-10"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-2 backdrop-blur-md md:p-6"
       onClick={onClose}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-4 h-1 w-12 -translate-x-1/2 rounded-full bg-white/30 md:hidden"
+        className="pointer-events-none absolute left-1/2 top-4 z-20 h-1 w-12 -translate-x-1/2 rounded-full bg-white/30 md:hidden"
       />
       <button
         onClick={onClose}
-        className="absolute right-5 top-5 z-10 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-red md:right-8 md:top-8 md:flex"
+        className="absolute right-5 top-5 z-20 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-red md:right-8 md:top-8 md:flex"
         aria-label="Close"
       >
         <span className="text-2xl leading-none">&times;</span>
       </button>
       <div
         ref={frameRef}
-        className="relative h-full max-h-[90vh] overflow-hidden rounded-xl bg-black will-change-transform"
+        className="relative h-full max-h-[96vh] overflow-hidden rounded-xl bg-black will-change-transform md:max-h-[92vh]"
         style={{ aspectRatio: "9 / 16", transformOrigin: "center center" }}
         onClick={handleFrameClick}
         onTouchStart={handleTouchStart}
@@ -178,6 +181,34 @@ export default function ReelModal({
         >
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
         </video>
+
+        {/* Instagram-style overlays — gradient at bottom for text readability,
+            category pill top-left, title + Go to article at bottom-left. */}
+        {reel.category && (
+          <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm">
+            {reel.category}
+          </span>
+        )}
+
+        {(reel.title || reel.href) && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-5 pb-6 pt-16">
+            {reel.title && (
+              <h3 className="font-poppins text-2xl font-black uppercase leading-[0.95] text-white md:text-3xl">
+                {reel.title}
+              </h3>
+            )}
+            {reel.href && (
+              <a
+                href={reel.href}
+                onClick={(e) => e.stopPropagation()}
+                className="pointer-events-auto mt-3 inline-flex items-center gap-2 font-montserrat text-[11px] font-bold uppercase tracking-[0.25em] text-white transition-colors hover:text-red"
+              >
+                Read Article
+                <span className="inline-block">&rarr;</span>
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

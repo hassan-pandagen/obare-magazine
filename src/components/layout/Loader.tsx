@@ -29,13 +29,13 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       },
     });
 
-    // Progress bar — minimum duration to keep loader visible but not block LCP
+    // Progress bar — long enough to be perceptually visible
     tl.to(
       { val: 0 },
       {
         val: 100,
-        duration: 0.5,
-        ease: "power2.out",
+        duration: 1.6,
+        ease: "power1.inOut",
         onUpdate: function () {
           const val = Math.round(this.targets()[0].val);
           setProgress(val);
