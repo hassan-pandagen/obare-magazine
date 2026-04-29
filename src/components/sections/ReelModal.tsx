@@ -150,17 +150,11 @@ export default function ReelModal({
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-2 backdrop-blur-md md:p-6"
       onClick={onClose}
     >
+      {/* Drag handle — mobile only */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-4 z-20 h-1 w-12 -translate-x-1/2 rounded-full bg-white/30 md:hidden"
       />
-      <button
-        onClick={onClose}
-        className="absolute right-5 top-5 z-20 hidden h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-red md:right-8 md:top-8 md:flex"
-        aria-label="Close"
-      >
-        <span className="text-2xl leading-none">&times;</span>
-      </button>
       <div
         ref={frameRef}
         className="relative h-full max-h-[96vh] overflow-hidden rounded-xl bg-black will-change-transform md:max-h-[92vh]"
@@ -182,8 +176,18 @@ export default function ReelModal({
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
         </video>
 
-        {/* Instagram-style overlays — gradient at bottom for text readability,
-            category pill top-left, title + Go to article at bottom-left. */}
+        {/* Close button — inside the video, top-right, all screen sizes */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="pointer-events-auto absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-red"
+          aria-label="Close"
+        >
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M1 1L13 13M13 1L1 13" />
+          </svg>
+        </button>
+
+        {/* Category pill top-left */}
         {reel.category && (
           <span className="pointer-events-none absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm">
             {reel.category}

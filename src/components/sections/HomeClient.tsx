@@ -73,11 +73,8 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
       const sections = gsap.utils.toArray<HTMLElement>(".folder-section");
 
       const isMobile = window.innerWidth < 768;
-      const tiltAngle = isMobile ? 4 : 14;
-      // Mobile uses top-center pivot — the corner-pivot swings the bottom of
-      // the card off-screen on narrow viewports and leaves a black wedge.
-      // Top-center keeps both edges balanced inside the viewport.
-      const tiltOrigin = isMobile ? "50% 0%" : "0% 0%";
+      const tiltAngle = 14;
+      const tiltOrigin = "0% 0%";
 
       const playOnly = (target: HTMLVideoElement | null) => {
         sections.forEach((s) => {
@@ -138,7 +135,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
           }
         }
 
-        if (card && i > 0) {
+        if (card && i > 0 && !isMobile) {
           gsap.fromTo(
             card,
             { rotationZ: tiltAngle, transformOrigin: tiltOrigin, force3D: true },
@@ -151,10 +148,6 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
                 start: "top bottom",
                 end: "top top",
                 scrub: 0.3,
-                // Recompute start/end after fonts/images load and after the
-                // mobile URL bar finishes its first collapse. Without this,
-                // mobile triggers were locking in stale positions and the
-                // rotation appeared to never run.
                 invalidateOnRefresh: true,
               },
             }
@@ -183,7 +176,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
           {projects.map((project, i) => (
             <section
               key={project.id}
-              className="folder-section sticky top-0 h-[110vh] w-full overflow-x-hidden md:h-[130vh]"
+              className="folder-section sticky top-0 h-[100svh] w-full md:h-[130vh]"
               style={{ zIndex: i + 10 }}
             >
               <FolderSection
