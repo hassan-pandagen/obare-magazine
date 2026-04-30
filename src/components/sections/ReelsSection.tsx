@@ -109,14 +109,14 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-black md:h-[300vh]"
+      className="relative w-full bg-black md:h-[220vh]"
     >
       {/* ===== DESKTOP LAYOUT — sticky scroll + domino animation (unchanged) ===== */}
       {/* items-start + top padding: items-center was clipping the heading on
          laptops where heading + 9:16 grid + footer link totalled > 100vh, so
          the top of "THE MOVING PICTURE" was disappearing above the sticky
          viewport's overflow-hidden boundary. */}
-      <div className="sticky top-0 hidden h-screen w-full overflow-hidden md:flex md:items-start md:pt-28 lg:pt-32">
+      <div className="sticky top-0 hidden h-screen w-full overflow-hidden md:flex md:items-start md:pt-16 lg:pt-20">
         <div className="mx-auto w-full max-w-[1600px] px-10 lg:px-16">
           <div className="mb-10 lg:mb-12">
             <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-red">
@@ -205,6 +205,13 @@ export default function ReelsSection({ reels = [] }: { reels?: Reel[] }) {
               <span className="text-xs">&rarr;</span>
             </a>
           </div>
+          <a
+            href="/reels"
+            className="group inline-flex items-center gap-2 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white/50 transition-colors hover:text-white"
+          >
+            View All Videos
+            <span className="inline-block transition-transform duration-500 group-hover:translate-x-1">&rarr;</span>
+          </a>
         </div>
       </div>
 

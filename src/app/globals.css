@@ -145,6 +145,18 @@ body {
   font-size: 1.05em;
 }
 
+/* Kill Chrome autofill yellow/white background on all inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0A0A0A inset !important;
+  -webkit-text-fill-color: #F5F5F0 !important;
+  caret-color: #F5F5F0;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

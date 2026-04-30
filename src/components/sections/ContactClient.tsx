@@ -61,6 +61,7 @@ export default function ContactClient({
     // TODO: wire to API route / email provider
     await new Promise((r) => setTimeout(r, 1000));
     setStatus("sent");
+    setForm({ name: "", email: "", department: "general", message: "" });
   };
 
   return (

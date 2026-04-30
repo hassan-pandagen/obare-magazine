@@ -144,8 +144,8 @@ export default function Navbar() {
     // 2-bar X: top bar rotates to "/", bottom to "\", both converge to the center line.
     // Gap between bars is 7px + 3px bar height = 10px → converge by 5px each.
     if (isMobileOpen) {
-      gsap.to(top, { rotate: 45, y: 5, duration: 0.3, ease: "power2.inOut" });
-      gsap.to(bot, { rotate: -45, y: -5, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(top, { rotate: 45, y: 6, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(bot, { rotate: -45, y: -6, duration: 0.3, ease: "power2.inOut" });
     } else {
       gsap.to(top, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
       gsap.to(bot, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
@@ -190,47 +190,90 @@ export default function Navbar() {
           isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
-        <div className="flex items-center justify-between px-4 py-3 md:px-10 md:py-5 lg:px-14">
+        <div className="flex items-center justify-between px-0 py-1 md:px-8 md:py-5 lg:px-10">
           {/* Logo — uploaded image if available, else OBARE wordmark fallback */}
           <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
             {logo?.url ? (
               <img
                 src={logo.url}
                 alt={logo.alt ?? "OBARE"}
-                className="h-7 w-auto md:h-8"
+                className="h-14 w-auto md:h-16"
+                style={{ filter: "brightness(0) invert(1)" }}
                 draggable={false}
               />
             ) : (
               <span
-                className="font-archivo text-lg font-bold tracking-[0.25em] text-white md:text-xl"
-                style={{ fontStretch: "125%" }}
+                className="font-archivo text-[2.2rem] font-black tracking-[0.18em] text-white md:text-[2.8rem]"
+                style={{ fontStretch: "125%", lineHeight: 1 }}
               >
                 OBARE
               </span>
             )}
           </a>
 
-          {/* Right-side controls — search + hamburger. The inline desktop link
-             list was removed in favour of a single hamburger trigger so the
-             top of the page stays minimal (per editorial-mag art direction);
-             the same fullscreen menu now opens on every breakpoint. */}
-          <div className="relative z-50 flex items-center gap-3">
+          {/* Desktop nav links */}
+          <div className="relative z-50 hidden items-center lg:flex">
+            {NAV_LINKS.map((link, i) => {
+              const isActive = link.href ? pathname === link.href : false;
+              const cls = cn(
+                "font-archivo text-[13px] font-bold uppercase tracking-[0.15em] transition-colors duration-200",
+                isActive ? "text-red" : "text-white/70 hover:text-white"
+              );
+              const separator = i < NAV_LINKS.length - 1 ? (
+                <span key={`sep-${i}`} className="mx-3 text-white/30 text-sm select-none">/</span>
+              ) : null;
+              const el = link.modal ? (
+                <button
+                  key={link.label}
+                  type="button"
+                  onClick={() => setOpenModal(link.modal!)}
+                  className={cls}
+                  style={{ fontStretch: "125%" }}
+                >
+                  {isActive && <span className="mr-2 inline-block h-2 w-2 rounded-full bg-red align-middle" />}
+                  {link.label}
+                </button>
+              ) : (
+                <a key={link.label} href={link.href} className={cls} style={{ fontStretch: "125%" }}>
+                  {isActive && <span className="mr-2 inline-block h-2 w-2 rounded-full bg-red align-middle" />}
+                  {link.label}
+                </a>
+              );
+              return (
+                <span key={link.label} className="flex items-center">
+                  {el}
+                  {separator}
+                </span>
+              );
+            })}
+            <span className="mx-3 text-white/30 text-sm select-none">/</span>
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red md:h-10 md:w-10"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white/70 transition-all hover:border-red hover:text-red"
+            >
+              <SearchIcon />
+            </button>
+          </div>
+
+          {/* Mobile/tablet: search + hamburger */}
+          <div className="relative z-50 flex items-center gap-3 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red"
             >
               <SearchIcon />
             </button>
             <button
-              className="flex h-10 w-10 flex-col items-center justify-center gap-[7px]"
+              className="flex flex-col items-end justify-center gap-[9px] p-2"
               onClick={() => setIsMobileOpen((prev) => !prev)}
               aria-label="Toggle menu"
             >
-              <span ref={hamburgerTopRef} className="block h-[3px] w-8 origin-center bg-white" />
-              <span ref={hamburgerBotRef} className="block h-[3px] w-8 origin-center bg-white" />
-              {/* Unused in the 2-bar design; kept so GSAP refs resolve cleanly. */}
+              <span ref={hamburgerTopRef} className="block h-[4px] w-12 origin-center rounded-none bg-white" />
+              <span ref={hamburgerBotRef} className="block h-[4px] w-12 origin-center rounded-none bg-white" />
               <span ref={hamburgerMidRef} className="hidden" />
             </button>
           </div>

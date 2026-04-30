@@ -210,7 +210,7 @@ export default function ArticleVideoPlayer({
         {/* Backdrop — fades in when expanded */}
         <div
           ref={backdropRef}
-          className="fixed inset-0 z-[99] bg-black/95 backdrop-blur-md"
+          className="fixed inset-0 z-[99] bg-black/95"
           style={{
             opacity: 0,
             pointerEvents: expanded ? "auto" : "none",
@@ -232,6 +232,7 @@ export default function ArticleVideoPlayer({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
+          {/* Mobile swipe handle */}
           {expanded && (
             <div
               aria-hidden
@@ -239,71 +240,79 @@ export default function ArticleVideoPlayer({
             />
           )}
 
-          <video
-            ref={videoRef}
-            key={effectiveSrc}
-            src={effectiveSrc}
-            poster={effectivePoster}
-            playsInline
-            onLoadedMetadata={onMetadata}
-            onLoadedData={onMetadata}
-            onCanPlay={onMetadata}
-            preload="metadata"
-            onEnded={close}
-            className={
-              expanded
-                ? "max-h-full max-w-full object-contain"
-                : `absolute inset-0 h-full w-full object-contain transition-[filter] duration-500 ${
-                    playing ? "blur-0" : "blur-[6px] scale-105"
-                  }`
-            }
-            style={expanded ? { aspectRatio, width: "auto", height: "auto" } : undefined}
-          >
-            <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
-          </video>
+          {expanded ? (
+            /* Expanded: video + X button in a shared relative wrapper so X stays on the video */
+            <div className="relative flex items-center justify-center max-h-full max-w-full">
+              <video
+                ref={videoRef}
+                key={effectiveSrc}
+                src={effectiveSrc}
+                poster={effectivePoster}
+                playsInline
+                onLoadedMetadata={onMetadata}
+                onLoadedData={onMetadata}
+                onCanPlay={onMetadata}
+                preload="metadata"
+                onEnded={close}
+                className="max-h-screen max-w-full object-contain"
+                style={{ aspectRatio, width: "auto", height: "auto" }}
+              >
+                <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+              </video>
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close video"
+                className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-red"
+              >
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M1 1L13 13M13 1L1 13" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <>
+              <video
+                ref={videoRef}
+                key={effectiveSrc}
+                src={effectiveSrc}
+                poster={effectivePoster}
+                playsInline
+                onLoadedMetadata={onMetadata}
+                onLoadedData={onMetadata}
+                onCanPlay={onMetadata}
+                preload="metadata"
+                onEnded={close}
+                className={`absolute inset-0 h-full w-full object-contain transition-[filter] duration-500 ${playing ? "blur-0" : "blur-[6px] scale-105"}`}
+              >
+                <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+              </video>
 
-          {/* Inline PLAY overlay */}
-          {!playing && !expanded && (
-            <button
-              type="button"
-              onClick={play}
-              aria-label="Play video"
-              className="group absolute inset-0 flex items-center justify-center"
-            >
-              <div className="absolute inset-0 bg-black/30 transition-opacity duration-300 group-hover:bg-black/20" />
-
-              <Bracket position="tl" />
-              <Bracket position="tr" />
-              <Bracket position="bl" />
-              <Bracket position="br" />
-
-              <span className="relative z-10 flex flex-col items-center gap-5 transition-transform duration-500 group-hover:scale-[1.04]">
-                <span className="relative flex h-24 w-24 items-center justify-center rounded-full border-[2.5px] border-white/90 backdrop-blur-[1px] transition-all duration-500 group-hover:border-red group-hover:bg-red md:h-28 md:w-28 lg:h-32 lg:w-32">
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 rounded-full border border-white/40 opacity-0 transition-all duration-700 group-hover:scale-[1.3] group-hover:opacity-100"
-                  />
-                  <PlayTriangle />
-                </span>
-                <span className="font-archivo text-xs font-bold uppercase tracking-[0.5em] text-white/90 transition-colors duration-500 group-hover:text-white md:text-sm">
-                  Play
-                </span>
-              </span>
-            </button>
-          )}
-
-          {/* Close button — always visible when expanded. Mobile also supports swipe-down. */}
-          {expanded && (
-            <button
-              type="button"
-              onClick={close}
-              aria-label="Close video"
-              className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/60 text-white backdrop-blur-sm transition-colors hover:border-red hover:text-red md:right-6 md:top-6"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M1 1L13 13M13 1L1 13" />
-              </svg>
-            </button>
+              {/* Inline PLAY overlay */}
+              {!playing && (
+                <button
+                  type="button"
+                  onClick={play}
+                  aria-label="Play video"
+                  className="group absolute inset-0 flex items-center justify-center"
+                >
+                  <div className="absolute inset-0 bg-black/30 transition-opacity duration-300 group-hover:bg-black/20" />
+                  <Bracket position="tl" />
+                  <Bracket position="tr" />
+                  <Bracket position="bl" />
+                  <Bracket position="br" />
+                  <span className="relative z-10 flex flex-col items-center gap-5 transition-transform duration-500 group-hover:scale-[1.04]">
+                    <span className="relative flex h-24 w-24 items-center justify-center rounded-full border-[2.5px] border-white/90 backdrop-blur-[1px] transition-all duration-500 group-hover:border-red group-hover:bg-red md:h-28 md:w-28 lg:h-32 lg:w-32">
+                      <span aria-hidden className="absolute inset-0 rounded-full border border-white/40 opacity-0 transition-all duration-700 group-hover:scale-[1.3] group-hover:opacity-100" />
+                      <PlayTriangle />
+                    </span>
+                    <span className="font-archivo text-xs font-bold uppercase tracking-[0.5em] text-white/90 transition-colors duration-500 group-hover:text-white md:text-sm">
+                      Play
+                    </span>
+                  </span>
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

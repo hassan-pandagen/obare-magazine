@@ -29,8 +29,9 @@ export default function HeroDeckBox({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=80%",
+          end: "bottom top",
           scrub: 0.8,
+          invalidateOnRefresh: true,
         },
       });
     },

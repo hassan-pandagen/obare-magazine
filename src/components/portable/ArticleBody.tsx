@@ -6,14 +6,20 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { urlFor } from "@/sanity/imageUrl";
-import ArticleVideoPlayer from "./ArticleVideoPlayer";
 
 function InlineReel({ src, poster, caption }: { src: string; poster?: string; caption?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(true);
   const [muted, setMuted] = useState(true);
   const [controlsVisible, setControlsVisible] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState<string>("9/16");
   const hideTimer = useRef<number | null>(null);
+
+  const handleMetadata = () => {
+    const v = videoRef.current;
+    if (!v?.videoWidth || !v.videoHeight) return;
+    setAspectRatio(`${v.videoWidth}/${v.videoHeight}`);
+  };
 
   const showControls = () => {
     setControlsVisible(true);
@@ -59,8 +65,8 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
   return (
     <figure className="my-10 flex flex-col items-center">
       <div
-        className="relative w-full max-w-xs cursor-pointer overflow-hidden rounded-xl bg-black"
-        style={{ aspectRatio: "9/16" }}
+        className={`relative mx-auto w-full cursor-pointer overflow-hidden rounded-xl bg-black ${(() => { const [w, h] = aspectRatio.split("/").map(Number); return h > w ? "max-w-[320px]" : "max-w-2xl"; })()}`}
+        style={{ aspectRatio }}
         onClick={handleTap}
       >
         <video
@@ -70,6 +76,7 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
           loop
           muted
           playsInline
+          onLoadedMetadata={handleMetadata}
           className="h-full w-full object-cover"
         />
 
@@ -223,18 +230,10 @@ const components: PortableTextComponents = {
       );
     },
 
-    // Inline video — custom OBARE player with big PLAY overlay + sound + auto-pause on scroll-out
+    // Inline video — same Instagram-style player, aspect ratio detected from the video itself
     inlineVideo: ({ value }) => {
       if (!value?.fileUrl) return null;
-      return (
-        <ArticleVideoPlayer
-          src={value.fileUrl}
-          srcMobile={value.fileMobileUrl}
-          poster={value.posterUrl}
-          posterMobile={value.posterMobileUrl}
-          caption={value.caption}
-        />
-      );
+      return <InlineReel src={value.fileUrl} poster={value.posterUrl} caption={value.caption} />;
     },
 
     // Inline reel (9:16 portrait) — Instagram-style tap controls

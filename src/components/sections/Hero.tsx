@@ -114,7 +114,7 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       {/* Background image */}
       <div
         ref={bgRef}
-        className="hero-bg-responsive absolute inset-0 bg-cover bg-center"
+        className="hero-bg-responsive absolute inset-0 bg-cover bg-[center_center]"
       />
       <div className="absolute inset-0 bg-black/30" />
 
@@ -138,7 +138,7 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full flex-col items-start justify-end px-3 pb-[12vh] md:px-10 lg:px-16">
+      <div className="relative z-10 flex h-full flex-col items-center justify-end px-3 pb-[12vh] md:px-10 lg:px-16">
         <h1
           ref={headingRef}
           className="overflow-hidden whitespace-nowrap font-archivo text-[13vw] font-bold leading-[0.85] tracking-[0.05em] text-white md:text-[16vw] lg:text-[14vw]"
@@ -155,10 +155,6 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
           ))}
         </h1>
 
-        <span
-          ref={underlineRef}
-          className="mt-2 block h-[3px] w-32 bg-red md:h-[4px] md:w-48"
-        />
 
         <p
           ref={subtitleRef}

@@ -81,7 +81,7 @@ export default function SubmissionsClient({
             >
               Your Work.
               <br />
-              <span className="text-red">Our Platform.</span>
+              <span className="text-red">On Obare Magazine.</span>
             </h1>
             <p className="mt-8 max-w-lg font-montserrat text-base leading-relaxed text-white/55 md:text-lg">
               We are always looking for photographers, models, and writers to share with our community.
@@ -97,12 +97,12 @@ export default function SubmissionsClient({
                 {
                   num: "01",
                   title: "Original",
-                  body: "Your work, your voice. No AI-generated content without clear disclosure.",
+                  body: "Your work, your voice. No AI-generated content.",
                 },
                 {
                   num: "02",
                   title: "Quality",
-                  body: "Best 5–10 images. 600–2,000 words for editorial. Under 5 mins for video.",
+                  body: "Best 5–10 images. 600–2,000 words for editorial.",
                 },
                 {
                   num: "03",
@@ -150,10 +150,6 @@ export default function SubmissionsClient({
                   <h2 className="font-poppins text-4xl font-black uppercase leading-[0.9] md:text-5xl">
                     Ready to be seen?
                   </h2>
-                  <p className="mt-6 font-montserrat text-sm leading-relaxed text-white/50">
-                    Fill out the form and our editorial team will review your pitch within 2–3 weeks.
-                    We reply to every submission that&apos;s a genuine fit.
-                  </p>
                 </div>
 
                 <div className="mt-12 space-y-6 border-t border-white/10 pt-10">
@@ -245,8 +241,7 @@ export default function SubmissionsClient({
                       Files (images, PDFs, video links) can be sent to{" "}
                       <a href="mailto:editorial@ObareMag.com" className="text-white font-semibold underline hover:text-red transition-colors">
                         editorial@ObareMag.com
-                      </a>{" "}
-                      with your submission title as the subject.
+                      </a>
                     </p>
 
                     <SubmitButton disabled={status === "sending"}>

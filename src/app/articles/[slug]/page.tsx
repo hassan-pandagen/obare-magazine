@@ -78,71 +78,75 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
 
           {/* Red curtain — slides up on scroll revealing the photo beneath.
               Clipped by the outer overflow-hidden so it never bleeds outside the box. */}
-          <div className="absolute right-0 bottom-0 top-24 left-[12%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
-            <HeroDeckBox className="absolute inset-0">
-              {/* Red background — semi-transparent so photo shows through */}
-              <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: "rgba(255,57,30,0.72)" }} />
+          {/* Red panel — covers right 55% full height on mobile, large portion on desktop */}
+          <div className="absolute bottom-0 right-0 top-0 left-0 overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
+            <HeroDeckBox className="absolute bottom-0 left-0 right-0 top-[25%] md:top-0">
+              {/* Red background */}
+              <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: "rgba(255,57,30,0.82)" }} />
 
               {/* Camera UI chrome */}
               <div className="pointer-events-none absolute inset-0 text-white">
-                <div className="absolute left-4 top-4 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:left-6 md:top-6 md:text-xs">
-                  <span className="inline-block h-2 w-2 rounded-full bg-white" />
+                <div className="absolute left-3 top-3 flex items-center gap-1.5 font-archivo text-[9px] font-bold tracking-[0.12em] md:left-6 md:top-6 md:text-xs">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
                   2026.4.21
                   <span className="opacity-70">03:50 PM</span>
                 </div>
-                <div className="absolute right-4 top-4 rounded-sm bg-black/20 px-2 py-0.5 font-archivo text-[10px] font-bold tracking-[0.15em] md:right-6 md:top-6 md:text-xs">
+                <div className="absolute right-3 top-3 rounded-sm bg-black/20 px-1.5 py-0.5 font-archivo text-[9px] font-bold tracking-[0.12em] md:right-6 md:top-6 md:text-xs">
                   200-300
                 </div>
-                <div className="absolute bottom-4 left-4 flex items-center gap-3 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-6 md:left-6 md:text-xs">
+                <div className="absolute bottom-16 left-3 flex items-center gap-2 font-archivo text-[9px] font-bold tracking-[0.12em] md:bottom-6 md:left-6 md:text-xs">
                   <span>F. 3.2</span>
-                  <span className="rounded-sm bg-white/90 px-1.5 py-0.5 text-black">ISO</span>
+                  <span className="rounded-sm bg-white/90 px-1 py-0.5 text-black text-[8px]">ISO</span>
                   <span>800</span>
                 </div>
-                <div className="absolute bottom-4 right-4 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-6 md:right-6 md:text-xs">
-                  <span className="rounded-sm bg-black/20 px-1.5 py-0.5">RAW</span>
+                <div className="absolute bottom-16 right-3 flex items-center gap-1.5 font-archivo text-[9px] font-bold tracking-[0.12em] md:bottom-6 md:right-6 md:text-xs">
+                  <span className="rounded-sm bg-black/20 px-1 py-0.5">RAW</span>
                   <span>3/10</span>
                 </div>
               </div>
 
-              {/* Headline */}
-              <div className="absolute left-0 right-0 top-14 px-6 md:top-20 md:px-10 lg:top-24 lg:px-14">
+              {/* Headline + arrow — packed together in the center-bottom area */}
+              <div className="absolute inset-0 flex flex-col justify-center px-5 md:px-10 lg:px-14">
                 {article.category && (
-                  <span className="mb-3 block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-white/70 md:text-xs">
+                  <span className="mb-3 block font-montserrat text-[9px] font-bold uppercase tracking-[0.45em] text-white/60 md:mb-4 md:text-[10px]">
                     {article.category}
                     {article.modelName && (
-                      <span className="ml-3 font-normal text-white/50">
-                        | By {article.modelName}
-                      </span>
+                      <span className="ml-2 font-normal text-white/40">· {article.modelName}</span>
                     )}
                   </span>
                 )}
                 <h1
-                  className="font-poppins font-black uppercase leading-[0.9] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.3)] max-w-[85%]"
-                  style={{ fontSize: "clamp(1.75rem, 4vw, 4rem)" }}
+                  className="font-poppins font-black uppercase text-white"
+                  style={{
+                    fontSize: "clamp(2rem, 8.5vw, 4.5rem)",
+                    lineHeight: 0.88,
+                    letterSpacing: "-0.02em",
+                    fontWeight: 900,
+                  }}
                 >
-                  {article.title}
+                  {article.title.replace(/\*\*/g, "")}
                 </h1>
-              </div>
 
-              {/* Scroll-down arrow */}
-              <a
-                href="#article-body"
-                aria-label="Scroll to article"
-                className="group absolute bottom-16 left-6 outline-none focus:outline-none md:bottom-20 md:left-10 lg:bottom-24 lg:left-14"
-              >
-                <svg
-                  viewBox="0 0 60 160"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-[100px] w-[42px] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-colors group-hover:text-white md:h-[140px] md:w-[58px] lg:h-[180px] lg:w-[74px]"
-                  aria-hidden
+                {/* Arrow just below title */}
+                <a
+                  href="#article-body"
+                  aria-label="Scroll to article"
+                  className="group mt-6 outline-none focus:outline-none self-start md:mt-10"
                 >
-                  <polyline points="30,10 30,118 2,88 30,118 58,88" />
-                </svg>
-              </a>
+                  <svg
+                    viewBox="0 0 60 160"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-[70px] w-[28px] text-white/80 transition-opacity group-hover:opacity-60 md:h-[140px] md:w-[58px] lg:h-[180px] lg:w-[74px]"
+                    aria-hidden
+                  >
+                    <polyline points="30,10 30,118 2,88 30,118 58,88" />
+                  </svg>
+                </a>
+              </div>
             </HeroDeckBox>
           </div>
         </section>
