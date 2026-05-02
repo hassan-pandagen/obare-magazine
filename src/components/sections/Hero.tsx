@@ -121,28 +121,23 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       {/* Red accent */}
       <div
         className="absolute bottom-0 left-0 right-0 z-[5]"
-        style={{
-          height: "50%",
-          top: "53%",
-          mixBlendMode: "multiply",
-        }}
+        style={{ height: "50%", top: "53%" }}
       >
-        <img
-          src="/images/red-accent.webp"
-          alt=""
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
-          className="h-full w-full object-cover"
-        />
+        <div className="absolute inset-0" style={{ backgroundColor: "rgba(187,17,4,0.80)" }} />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-end px-3 pb-[12vh] md:px-10 lg:px-16">
+      <div className="relative z-10 flex h-full flex-col items-center justify-end pb-14 md:pb-16">
         <h1
           ref={headingRef}
-          className="overflow-hidden whitespace-nowrap font-archivo text-[13vw] font-bold leading-[0.85] tracking-[0.05em] text-white md:text-[16vw] lg:text-[14vw]"
-          style={{ perspective: "800px", fontStretch: "125%" }}
+          className="overflow-hidden whitespace-nowrap font-archivo font-bold leading-[0.85] tracking-[0.02em] text-white w-full text-center"
+          style={{
+            perspective: "800px",
+            fontStretch: "125%",
+            fontSize: "clamp(4.5rem, 18vw, 18vw)",
+            transform: "scaleX(1.18)",
+            transformOrigin: "center bottom",
+          }}
         >
           {headingText.split("").map((char, i) => (
             <span
@@ -155,10 +150,9 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
           ))}
         </h1>
 
-
         <p
           ref={subtitleRef}
-          className="mt-5 w-full text-center font-montserrat text-[15px] font-bold uppercase tracking-[0.18em] text-white md:mt-7 md:text-xl md:tracking-[0.22em] lg:text-2xl"
+          className="hidden"
           style={{ lineHeight: "1.35" }}
         >
           {(subheadline ?? "My visual universe is surrealistic, colorful,\nand dark at the same time.")
@@ -191,10 +185,7 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
                 className="font-archivo text-sm font-bold uppercase tracking-[0.35em] text-white/85 md:text-base"
                 style={{ fontStretch: "125%" }}
               >
-                See What&apos;s Real
-              </span>
-              <span aria-hidden className="ml-3 font-archivo text-sm font-bold text-red md:ml-4 md:text-base">
-                &darr;
+                The Magazine That&apos;s Real
               </span>
               <span className="mx-5 h-1.5 w-1.5 rounded-full bg-red md:mx-7" />
             </span>

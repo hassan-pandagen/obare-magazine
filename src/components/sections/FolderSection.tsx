@@ -259,7 +259,7 @@ export default function FolderSection({
               </span>
             </div>
           )}
-          <div className="pointer-events-none absolute bottom-10 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
+          <div className="pointer-events-none absolute bottom-20 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
             <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white md:text-[8vw] lg:text-[7vw]">
               <RedEmphasis>{title}</RedEmphasis>
             </h2>
@@ -270,7 +270,7 @@ export default function FolderSection({
             )}
             <a
               href={href}
-              className="group pointer-events-auto relative mt-5 hidden items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7 md:inline-flex"
+              className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7"
             >
               <span className="relative">
                 Go Bare

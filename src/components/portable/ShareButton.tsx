@@ -56,8 +56,8 @@ export default function ShareButton({ title }: { title: string }) {
         className="flex items-center gap-3 rounded-full border border-white/20 bg-transparent px-7 py-3 font-montserrat text-[11px] font-bold uppercase tracking-[0.3em] text-white transition-all hover:border-white/60 hover:bg-white/5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
         </svg>
         Share This Article
       </button>

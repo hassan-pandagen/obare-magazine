@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-red: #FF391E;
+  --color-red: #e60303;
   --color-black: #0A0A0A;
   --color-white: #F5F5F0;
   --color-grey: #888888;
@@ -68,7 +68,7 @@ body {
   100% { transform: translateX(-50%); }
 }
 .hero-ticker {
-  animation: hero-ticker-anim 15s linear infinite;
+  animation: hero-ticker-anim 25s linear infinite;
 }
 
 /* Editorial grid Swiper pagination */

@@ -65,8 +65,8 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
   return (
     <figure className="my-10 flex flex-col items-center">
       <div
-        className={`relative mx-auto w-full cursor-pointer overflow-hidden rounded-xl bg-black ${(() => { const [w, h] = aspectRatio.split("/").map(Number); return h > w ? "max-w-[320px]" : "max-w-2xl"; })()}`}
-        style={{ aspectRatio }}
+        className="relative mx-auto w-full cursor-pointer overflow-hidden rounded-2xl bg-black"
+        style={{ aspectRatio, maxWidth: (() => { const [w, h] = aspectRatio.split("/").map(Number); return h > w ? "400px" : "100%"; })() }}
         onClick={handleTap}
       >
         <video

@@ -80,6 +80,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Prevent iOS Safari pinch-zoom — Safari ignores user-scalable=no since iOS 10 */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive: false });
+          document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, { passive: false });
+          document.addEventListener('gestureend', function(e){ e.preventDefault(); }, { passive: false });
+        `}} />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link

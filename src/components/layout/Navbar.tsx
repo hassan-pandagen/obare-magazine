@@ -257,16 +257,8 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Mobile/tablet: search + hamburger */}
+          {/* Mobile/tablet: hamburger only */}
           <div className="relative z-50 flex items-center gap-3 lg:hidden">
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              aria-label="Search"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all hover:border-red hover:text-red"
-            >
-              <SearchIcon />
-            </button>
             <button
               className="flex flex-col items-end justify-center gap-[9px] p-2"
               onClick={() => setIsMobileOpen((prev) => !prev)}
@@ -283,7 +275,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       <div
         ref={mobileMenuRef}
-        className="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-5 bg-black"
+        className="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-3 bg-black"
         style={{ clipPath: "inset(0 0 100% 0)" }}
       >
         {NAV_LINKS.map((link) => {
@@ -328,20 +320,12 @@ export default function Navbar() {
         })}
         <button
           type="button"
-          onClick={() => {
-            setIsMobileOpen(false);
-            setSearchOpen(true);
-          }}
+          onClick={() => { setIsMobileOpen(false); setSearchOpen(true); }}
           aria-label="Search articles"
-          className="mobile-link mt-6 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 text-white transition-all hover:border-red hover:text-red"
+          className="mobile-link mt-2 flex h-14 w-14 items-center justify-center rounded-full border border-white/30 text-white transition-all hover:border-red hover:text-red"
         >
           <SearchIcon large />
         </button>
-        <div className="mt-8">
-          <span className="font-archivo text-sm uppercase tracking-widest text-white/40">
-            info@ObareMag.com
-          </span>
-        </div>
       </div>
 
       {/* Search overlay */}
