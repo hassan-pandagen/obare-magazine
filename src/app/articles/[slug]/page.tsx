@@ -76,13 +76,17 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
 
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
-          {/* Red curtain — slides up on scroll revealing the photo beneath.
-              Clipped by the outer overflow-hidden so it never bleeds outside the box. */}
+          {/* Red multiply overlay — sits directly on photo, outside GSAP stacking context */}
+          <div
+            className="pointer-events-none absolute bottom-0 right-0 top-[32%] left-[10%] md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]"
+            style={{ backgroundColor: "#bb1104", mixBlendMode: "multiply", opacity: 0.9 }}
+          />
+
           {/* Red panel — covers right 55% full height on mobile, large portion on desktop */}
           <div className="absolute bottom-0 right-0 top-0 left-[10%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
             <HeroDeckBox className="absolute bottom-0 left-0 right-0 top-[32%] md:top-0">
-              {/* Red background */}
-              <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: "rgba(230,3,3,0.88)" }} />
+              {/* No background — color from sibling multiply overlay */}
+              <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: "transparent" }} />
 
               {/* Camera UI chrome */}
               <div className="pointer-events-none absolute inset-0 text-white">
@@ -139,14 +143,14 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   viewBox="0 0 24 40"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="4"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="h-[80px] w-[36px] text-white transition-opacity group-hover:opacity-60 md:h-[120px] md:w-[50px]"
                   aria-hidden
                 >
-                  <line x1="12" y1="2" x2="12" y2="34" />
-                  <polyline points="4,26 12,34 20,26" />
+                  <line x1="12" y1="2" x2="12" y2="30" />
+                  <polyline points="2,20 12,32 22,20" />
                 </svg>
               </a>
             </HeroDeckBox>

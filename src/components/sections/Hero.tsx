@@ -121,10 +121,8 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       {/* Red accent */}
       <div
         className="absolute bottom-0 left-0 right-0 z-[5]"
-        style={{ height: "50%", top: "53%" }}
-      >
-        <div className="absolute inset-0" style={{ backgroundColor: "rgba(187,17,4,0.80)" }} />
-      </div>
+        style={{ height: "50%", top: "53%", backgroundColor: "#bb1104", mixBlendMode: "multiply", opacity: 0.9 }}
+      />
 
       {/* Content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-end pb-14 md:pb-16">
