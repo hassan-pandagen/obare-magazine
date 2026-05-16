@@ -36,6 +36,7 @@ export default function FolderSection({
   const cardRef = useRef<HTMLDivElement>(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   // Instagram-reels-style mobile controls: hidden until the user taps the
   // video, then fade in the center for 2.5s before auto-hiding.
   const [controlsVisible, setControlsVisible] = useState(false);
@@ -103,6 +104,22 @@ export default function FolderSection({
     return () => cancelAnimationFrame(id);
   }, [isDesktop]);
 
+  // Lazy-load video src only when card is within ~1 viewport from being visible
+  useEffect(() => {
+    if (!videoSrc || !cardRef.current || shouldLoadVideo) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadVideo(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "100% 0px" }
+    );
+    obs.observe(cardRef.current);
+    return () => obs.disconnect();
+  }, [videoSrc, shouldLoadVideo]);
+
   const hotspotPos =
     imageHotspot && typeof imageHotspot.x === "number" && typeof imageHotspot.y === "number"
       ? `${imageHotspot.x * 100}% ${imageHotspot.y * 100}%`
@@ -113,12 +130,13 @@ export default function FolderSection({
       return (
         <video
           ref={videoRef}
-          src={videoSrc}
+          src={shouldLoadVideo ? videoSrc : undefined}
           loop
           muted
           playsInline
           autoPlay
-          preload="auto"
+          preload="none"
+          poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
           className="folder-video absolute inset-0 h-full w-full object-cover"
         >
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />

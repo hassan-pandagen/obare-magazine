@@ -27,7 +27,7 @@ export default function AgeGate() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 px-6 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black px-6">
       <div className="w-full max-w-md text-center">
         <p className="font-montserrat text-[10px] font-bold uppercase tracking-[0.45em] text-red mb-6">
           Age Verification

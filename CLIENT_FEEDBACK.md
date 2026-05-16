@@ -150,10 +150,25 @@
 - [ ] 16. Article hero arrow thinner (same as #2 — already done).
 
 - [ ] 18. Cross-browser compatibility — iOS Safari, Android Chrome, Samsung Internet.
-  - Multiple files — browser audit
+  - Multiple files — browser audit needed via BrowserStack/TestGrid
 
 - [ ] 43. 301 redirects from SundayMorningView.com → Obaremag.com / obare.vercel.app.
   - File: `next.config.ts` — add redirects array
+
+## ACCESSIBILITY — Lighthouse round 1
+
+- [x] Removed `user-scalable=no` and `maximumScale: 1` — users can now zoom for accessibility.
+- [x] Duplicate "Go Bare" links: right-side mirror now `aria-hidden` + `tabIndex={-1}` so screen readers only announce one.
+- [~] Color contrast: small `text-[9px]`/`text-[10px]` red eyebrows fail WCAG AA on black bg (ratio ~4.0, needs 4.5). Design-intentional editorial style — keeping per client brand direction.
+
+## PERF — PageSpeed Optimizations (round 1)
+
+- [x] Hero bg: responsive srcSet (1200/1600/2000), q=75 instead of full 3300px image. ~270 KB saved.
+- [x] Logo: optimizeImg `?w=400&q=80&auto=format` instead of raw 7500x2520 PNG. Width/height attrs to fix CLS. ~119 KB saved.
+- [x] FolderSection videos: `preload="none"` + IntersectionObserver lazy-load (rootMargin 100%). Saves 27 MB on initial load.
+- [x] FooterCTA hover video: `preload="none"`.
+- [x] TypeScript target: ES2017 → ES2022 (less polyfill bloat).
+- [x] AgeGate: removed `backdrop-blur-sm`.
 
 ---
 

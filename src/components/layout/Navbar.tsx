@@ -195,11 +195,15 @@ export default function Navbar() {
           <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
             {logo?.url ? (
               <img
-                src={logo.url}
+                src={`${logo.url}?w=400&q=80&auto=format`}
                 alt={logo.alt ?? "OBARE"}
+                width={400}
+                height={134}
                 className="h-14 w-auto md:h-16"
                 style={{ filter: "brightness(0) invert(1)" }}
                 draggable={false}
+                loading="eager"
+                fetchPriority="high"
               />
             ) : (
               <span

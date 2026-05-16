@@ -202,9 +202,11 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
             }}
           />
 
-          {/* Vertical "Go Bare" CTAs on each side — desktop only */}
+          {/* Vertical "Go Bare" CTAs on each side — desktop only.
+              Right side is aria-hidden since it's a decorative mirror of the left link. */}
           <a
             href="/submissions"
+            aria-label="Go Bare — submit your work"
             className="absolute left-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 transition-colors hover:text-white lg:block"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg) translateY(50%)" }}
           >
@@ -212,6 +214,8 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           </a>
           <a
             href="/submissions"
+            aria-hidden="true"
+            tabIndex={-1}
             className="absolute right-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 transition-colors hover:text-white lg:block"
             style={{ writingMode: "vertical-rl" }}
           >

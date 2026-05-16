@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const platforms = [
   {
@@ -38,8 +38,11 @@ const platforms = [
 export default function ShareButton({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
 
-  const url = typeof window !== "undefined" ? window.location.href : "";
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(url);

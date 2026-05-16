@@ -163,7 +163,7 @@ export default function FooterCTA() {
                   muted
                   loop
                   playsInline
-                  preload="auto"
+                  preload="none"
                   className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
                   style={{ objectPosition: "center 25%" }}
                 >

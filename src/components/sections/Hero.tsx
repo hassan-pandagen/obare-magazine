@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { optimizeImg } from "@/lib/sanityImg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -116,11 +117,20 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: 
       {/* Background image — CMS image takes priority over static webp fallback */}
       {bgImage ? (
         <picture className="absolute inset-0">
-          {bgImageMobile && <source media="(max-width: 767px)" srcSet={bgImageMobile} />}
+          {bgImageMobile && (
+            <source
+              media="(max-width: 767px)"
+              srcSet={`${optimizeImg(bgImageMobile, { w: 720, q: 70 })} 1x, ${optimizeImg(bgImageMobile, { w: 1080, q: 70 })} 2x`}
+            />
+          )}
           <img
             ref={bgRef as React.RefObject<HTMLImageElement>}
-            src={bgImage}
+            src={optimizeImg(bgImage, { w: 1600, q: 75 })}
+            srcSet={`${optimizeImg(bgImage, { w: 1200, q: 75 })} 1200w, ${optimizeImg(bgImage, { w: 1600, q: 75 })} 1600w, ${optimizeImg(bgImage, { w: 2000, q: 75 })} 2000w`}
+            sizes="100vw"
             alt=""
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </picture>
