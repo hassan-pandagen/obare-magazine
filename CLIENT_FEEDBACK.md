@@ -161,6 +161,11 @@
 - [x] Duplicate "Go Bare" links: right-side mirror now `aria-hidden` + `tabIndex={-1}` so screen readers only announce one.
 - [~] Color contrast: small `text-[9px]`/`text-[10px]` red eyebrows fail WCAG AA on black bg (ratio ~4.0, needs 4.5). Design-intentional editorial style — keeping per client brand direction.
 
+## SEO — Lighthouse round 2
+- [x] Added `public/robots.txt` (allows all, disallows /studio, points to sitemap).
+- [x] Added dynamic `src/app/sitemap.ts` — pulls article slugs from Sanity, hourly revalidate.
+- [x] Article pages have `generateMetadata()` — title, description, OG image, Twitter card per article.
+
 ## PERF — PageSpeed Optimizations (round 1)
 
 - [x] Hero bg: responsive srcSet (1200/1600/2000), q=75 instead of full 3300px image. ~270 KB saved.

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { serverClient } from "@/sanity/client";
 import { articleBySlugQuery, adjacentArticlesQuery } from "@/sanity/queries/articles";
 import { urlFor } from "@/sanity/imageUrl";
@@ -14,6 +15,36 @@ export const revalidate = 60;
 
 interface Params {
   slug: string;
+}
+
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await serverClient.fetch(articleBySlugQuery, { slug });
+  if (!article) return { title: "Article Not Found — OBARE Magazine" };
+
+  const title = `${article.title.replace(/\*\*/g, "")} — OBARE Magazine`;
+  const description =
+    article.excerpt?.replace(/\*\*/g, "")?.slice(0, 160) ??
+    `Read ${article.title.replace(/\*\*/g, "")} on OBARE Magazine. The magazine that's real.`;
+  const ogImage = article.coverImage?.asset ? urlFor(article.coverImage).width(1200).height(630).url() : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: article.title }] : undefined,
+      publishedTime: article.publishedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<Params> }) {
