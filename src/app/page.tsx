@@ -34,7 +34,7 @@ interface SettingsResult {
     title: string;
     subtitle?: string;
     category?: string;
-    accent?: string;
+    cta?: string;
     imageAlt?: string;
     imageUrl?: string;
     imageMobileUrl?: string;
@@ -91,10 +91,10 @@ export default async function Home() {
       title: s.title,
       subtitle: s.subtitle,
       category: s.category,
+      cta: s.cta,
       image: s.imageUrl ?? "",
       imageMobile: s.imageMobileUrl,
       imageAlt: s.imageAlt,
-      accent: s.accent ?? "bg-red",
       href: s.linkedSlug ? `/articles/${s.linkedSlug}` : "#",
     })
   );
@@ -106,6 +106,8 @@ export default async function Home() {
       stories={stories}
       heroHeadline={settings?.heroMedia?.headline}
       heroSubheadline={settings?.heroMedia?.subheadline}
+      heroBgImage={settings?.heroMedia?.imageUrl}
+      heroBgImageMobile={settings?.heroMedia?.imageMobileUrl}
     />
   );
 }

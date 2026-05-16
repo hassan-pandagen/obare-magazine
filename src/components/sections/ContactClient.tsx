@@ -26,14 +26,24 @@ const DEPARTMENTS = [
   { label: "Other", value: "other" },
 ];
 
+export interface ContactCopy {
+  eyebrow?: string;
+  headlineLine1?: string;
+  headlineLine2?: string;
+  infoHeadline?: string;
+  infoSubtitle?: string;
+}
+
 export default function ContactClient({
   heroBgImage,
   heroBgImageMobile,
   heroBgAlt,
+  copy,
 }: {
   heroBgImage?: string;
   heroBgImageMobile?: string;
   heroBgAlt?: string;
+  copy?: ContactCopy;
 }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [socials, setSocials] = useState<SocialLinks>({});
@@ -91,10 +101,10 @@ export default function ContactClient({
 
           <div className="relative z-10">
             <span className="mb-6 block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">
-              Get in Touch
+              {copy?.eyebrow ?? "Get in Touch"}
             </span>
             <h1 className="font-poppins font-black uppercase leading-[0.85]" style={{ fontSize: "clamp(3.5rem, 12vw, 12rem)" }}>
-              Contact <span className="text-red">Us</span>
+              {copy?.headlineLine1 ?? "Contact"} {copy?.headlineLine2 ?? "Us"}
             </h1>
           </div>
         </section>
@@ -106,15 +116,14 @@ export default function ContactClient({
 
               {/* Left: info */}
               <div>
-                <h2 className="font-poppins text-2xl font-black uppercase">Let&apos;s talk.</h2>
+                <h2 className="font-poppins text-2xl font-black uppercase">{copy?.infoHeadline ?? "Let's talk."}</h2>
                 <p className="mt-4 font-montserrat text-sm leading-relaxed text-white/60">
-                  Reach out about editorial pitches, advertising opportunities, event partnerships,
-                  or anything else on your mind. We read every email.
+                  {copy?.infoSubtitle ?? "Reach out about editorial pitches, advertising opportunities, event partnerships, or anything else on your mind. We read every email."}
                 </p>
 
                 <div className="mt-10 space-y-6 border-t border-white/10 pt-10">
                   <div>
-                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-red">
+                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-white/50">
                       Email
                     </span>
                     <a
@@ -125,7 +134,7 @@ export default function ContactClient({
                     </a>
                   </div>
                   <div>
-                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-red">
+                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-white/50">
                       Editorial Pitches
                     </span>
                     <a
@@ -136,7 +145,7 @@ export default function ContactClient({
                     </a>
                   </div>
                   <div>
-                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-red">
+                    <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.35em] text-white/50">
                       Advertising
                     </span>
                     <a
@@ -175,7 +184,7 @@ export default function ContactClient({
               <div>
                 {status === "sent" ? (
                   <div className="flex h-full flex-col items-start justify-center py-10">
-                    <span className="mb-4 block font-montserrat text-xs font-bold uppercase tracking-[0.35em] text-red">
+                    <span className="mb-4 block font-montserrat text-xs font-bold uppercase tracking-[0.35em] text-white/50">
                       Message Sent
                     </span>
                     <h2 className="font-poppins text-3xl font-black uppercase">We&apos;ll be in touch.</h2>

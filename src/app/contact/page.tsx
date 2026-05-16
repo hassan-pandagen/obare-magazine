@@ -1,6 +1,6 @@
 import { client } from "@/sanity/client";
-import { contactHeroImageQuery } from "@/sanity/queries/aboutPage";
-import ContactClient from "@/components/sections/ContactClient";
+import { contactHeroImageQuery, contactCopyQuery } from "@/sanity/queries/aboutPage";
+import ContactClient, { type ContactCopy } from "@/components/sections/ContactClient";
 
 export const revalidate = 60;
 
@@ -11,12 +11,16 @@ interface HeroBg {
 }
 
 export default async function ContactPage() {
-  const hero = await client.fetch<HeroBg | null>(contactHeroImageQuery);
+  const [hero, copy] = await Promise.all([
+    client.fetch<HeroBg | null>(contactHeroImageQuery),
+    client.fetch<ContactCopy | null>(contactCopyQuery),
+  ]);
   return (
     <ContactClient
       heroBgImage={hero?.url ?? undefined}
       heroBgImageMobile={hero?.mobileUrl ?? undefined}
       heroBgAlt={hero?.alt ?? undefined}
+      copy={copy ?? undefined}
     />
   );
 }

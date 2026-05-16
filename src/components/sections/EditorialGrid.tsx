@@ -17,10 +17,10 @@ export interface EditorialStory {
   category?: string;
   title: string;
   subtitle?: string;
+  cta?: string;
   image: string;
   imageMobile?: string;
   imageAlt?: string;
-  accent: string;
   href?: string;
 }
 
@@ -76,7 +76,6 @@ export default function EditorialGrid({
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       <div className="absolute inset-0 bg-red/0 transition-colors duration-300 group-hover:bg-red/15" />
-      <div className={`absolute left-0 top-0 h-1.5 w-full ${story.accent}`} />
 
       <div className="relative z-10 flex h-full flex-col justify-end p-6 md:p-8">
         <span className="mb-3 font-archivo text-xs font-bold uppercase tracking-[0.3em] text-white/60" style={{ fontStretch: "125%" }}>
@@ -90,8 +89,8 @@ export default function EditorialGrid({
             <RedEmphasis>{story.subtitle}</RedEmphasis>
           </p>
         )}
-        <div className="mt-5 flex items-center gap-2 font-archivo text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-red" style={{ fontStretch: "125%" }}>
-          Full Story
+        <div className="mt-5 flex items-center gap-2 font-archivo text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-white" style={{ fontStretch: "125%" }}>
+          {story.cta ?? "Full Story"}
           <span className="inline-block transition-transform duration-300 group-hover:translate-x-2">
             &rarr;
           </span>

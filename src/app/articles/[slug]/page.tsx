@@ -40,8 +40,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
       <main className="bg-black text-white">
         {/* ── Hero — sticky deck: pins to viewport top while body slides up over it ── */}
         <section
-          className="sticky top-0 z-0 w-full overflow-hidden bg-black"
-          style={{ height: "100vh", minHeight: "600px" }}
+          className="sticky top-0 z-0 w-full overflow-hidden bg-black h-[78vh] min-h-[520px] md:h-screen md:min-h-[600px]"
         >
           {/* Cover media — fills the entire viewport, no borders, no padding */}
           {article.coverVideo ? (
@@ -76,17 +75,10 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
 
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
-          {/* Red multiply overlay — sits directly on photo, outside GSAP stacking context */}
-          <div
-            className="pointer-events-none absolute bottom-0 right-0 top-[32%] left-[10%] md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]"
-            style={{ backgroundColor: "#bb1104", mixBlendMode: "multiply", opacity: 0.9 }}
-          />
 
           {/* Red panel — covers right 55% full height on mobile, large portion on desktop */}
           <div className="absolute bottom-0 right-0 top-0 left-[10%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
             <HeroDeckBox className="absolute bottom-0 left-0 right-0 top-[32%] md:top-0">
-              {/* No background — color from sibling multiply overlay */}
-              <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: "transparent" }} />
 
               {/* Camera UI chrome */}
               <div className="pointer-events-none absolute inset-0 text-white">
@@ -143,7 +135,7 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   viewBox="0 0 24 40"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="h-[80px] w-[36px] text-white transition-opacity group-hover:opacity-60 md:h-[120px] md:w-[50px]"
@@ -158,7 +150,16 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
         </section>
 
         {/* Everything below the hero slides up over the pinned hero like a deck. */}
-        <div className="relative z-10 bg-black">
+        <div
+          className="relative z-10 bg-black"
+          style={(() => {
+            const c =
+              article.dropCapColor === "custom"
+                ? article.dropCapColorCustom
+                : article.dropCapColor;
+            return c ? ({ ["--dropcap-color" as string]: c } as React.CSSProperties) : undefined;
+          })()}
+        >
 
         {/* ── Author strip ───── */}
         <div className="border-b border-white/10 px-6 py-5 md:px-14 md:py-6 lg:px-20">
@@ -201,29 +202,21 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
             }}
           />
 
-          {/* Vertical "IN THE MAGAZINE" flourishes on each side — desktop only */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute left-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 lg:block"
+          {/* Vertical "Go Bare" CTAs on each side — desktop only */}
+          <a
+            href="/submissions"
+            className="absolute left-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 transition-colors hover:text-white lg:block"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg) translateY(50%)" }}
           >
-            Go Bare
-          </span>
-          <span
-            aria-hidden
-            className="pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 lg:block"
+            Go Bare →
+          </a>
+          <a
+            href="/submissions"
+            className="absolute right-6 top-1/2 hidden -translate-y-1/2 select-none font-archivo text-xs font-bold uppercase tracking-[0.4em] text-white/25 transition-colors hover:text-white lg:block"
             style={{ writingMode: "vertical-rl" }}
           >
-            In the Magazine
-          </span>
-
-          {/* Big faint red drop-cap flourish at the top of the body */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-6 hidden -translate-x-1/2 select-none font-poppins text-[10vw] font-black leading-none text-red/[0.06] md:block"
-          >
-            OBARE
-          </span>
+            Go Bare →
+          </a>
 
           <div className="relative z-10">
             {/* Excerpt shown here only on mobile — desktop shows it in the hero already */}

@@ -37,6 +37,8 @@ export const articleBySlugQuery = groq`
     modelName,
     publishedAt,
     excerpt,
+    dropCapColor,
+    dropCapColorCustom,
     "coverImage": coverImage { asset, alt, caption },
     "coverImageMobile": coverImageMobile { asset },
     "coverVideo": coverVideo.asset->url,
@@ -49,7 +51,8 @@ export const articleBySlugQuery = groq`
         "url": asset->url,
         "mobileUrl": imageMobile.asset->url,
         "dimensions": asset->metadata.dimensions,
-        credit
+        credit,
+        creditUrl
       },
       _type == "inlineVideo" => {
         ...,
@@ -69,6 +72,17 @@ export const articleBySlugQuery = groq`
           ...,
           "url": asset->url,
           alt
+        }
+      },
+      _type == "mediaCarousel" => {
+        ...,
+        items[] {
+          type,
+          caption,
+          "imageUrl": image.asset->url,
+          "imageAlt": image.alt,
+          "videoUrl": video.asset->url,
+          "posterUrl": poster.asset->url
         }
       }
     },

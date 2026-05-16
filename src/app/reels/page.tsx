@@ -1,6 +1,7 @@
 import { serverClient } from "@/sanity/client";
 import { allReelsQuery } from "@/sanity/queries/homepage";
-import ReelsIndexClient, { type ReelItem } from "@/components/sections/ReelsIndexClient";
+import { reelsCopyQuery } from "@/sanity/queries/aboutPage";
+import ReelsIndexClient, { type ReelItem, type ReelsCopy } from "@/components/sections/ReelsIndexClient";
 
 export const revalidate = 60;
 
@@ -15,7 +16,10 @@ interface ReelDoc {
 }
 
 export default async function ReelsPage() {
-  const docs = await serverClient.fetch<ReelDoc[]>(allReelsQuery);
+  const [docs, copy] = await Promise.all([
+    serverClient.fetch<ReelDoc[]>(allReelsQuery),
+    serverClient.fetch<ReelsCopy | null>(reelsCopyQuery),
+  ]);
 
   const reels: ReelItem[] = (docs ?? [])
     .filter((r) => r.videoUrl)
@@ -29,5 +33,5 @@ export default async function ReelsPage() {
       href: r.linkedSlug ? `/articles/${r.linkedSlug}` : "#",
     }));
 
-  return <ReelsIndexClient reels={reels} />;
+  return <ReelsIndexClient reels={reels} copy={copy ?? undefined} />;
 }

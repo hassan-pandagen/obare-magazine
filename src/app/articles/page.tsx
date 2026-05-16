@@ -191,7 +191,7 @@ function ArticleCard({ article }: { article: ArticleCard }) {
             {formatDate(article.publishedAt)}
           </time>
         )}
-        <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white underline decoration-transparent decoration-2 underline-offset-[6px] transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
+        <h2 className="mt-2 font-poppins text-xl font-black uppercase leading-tight text-white underline decoration-transparent decoration-2 underline-offset-[6px] transition-[text-decoration-color] duration-300 group-hover:decoration-white">
           <RedEmphasis>{article.title}</RedEmphasis>
         </h2>
         {article.excerpt && (
@@ -199,7 +199,7 @@ function ArticleCard({ article }: { article: ArticleCard }) {
             <RedEmphasis>{article.excerpt}</RedEmphasis>
           </p>
         )}
-        <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-300 group-hover:text-red group-hover:decoration-red">
+        <span className="mt-4 font-montserrat text-xs font-bold uppercase tracking-[0.2em] text-white/30 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] duration-300 group-hover:text-white group-hover:decoration-white">
           Full Story →
         </span>
       </div>

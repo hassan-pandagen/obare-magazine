@@ -1,6 +1,6 @@
 import { client } from "@/sanity/client";
-import { submissionsHeroImageQuery } from "@/sanity/queries/aboutPage";
-import SubmissionsClient from "@/components/sections/SubmissionsClient";
+import { submissionsHeroImageQuery, submissionsCopyQuery } from "@/sanity/queries/aboutPage";
+import SubmissionsClient, { type SubmissionsCopy } from "@/components/sections/SubmissionsClient";
 
 export const revalidate = 60;
 
@@ -11,12 +11,16 @@ interface HeroBg {
 }
 
 export default async function SubmissionsPage() {
-  const hero = await client.fetch<HeroBg | null>(submissionsHeroImageQuery);
+  const [hero, copy] = await Promise.all([
+    client.fetch<HeroBg | null>(submissionsHeroImageQuery),
+    client.fetch<SubmissionsCopy | null>(submissionsCopyQuery),
+  ]);
   return (
     <SubmissionsClient
       heroBgImage={hero?.url ?? undefined}
       heroBgImageMobile={hero?.mobileUrl ?? undefined}
       heroBgAlt={hero?.alt ?? undefined}
+      copy={copy ?? undefined}
     />
   );
 }

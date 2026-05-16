@@ -40,7 +40,7 @@ export const homepageSettingsQuery = groq`
       title,
       subtitle,
       category,
-      accent,
+      cta,
       imageAlt,
       "imageUrl": image.asset->url,
       "imageMobileUrl": imageMobile.asset->url,

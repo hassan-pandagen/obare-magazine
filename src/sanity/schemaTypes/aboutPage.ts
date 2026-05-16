@@ -114,6 +114,22 @@ export const aboutPage = defineType({
               initialValue: "image-right",
             }),
             defineField({
+              name: "imageAspectRatio",
+              title: "Image Aspect Ratio",
+              type: "string",
+              options: {
+                list: [
+                  { title: "2:3 — Portrait tall", value: "2/3" },
+                  { title: "4:5 — Portrait standard", value: "4/5" },
+                  { title: "3:2 — Landscape", value: "3/2" },
+                  { title: "1:1 — Square", value: "1/1" },
+                  { title: "4:3 — Landscape wide", value: "4/3" },
+                ],
+                layout: "radio",
+              },
+              initialValue: "4/5",
+            }),
+            defineField({
               name: "redOverlay",
               title: "Red overlay on image?",
               type: "boolean",

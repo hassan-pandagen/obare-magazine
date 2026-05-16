@@ -128,6 +128,83 @@ function InlineReel({ src, poster, caption }: { src: string; poster?: string; ca
   );
 }
 
+interface CarouselItem {
+  type: "photo" | "video";
+  imageUrl?: string;
+  imageAlt?: string;
+  videoUrl?: string;
+  posterUrl?: string;
+  caption?: string;
+}
+
+function MediaCarousel({ items, caption }: { items: CarouselItem[]; caption?: string }) {
+  const [active, setActive] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    v.currentTime = 0;
+    if (items[active]?.type === "video") v.play().catch(() => {});
+  }, [active, items]);
+
+  const item = items[active];
+
+  return (
+    <figure className="my-14 -mx-6 md:mx-0">
+      <div className="relative w-full overflow-hidden rounded-xl bg-black" style={{ aspectRatio: "9/16", maxWidth: "380px", margin: "0 auto" }}>
+        {item.type === "video" && item.videoUrl ? (
+          <video
+            ref={videoRef}
+            src={item.videoUrl}
+            poster={item.posterUrl}
+            loop muted playsInline autoPlay
+            className="h-full w-full object-cover"
+          >
+            <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+          </video>
+        ) : item.imageUrl ? (
+          <img src={item.imageUrl} alt={item.imageAlt ?? ""} className="h-full w-full object-cover" />
+        ) : null}
+
+        {/* Dots */}
+        {items.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+            {items.map((_, i) => (
+              <button key={i} onClick={() => setActive(i)}
+                className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-white" : "w-1.5 bg-white/40"}`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Prev/Next */}
+        {items.length > 1 && (
+          <>
+            {active > 0 && (
+              <button onClick={() => setActive(a => a - 1)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm"
+                aria-label="Previous">‹</button>
+            )}
+            {active < items.length - 1 && (
+              <button onClick={() => setActive(a => a + 1)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm"
+                aria-label="Next">›</button>
+            )}
+          </>
+        )}
+      </div>
+      {(item.caption || caption) && (
+        <figcaption className="mt-3 px-6 text-center font-montserrat text-xs italic text-white/50 md:px-0">
+          {item.caption || caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 const components: PortableTextComponents = {
   block: {
     // Normal paragraph — with the messy-magazine drop cap on the first one.
@@ -182,6 +259,9 @@ const components: PortableTextComponents = {
         {children}
       </a>
     ),
+    highlight: ({ value, children }) => (
+      <span style={{ color: value?.color ?? "#e60303" }}>{children}</span>
+    ),
   },
 
   types: {
@@ -218,11 +298,20 @@ const components: PortableTextComponents = {
                 </span>
               )}
               {value.credit && (
-                // Editorial credit line — tiny, uppercase, tracked, right-aligned.
-                // Reads like a photographer's chop without competing with the caption.
-                <span className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 md:text-[10px]">
-                  Photo &middot; {value.credit}
-                </span>
+                value.creditUrl ? (
+                  <a
+                    href={value.creditUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 transition-colors hover:text-white/70 md:text-[10px]"
+                  >
+                    Photo &middot; {value.credit}
+                  </a>
+                ) : (
+                  <span className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 md:text-[10px]">
+                    Photo &middot; {value.credit}
+                  </span>
+                )
               )}
             </figcaption>
           )}
@@ -270,6 +359,12 @@ const components: PortableTextComponents = {
           )}
         </figure>
       );
+    },
+
+    // Media Carousel — TikTok/Instagram style swipeable mixed photos + videos
+    mediaCarousel: ({ value }) => {
+      if (!value?.items?.length) return null;
+      return <MediaCarousel items={value.items} caption={value.caption} />;
     },
 
     // Pull quote — slightly rotated, with a big red slash mark for the messy-magazine feel

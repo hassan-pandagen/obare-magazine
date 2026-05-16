@@ -112,8 +112,6 @@ export default function FooterCTA() {
 
   return (
     <section ref={sectionRef} className="w-full bg-white">
-      <div className="h-2 w-full bg-red" />
-
       <div className="flex flex-col items-center justify-center px-6 py-16 md:py-24">
         {/* LET'S TALK → */}
         <a
@@ -186,7 +184,6 @@ export default function FooterCTA() {
         <SocialRow socials={socials} />
       </div>
 
-      <div className="h-2 w-full bg-red" />
     </section>
   );
 }

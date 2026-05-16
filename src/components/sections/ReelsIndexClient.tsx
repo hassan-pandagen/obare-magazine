@@ -20,6 +20,17 @@ export interface ReelItem {
   href: string;
 }
 
+export interface ReelsCopy {
+  eyebrow?: string;
+  eyebrowColor?: "red" | "white";
+  headlineLine1?: string;
+  headlineLine1Color?: "red" | "white";
+  headlineLine2?: string;
+  headlineLine2Color?: "red" | "white";
+  subtitle?: string;
+  subtitleColor?: "red" | "white";
+}
+
 /**
  * /reels index — editorial grid of every reel in the archive.
  * - Hero strip with "In Motion" eyebrow + "The Moving Picture" headline.
@@ -29,7 +40,7 @@ export interface ReelItem {
  *   player with swipe-down-to-close on mobile, X button on desktop).
  * - Scroll-reveal on each tile via GSAP ScrollTrigger.
  */
-export default function ReelsIndexClient({ reels }: { reels: ReelItem[] }) {
+export default function ReelsIndexClient({ reels, copy }: { reels: ReelItem[]; copy?: ReelsCopy }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const [activeReel, setActiveReel] = useState<ReelItem | null>(null);
@@ -65,17 +76,19 @@ export default function ReelsIndexClient({ reels }: { reels: ReelItem[] }) {
       <main ref={rootRef} className="min-h-screen bg-black text-white">
         {/* Hero */}
         <section className="relative px-6 pt-32 pb-12 md:px-14 md:pt-40 md:pb-16 lg:px-20">
-          <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">
-            In Motion
+          <span className={`block font-montserrat text-xs font-bold uppercase tracking-[0.45em] ${copy?.eyebrowColor === "white" ? "text-white/60" : "text-red"}`}>
+            {copy?.eyebrow ?? "In Motion"}
           </span>
           <h1
-            className="mt-4 font-poppins font-black uppercase leading-[0.9] text-white"
+            className="mt-4 font-poppins font-black uppercase leading-[0.9]"
             style={{ fontSize: "clamp(3rem, 9vw, 7rem)" }}
           >
-            The Moving <span className="text-red">Picture</span>
+            <span className={copy?.headlineLine1Color === "red" ? "text-red" : "text-white"}>{copy?.headlineLine1 ?? "The Moving"}</span>
+            {" "}
+            <span className={copy?.headlineLine2Color === "white" ? "text-white" : "text-red"}>{copy?.headlineLine2 ?? "Picture"}</span>
           </h1>
-          <p className="mt-6 max-w-xl font-montserrat text-sm leading-relaxed text-white/55 md:text-base">
-            A closer look at the women and the moments behind creating our imagery.
+          <p className={`mt-6 max-w-xl font-montserrat text-sm leading-relaxed md:text-base ${copy?.subtitleColor === "red" ? "text-red" : "text-white/55"}`}>
+            {copy?.subtitle ?? "A closer look at the women and the moments behind creating our imagery."}
           </p>
         </section>
 

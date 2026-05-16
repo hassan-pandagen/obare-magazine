@@ -15,6 +15,7 @@ export const aboutPageQuery = groq`
       title,
       body,
       layout,
+      imageAspectRatio,
       redOverlay,
       imageAlt,
       "imageUrl": image.asset->url,
@@ -55,6 +56,47 @@ export const submissionsHeroImageQuery = groq`
     "url": submissionsHeroImage.asset->url,
     "mobileUrl": submissionsHeroImageMobile.asset->url,
     "alt": submissionsHeroImageAlt
+  }
+`;
+
+export const submissionsCopyQuery = groq`
+  *[_type == "settings"][0].submissionsCopy {
+    eyebrow,
+    headlineLine1,
+    headlineLine2,
+    subtitle,
+    formEyebrow,
+    formHeadline
+  }
+`;
+
+export const contactCopyQuery = groq`
+  *[_type == "settings"][0].contactCopy {
+    eyebrow,
+    headlineLine1,
+    headlineLine2,
+    infoHeadline,
+    infoSubtitle
+  }
+`;
+
+export const eventsCopyQuery = groq`
+  *[_type == "settings"][0].eventsCopy {
+    eyebrow,
+    headline
+  }
+`;
+
+export const reelsCopyQuery = groq`
+  *[_type == "settings"][0].reelsCopy {
+    eyebrow,
+    eyebrowColor,
+    headlineLine1,
+    headlineLine1Color,
+    headlineLine2,
+    headlineLine2Color,
+    subtitle,
+    subtitleColor
   }
 `;
 

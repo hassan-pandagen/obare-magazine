@@ -43,10 +43,10 @@ export interface HomeStory {
   title: string;
   subtitle?: string;
   category?: string;
+  cta?: string;
   image: string;
   imageMobile?: string;
   imageAlt?: string;
-  accent: string;
   href: string;
 }
 
@@ -56,9 +56,11 @@ interface Props {
   stories: HomeStory[];
   heroHeadline?: string;
   heroSubheadline?: string;
+  heroBgImage?: string;
+  heroBgImageMobile?: string;
 }
 
-export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline }: Props) {
+export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile }: Props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
 
@@ -171,7 +173,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
       <Navbar />
 
       <main>
-        <Hero headline={heroHeadline} subheadline={heroSubheadline} />
+        <Hero headline={heroHeadline} subheadline={heroSubheadline} bgImage={heroBgImage} bgImageMobile={heroBgImageMobile} />
 
         <div ref={stackContainerRef} className="relative" style={{ overflowX: "clip" }}>
           {projects.map((project, i) => (

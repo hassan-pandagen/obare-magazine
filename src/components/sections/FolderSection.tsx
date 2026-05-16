@@ -117,7 +117,8 @@ export default function FolderSection({
           loop
           muted
           playsInline
-          preload="metadata"
+          autoPlay
+          preload="auto"
           className="folder-video absolute inset-0 h-full w-full object-cover"
         >
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
@@ -243,7 +244,7 @@ export default function FolderSection({
                 onClick={toggleMute}
                 aria-label={muted ? "Unmute" : "Mute"}
                 tabIndex={controlsVisible ? 0 : -1}
-                className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white md:hidden ${
                   controlsVisible ? "pointer-events-auto" : ""
                 }`}
               >
@@ -260,9 +261,11 @@ export default function FolderSection({
             </div>
           )}
           <div className="pointer-events-none absolute bottom-20 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
-            <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white md:text-[8vw] lg:text-[7vw]">
-              <RedEmphasis>{title}</RedEmphasis>
-            </h2>
+            <a href={href} className="pointer-events-auto group/title">
+              <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-300 group-hover/title:decoration-white md:text-[8vw] lg:text-[7vw]">
+                <RedEmphasis>{title}</RedEmphasis>
+              </h2>
+            </a>
             {subtitle && (
               <p className="mt-4 max-w-xl font-montserrat text-sm leading-relaxed text-white/75 md:mt-6 md:text-base">
                 <RedEmphasis>{subtitle}</RedEmphasis>

@@ -194,7 +194,7 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-6 px-6 pb-8 md:px-10 md:pb-10 lg:px-14 lg:pb-14">
           <div className="min-w-0">
             {next.category && (
-              <span className="mb-3 block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-red md:text-xs">
+              <span className="mb-3 block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-white/60 md:text-xs">
                 {next.category}
               </span>
             )}
@@ -217,10 +217,6 @@ export default function NextArticleCard({ next }: { next: NextArticle }) {
         </div>
       </a>
 
-      {/* Small hint text below */}
-      <p className="mx-auto mt-6 max-w-6xl font-montserrat text-[10px] uppercase tracking-[0.3em] text-white/35 md:mt-10 md:text-xs">
-        Tap the card to continue
-      </p>
     </section>
   );
 }

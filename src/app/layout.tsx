@@ -4,10 +4,12 @@
  */
 
 import type { Metadata, Viewport } from "next";
-import { Poppins, Montserrat, Archivo } from "next/font/google";
+import Script from "next/script";
+import { Poppins, Montserrat, Archivo, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import GSAPProvider from "@/providers/GSAPProvider";
+import AgeGate from "@/components/ui/AgeGate";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -29,6 +31,13 @@ const archivo = Archivo({
   variable: "--font-archivo-var",
   display: "swap",
   axes: ["wdth"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  variable: "--font-playfair-var",
+  display: "swap",
 });
 
 // Placeholder for custom fonts — replace src with actual font files when available
@@ -76,16 +85,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${montserrat.variable} ${archivo.variable}`}
+      className={`${poppins.variable} ${montserrat.variable} ${archivo.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
       <head>
-        {/* Prevent iOS Safari pinch-zoom — Safari ignores user-scalable=no since iOS 10 */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive: false });
-          document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, { passive: false });
-          document.addEventListener('gestureend', function(e){ e.preventDefault(); }, { passive: false });
-        `}} />
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link
@@ -110,7 +113,38 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
+        <AgeGate />
         <GSAPProvider>{children}</GSAPProvider>
+        {/* Prevent iOS Safari pinch-zoom — Safari ignores user-scalable=no since iOS 10 */}
+        <Script id="ios-gesture-lock" strategy="beforeInteractive">{`
+          document.addEventListener('gesturestart',function(e){e.preventDefault();},{passive:false});
+          document.addEventListener('gesturechange',function(e){e.preventDefault();},{passive:false});
+          document.addEventListener('gestureend',function(e){e.preventDefault();},{passive:false});
+        `}</Script>
+
+        {/* Google Analytics — replace G-XXXXXXXXXX with your GA4 Measurement ID */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} strategy="afterInteractive" />
+            <Script id="google-analytics" strategy="afterInteractive">{`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+            `}</Script>
+          </>
+        )}
+
+        {/* Microsoft Clarity — replace with your Clarity Project ID */}
+        {process.env.NEXT_PUBLIC_CLARITY_ID && (
+          <Script id="microsoft-clarity" strategy="afterInteractive">{`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_CLARITY_ID}");
+          `}</Script>
+        )}
       </body>
     </html>
   );

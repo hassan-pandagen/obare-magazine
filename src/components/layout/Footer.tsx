@@ -7,7 +7,7 @@ const SITEMAP_LINKS = [
   { label: "About", href: "/about" },
   { label: "Events", href: "/event" },
   { label: "Advertise", href: "/advertise" },
-  { label: "Submit Work", href: "/submissions" },
+  { label: "Submissions", href: "/submissions" },
   { label: "Newsletter", href: "/newsletter" },
   { label: "Contact", href: "/contact" },
 ];
@@ -15,7 +15,6 @@ const SITEMAP_LINKS = [
 const FOOTER_LINKS = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
-  { label: "Content Guidelines", href: "/content-guidelines" },
 ];
 
 export default function Footer() {
@@ -89,26 +88,21 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="flex flex-col items-center gap-1 border-t border-white/10 px-6 py-4 text-center md:flex-row md:justify-between md:gap-4">
-          <p className="font-montserrat text-xs text-white/60">
-            &copy; 2026 OBARE Magazine. All rights reserved.
-          </p>
-          <p className="font-montserrat text-xs text-white/40">
-            Made by{" "}
-            <a
-              href="https://www.pandacodegen.com"
-              target="_blank"
-              rel="noopener"
-              className="text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline"
-            >
-              www.pandacodegen.com
+        {/* Bottom bar — large serif credit like HommmeGirls reference */}
+        <div className="border-t border-white/10 px-6 py-8 md:px-10 lg:px-16">
+          <p
+            className="font-playfair text-white leading-[1.15]"
+            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.8rem)", fontWeight: 400 }}
+          >
+            Copyright &copy; 2026 OBARE Magazine.
+            <br />
+            Site built by{" "}
+            <a href="https://www.pandacodegen.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              PandaCodeGen.
             </a>
           </p>
         </div>
 
-        {/* Red bar at very bottom */}
-        <div className="h-2 bg-red" />
       </footer>
     </>
   );

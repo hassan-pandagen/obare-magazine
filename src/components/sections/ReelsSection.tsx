@@ -352,15 +352,21 @@ function DesktopReel({ reel, onOpen }: { reel: Reel; onOpen: () => void }) {
           </svg>
         </button>
       </div>
-      <a
-        href={reel.href}
-        className="group/title mt-4 inline-flex items-baseline gap-2 font-poppins text-lg font-black uppercase leading-tight text-white transition-colors hover:text-red xl:text-xl"
-      >
-        <RedEmphasis>{reel.title}</RedEmphasis>
-        <span className="inline-block text-sm transition-transform duration-500 group-hover/title:translate-x-1">
-          &rarr;
+      {reel.href && reel.href !== "#" ? (
+        <a
+          href={reel.href}
+          className="group/title mt-4 inline-flex items-baseline gap-2 font-poppins text-lg font-black uppercase leading-tight text-white transition-colors hover:text-red xl:text-xl"
+        >
+          <RedEmphasis>{reel.title}</RedEmphasis>
+          <span className="inline-block text-sm transition-transform duration-500 group-hover/title:translate-x-1">
+            &rarr;
+          </span>
+        </a>
+      ) : (
+        <span className="mt-4 inline-flex font-poppins text-lg font-black uppercase leading-tight text-white xl:text-xl">
+          <RedEmphasis>{reel.title}</RedEmphasis>
         </span>
-      </a>
+      )}
     </div>
   );
 }

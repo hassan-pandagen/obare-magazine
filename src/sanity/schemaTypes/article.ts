@@ -76,6 +76,30 @@ export const article = defineType({
       initialValue: () => new Date().toISOString(),
     }),
     defineField({
+      name: "dropCapColor",
+      title: "Drop Cap Color",
+      type: "string",
+      description:
+        "Color of the large opening letter at the start of the article body. " +
+        "Pick a brand color or enter a custom hex (e.g. #e60303). Leave empty for the default brand red.",
+      options: {
+        list: [
+          { title: "Brand Red (default)", value: "" },
+          { title: "White", value: "#F5F5F0" },
+          { title: "Black", value: "#0A0A0A" },
+          { title: "Custom (use any hex below)", value: "custom" },
+        ],
+        layout: "radio",
+      },
+    }),
+    defineField({
+      name: "dropCapColorCustom",
+      title: "Drop Cap Custom Color (hex)",
+      type: "string",
+      description: "Only used when 'Custom' is selected above. Example: #bb1104",
+      hidden: ({ parent }) => parent?.dropCapColor !== "custom",
+    }),
+    defineField({
       name: "coverImage",
       title: "Cover Image (Desktop) — 16:9 landscape",
       type: "image",
@@ -143,6 +167,30 @@ export const article = defineType({
                   defineField({ name: "blank", type: "boolean", title: "Open in new tab" }),
                 ],
               },
+              {
+                name: "highlight",
+                type: "object",
+                title: "Highlight Color",
+                fields: [
+                  defineField({
+                    name: "color",
+                    type: "string",
+                    title: "Color",
+                    options: {
+                      list: [
+                        { title: "Red (brand #e60303)", value: "#e60303" },
+                        { title: "Red 1 — Dark (#84151b)", value: "#84151b" },
+                        { title: "Red 2 — Mid (#aa272d)", value: "#aa272d" },
+                        { title: "Red 3 — Vivid (#de0c07)", value: "#de0c07" },
+                        { title: "Yellow (#f0ff0a)", value: "#f0ff0a" },
+                        { title: "White", value: "#F5F5F0" },
+                      ],
+                      layout: "radio",
+                    },
+                    initialValue: "#e60303",
+                  }),
+                ],
+              },
             ],
           },
         }),
@@ -164,7 +212,13 @@ export const article = defineType({
               name: "credit",
               type: "string",
               title: "Photo Credit — optional",
-              description: "Photographer or source attribution (e.g. 'Jane Smith' or 'Getty'). Shown small + italic under the caption.",
+              description: "Photographer or source attribution (e.g. 'Jane Smith' or 'Getty'). Shown small under the image.",
+            }),
+            defineField({
+              name: "creditUrl",
+              type: "url",
+              title: "Photo Credit Link — optional",
+              description: "Link the credit to a portfolio, Instagram, or source URL.",
             }),
           ],
         }),
@@ -233,6 +287,41 @@ export const article = defineType({
             defineField({ name: "caption", type: "string", title: "Caption" }),
           ],
           preview: { select: { title: "caption" }, prepare: ({ title }) => ({ title: title || "Gallery" }) },
+        }),
+        // Media Carousel — TikTok/Instagram style mixed photos + videos
+        defineArrayMember({
+          type: "object",
+          name: "mediaCarousel",
+          title: "Media Carousel (Photos + Videos)",
+          fields: [
+            defineField({
+              name: "items",
+              type: "array",
+              title: "Media Items",
+              of: [
+                defineArrayMember({
+                  type: "object",
+                  name: "carouselItem",
+                  fields: [
+                    defineField({
+                      name: "type",
+                      type: "string",
+                      title: "Type",
+                      options: { list: [{ title: "Photo", value: "photo" }, { title: "Video", value: "video" }], layout: "radio" },
+                      initialValue: "photo",
+                    }),
+                    defineField({ name: "image", type: "image", title: "Photo", options: { hotspot: true }, fields: [defineField({ name: "alt", type: "string", title: "Alt text" })] }),
+                    defineField({ name: "video", type: "file", title: "Video", options: { accept: "video/*" } }),
+                    defineField({ name: "poster", type: "image", title: "Video Poster" }),
+                    defineField({ name: "caption", type: "string", title: "Caption" }),
+                  ],
+                  preview: { select: { title: "caption", type: "type" }, prepare: ({ title, type }) => ({ title: title || type || "Item" }) },
+                }),
+              ],
+            }),
+            defineField({ name: "caption", type: "string", title: "Carousel Caption" }),
+          ],
+          preview: { select: { title: "caption" }, prepare: ({ title }) => ({ title: title || "Media Carousel" }) },
         }),
         // Pull quote
         defineArrayMember({

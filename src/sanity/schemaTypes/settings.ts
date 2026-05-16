@@ -164,18 +164,10 @@ export const settings = defineType({
               description: "Describe what's in the image for accessibility + search engines.",
             }),
             defineField({
-              name: "accent",
-              title: "Accent Color",
+              name: "cta",
               type: "string",
-              options: {
-                list: [
-                  { title: "Red", value: "bg-red" },
-                  { title: "White", value: "bg-white" },
-                  { title: "None", value: "bg-transparent" },
-                ],
-                layout: "radio",
-              },
-              initialValue: "bg-red",
+              title: "CTA Label (default: Full Story)",
+              description: "Leave empty to use 'Full Story →'",
             }),
             defineField({
               name: "linkedArticle",
@@ -235,6 +227,79 @@ export const settings = defineType({
       title: "Submissions Hero — Alt Text (SEO)",
       type: "string",
       description: "Describe what's in the image for accessibility + search engines.",
+    }),
+
+    /* ── Submissions Page Copy ─────────────────────────────── */
+    defineField({
+      name: "submissionsCopy",
+      title: "Submissions Page — Headings & Copy",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", type: "string", title: "Eyebrow (small label)", initialValue: "Open Call" }),
+        defineField({ name: "headlineLine1", type: "string", title: "Headline — Line 1", initialValue: "Your Work." }),
+        defineField({ name: "headlineLine2", type: "string", title: "Headline — Line 2 (red)", initialValue: "On Obare Magazine." }),
+        defineField({ name: "subtitle", type: "text", rows: 2, title: "Subtitle", initialValue: "We are always looking for photographers, models, and writers to share with our community." }),
+        defineField({ name: "formEyebrow", type: "string", title: "Form Eyebrow", initialValue: "Submit Your Work" }),
+        defineField({ name: "formHeadline", type: "string", title: "Form Headline", initialValue: "Ready to be seen?" }),
+      ],
+    }),
+
+    /* ── Contact Page Copy ─────────────────────────────────── */
+    defineField({
+      name: "contactCopy",
+      title: "Contact Page — Headings & Copy",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", type: "string", title: "Eyebrow", initialValue: "Get in Touch" }),
+        defineField({ name: "headlineLine1", type: "string", title: "Headline — Line 1", initialValue: "Contact" }),
+        defineField({ name: "headlineLine2", type: "string", title: "Headline — Line 2 (red)", initialValue: "Us" }),
+        defineField({ name: "infoHeadline", type: "string", title: "Info Block Headline", initialValue: "Let's talk." }),
+        defineField({ name: "infoSubtitle", type: "text", rows: 3, title: "Info Block Subtitle", initialValue: "Reach out about editorial pitches, advertising opportunities, event partnerships, or anything else on your mind. We read every email." }),
+      ],
+    }),
+
+    /* ── Events Page Copy ──────────────────────────────────── */
+    defineField({
+      name: "eventsCopy",
+      title: "Events Page — Headings & Copy",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", type: "string", title: "Eyebrow", initialValue: "What's On" }),
+        defineField({ name: "headline", type: "string", title: "Headline", initialValue: "Events" }),
+      ],
+    }),
+
+    /* ── Reels Page Copy ───────────────────────────────────── */
+    defineField({
+      name: "reelsCopy",
+      title: "Reels Page — Headings & Copy",
+      type: "object",
+      fields: [
+        defineField({ name: "eyebrow", type: "string", title: "Eyebrow text", initialValue: "In Motion" }),
+        defineField({
+          name: "eyebrowColor", type: "string", title: "Eyebrow color",
+          options: { list: [{ title: "Red", value: "red" }, { title: "White", value: "white" }], layout: "radio" },
+          initialValue: "red",
+        }),
+        defineField({ name: "headlineLine1", type: "string", title: "Headline — Line 1", initialValue: "The Moving" }),
+        defineField({
+          name: "headlineLine1Color", type: "string", title: "Headline Line 1 color",
+          options: { list: [{ title: "Red", value: "red" }, { title: "White", value: "white" }], layout: "radio" },
+          initialValue: "white",
+        }),
+        defineField({ name: "headlineLine2", type: "string", title: "Headline — Line 2", initialValue: "Picture" }),
+        defineField({
+          name: "headlineLine2Color", type: "string", title: "Headline Line 2 color",
+          options: { list: [{ title: "Red", value: "red" }, { title: "White", value: "white" }], layout: "radio" },
+          initialValue: "red",
+        }),
+        defineField({ name: "subtitle", type: "text", rows: 2, title: "Subtitle text", initialValue: "A closer look at the women and the moments behind creating our imagery." }),
+        defineField({
+          name: "subtitleColor", type: "string", title: "Subtitle color",
+          options: { list: [{ title: "Red", value: "red" }, { title: "White/muted", value: "white" }], layout: "radio" },
+          initialValue: "white",
+        }),
+      ],
     }),
     defineField({
       name: "seoDefaults",

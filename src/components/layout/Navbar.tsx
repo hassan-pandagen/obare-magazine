@@ -186,11 +186,11 @@ export default function Navbar() {
         ref={navRef}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-[transform,background-color,backdrop-filter] duration-300 ease-out will-change-transform",
-          isScrolled ? "bg-black/90 backdrop-blur-md" : "bg-transparent",
+          isScrolled ? "md:bg-black/90 md:backdrop-blur-md" : "bg-transparent",
           isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
-        <div className="flex items-center justify-between px-0 py-1 md:px-8 md:py-5 lg:px-10">
+        <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-5 lg:px-10">
           {/* Logo — uploaded image if available, else OBARE wordmark fallback */}
           <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
             {logo?.url ? (
@@ -230,12 +230,10 @@ export default function Navbar() {
                   className={cls}
                   style={{ fontStretch: "125%" }}
                 >
-                  {isActive && <span className="mr-2 inline-block h-2 w-2 rounded-full bg-red align-middle" />}
                   {link.label}
                 </button>
               ) : (
                 <a key={link.label} href={link.href} className={cls} style={{ fontStretch: "125%" }}>
-                  {isActive && <span className="mr-2 inline-block h-2 w-2 rounded-full bg-red align-middle" />}
                   {link.label}
                 </a>
               );

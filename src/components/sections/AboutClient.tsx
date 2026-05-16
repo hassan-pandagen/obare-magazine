@@ -20,6 +20,7 @@ export interface AboutSection {
   imageMobileUrl?: string;
   imageMobileHotspot?: { x?: number; y?: number };
   layout?: "image-left" | "image-right" | "full-bleed";
+  imageAspectRatio?: string;
   redOverlay?: boolean;
 }
 
@@ -574,8 +575,10 @@ function SectionImage({
       ? `${hotspot.x * 100}% ${hotspot.y * 100}%`
       : "center 30%";
 
+  const aspectRatio = section.imageAspectRatio ?? "4/5";
+
   if (!section.imageUrl) {
-    return <div className="aspect-[4/5] w-full bg-zinc-900 md:aspect-[4/3]" />;
+    return <div className="w-full bg-zinc-900" style={{ aspectRatio }} />;
   }
 
   const mobileUrl = section.imageMobileUrl ?? section.imageUrl;
@@ -589,8 +592,8 @@ function SectionImage({
     <div
       role="img"
       aria-label={section.imageAlt ?? section.title}
-      className="section-image relative aspect-[4/5] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform md:aspect-[4/3]"
-      style={{ transform: `rotate(${tilt})` }}
+      className="section-image relative w-full overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform"
+      style={{ transform: `rotate(${tilt})`, aspectRatio }}
     >
       {/* Mobile layer */}
       <div

@@ -10,15 +10,17 @@ gsap.registerPlugin(ScrollTrigger);
 interface HeroProps {
   headline?: string;
   subheadline?: string;
+  bgImage?: string;
+  bgImageMobile?: string;
 }
 
-export default function Hero({ headline, subheadline }: HeroProps = {}) {
+export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: HeroProps = {}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement | HTMLImageElement>(null);
 
   useGSAP(
     () => {
@@ -111,21 +113,28 @@ export default function Hero({ headline, subheadline }: HeroProps = {}) {
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden"
     >
-      {/* Background image */}
-      <div
-        ref={bgRef}
-        className="hero-bg-responsive absolute inset-0 bg-cover bg-[center_center]"
-      />
+      {/* Background image — CMS image takes priority over static webp fallback */}
+      {bgImage ? (
+        <picture className="absolute inset-0">
+          {bgImageMobile && <source media="(max-width: 767px)" srcSet={bgImageMobile} />}
+          <img
+            ref={bgRef as React.RefObject<HTMLImageElement>}
+            src={bgImage}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
+        </picture>
+      ) : (
+        <div
+          ref={bgRef}
+          className="hero-bg-responsive absolute inset-0 bg-cover bg-[center_center]"
+        />
+      )}
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Red accent */}
-      <div
-        className="absolute bottom-0 left-0 right-0 z-[5]"
-        style={{ height: "50%", top: "53%", backgroundColor: "#bb1104", mixBlendMode: "multiply", opacity: 0.9 }}
-      />
 
       {/* Content */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-end pb-14 md:pb-16">
+      <div className="relative z-10 flex h-full flex-col items-center justify-end pb-10 md:pb-14">
         <h1
           ref={headingRef}
           className="overflow-hidden whitespace-nowrap font-archivo font-bold leading-[0.85] tracking-[0.02em] text-white w-full text-center"

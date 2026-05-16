@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { client } from "@/sanity/client";
+import { eventsCopyQuery } from "@/sanity/queries/aboutPage";
+
+interface EventsCopy {
+  eyebrow?: string;
+  headline?: string;
+}
 
 // Placeholder events — will be replaced by Sanity data
 const EVENTS = [
@@ -179,10 +186,79 @@ function RSVPModal({ event, onClose }: { event: (typeof EVENTS)[0]; onClose: () 
   );
 }
 
+// ── Notify Form ───────────────────────────────────────────────────────────────
+
+function EventNotifyForm() {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [form, setForm] = useState({ name: "", email: "", instagram: "", interests: "" });
+
+  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      await fetch("https://formsubmit.co/info@ObareMag.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ ...form, _subject: "OBARE Events — Notify Me", _captcha: "false" }),
+      });
+    } catch {}
+    setStatus("sent");
+  };
+
+  if (status === "sent") {
+    return (
+      <div className="flex flex-col gap-4 py-6">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
+        </div>
+        <h3 className="font-poppins text-2xl font-black uppercase">You&apos;re on the list.</h3>
+        <p className="font-montserrat text-sm text-white/55">We&apos;ll reach out when something is happening near you.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-6">
+      <label className="flex flex-col gap-2">
+        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Full Name *</span>
+        <input required name="name" value={form.name} onChange={update} placeholder="Your name"
+          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Email *</span>
+        <input required type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com"
+          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Instagram Handle</span>
+        <input name="instagram" value={form.instagram} onChange={update} placeholder="@yourhandle"
+          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+      </label>
+      <label className="flex flex-col gap-2">
+        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">What kind of events interest you?</span>
+        <textarea name="interests" value={form.interests} onChange={update} rows={3} placeholder="launches, art nights, workshops, etc."
+          className="resize-none border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+      </label>
+      <button type="submit" disabled={status === "sending"}
+        className="self-start rounded-full bg-red px-10 py-4 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white transition-opacity hover:opacity-90 disabled:opacity-50">
+        {status === "sending" ? "Sending…" : "Notify Me →"}
+      </button>
+    </form>
+  );
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function EventPage() {
   const [rsvpEvent, setRsvpEvent] = useState<(typeof EVENTS)[0] | null>(null);
+  const [copy, setCopy] = useState<EventsCopy | null>(null);
+
+  useEffect(() => {
+    client.fetch<EventsCopy | null>(eventsCopyQuery).then(setCopy).catch(() => {});
+  }, []);
 
   const upcoming = EVENTS.filter((e) => e.status !== "past");
   const past = EVENTS.filter((e) => e.status === "past");
@@ -195,10 +271,10 @@ export default function EventPage() {
         {/* ── Header ─────────────────────────────────────────────────── */}
         <section className="px-6 pb-16 pt-40 md:px-14 lg:px-20">
           <span className="mb-6 block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">
-            What&apos;s On
+            {copy?.eyebrow ?? "What's On"}
           </span>
           <h1 className="font-poppins text-[12vw] font-black uppercase leading-[0.85] md:text-[7vw]">
-            Events
+            {copy?.headline ?? "Events"}
           </h1>
         </section>
 
@@ -290,6 +366,27 @@ export default function EventPage() {
             </div>
           </section>
         )}
+
+        {/* ── Stay Notified Form ─────────────────────────────────────── */}
+        <section className="border-t border-white/10 px-6 py-20 md:px-14 lg:px-20">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid gap-12 md:grid-cols-2 md:gap-24">
+              <div>
+                <span className="mb-5 block font-montserrat text-xs font-bold uppercase tracking-[0.45em] text-red">
+                  OBARE Events
+                </span>
+                <h2 className="font-poppins text-4xl font-black uppercase leading-[0.9] md:text-5xl">
+                  Stay in the loop.
+                </h2>
+                <p className="mt-6 font-montserrat text-sm leading-relaxed text-white/55">
+                  Get first access to OBARE events, launches, and private gatherings.
+                </p>
+              </div>
+
+              <EventNotifyForm />
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer />
