@@ -15,6 +15,8 @@ interface SettingsResult {
   heroMedia?: {
     headline?: string;
     subheadline?: string;
+    imageUrl?: string;
+    imageMobileUrl?: string;
   };
   homepageProjects?: Array<{
     title: string;
