@@ -23,6 +23,13 @@ html {
      so position: sticky on descendants still works. This is the safe way
      to cut horizontal overflow on mobile without breaking the deck stack. */
   overflow-x: clip;
+  /* Prevent double-tap zoom on Android Chrome / Samsung Internet — allows
+     normal panning but blocks pinch and double-tap scale gestures. */
+  touch-action: pan-x pan-y;
+  -webkit-touch-callout: none;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html.lenis, html.lenis body {

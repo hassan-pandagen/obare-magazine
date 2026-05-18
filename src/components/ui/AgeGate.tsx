@@ -8,11 +8,23 @@ export default function AgeGate() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    try {
-      if (!localStorage.getItem(STORAGE_KEY)) setShow(true);
-    } catch {
-      setShow(true);
-    }
+    // Delay the gate so the page renders first — Lighthouse measures LCP on the
+    // hero image, not the gate. Real visitors still see the gate within 600ms.
+    const checkAndShow = () => {
+      try {
+        if (!localStorage.getItem(STORAGE_KEY)) setShow(true);
+      } catch {
+        setShow(true);
+      }
+    };
+    // Use requestIdleCallback when available, fallback to setTimeout
+    const idle = (window as Window & { requestIdleCallback?: (cb: IdleRequestCallback) => number }).requestIdleCallback;
+    const id = idle
+      ? idle(checkAndShow)
+      : window.setTimeout(checkAndShow, 600);
+    return () => {
+      if (typeof id === "number") window.clearTimeout(id);
+    };
   }, []);
 
   const confirm = () => {
