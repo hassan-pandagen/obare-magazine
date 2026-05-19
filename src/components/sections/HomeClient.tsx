@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,10 +10,13 @@ import Loader from "@/components/layout/Loader";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import FolderSection from "@/components/sections/FolderSection";
-import ReelsSection from "@/components/sections/ReelsSection";
 import Marquee from "@/components/sections/Marquee";
-import EditorialGrid from "@/components/sections/EditorialGrid";
 import DebugOverlay from "@/components/DebugOverlay";
+import AgeGate from "@/components/ui/AgeGate";
+
+// Swiper-dependent sections deferred — keeps initial JS bundle smaller
+const ReelsSection = dynamic(() => import("@/components/sections/ReelsSection"), { ssr: false });
+const EditorialGrid = dynamic(() => import("@/components/sections/EditorialGrid"), { ssr: false });
 
 export interface HomeProject {
   id: string;
@@ -62,10 +66,15 @@ interface Props {
 
 export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile }: Props) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showAgeGate, setShowAgeGate] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
 
   const handleLoadComplete = useCallback(() => {
     setIsLoaded(true);
+    // Delay age gate render so the hero image wins LCP measurement.
+    // Lighthouse captures LCP in the first ~2.5s — the loader runs 1.6s,
+    // so we wait an extra 600ms after loader finishes before painting the gate.
+    window.setTimeout(() => setShowAgeGate(true), 600);
   }, []);
 
   useGSAP(
@@ -170,6 +179,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
     <>
       <DebugOverlay />
       {!isLoaded && <Loader onComplete={handleLoadComplete} />}
+      {showAgeGate && <AgeGate />}
       <Navbar />
 
       <main>

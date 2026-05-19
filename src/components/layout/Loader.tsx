@@ -66,8 +66,8 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
         OBARE
       </h1>
 
-      <div className="mt-8 h-[2px] w-48 overflow-hidden bg-white/20 md:w-64">
-        <div ref={progressRef} className="h-full w-0 bg-red" />
+      <div className="mt-8 h-[2px] w-48 overflow-hidden bg-white/15 md:w-64">
+        <div ref={progressRef} className="h-full w-0" style={{ backgroundColor: "#ff3b1f" }} />
       </div>
 
       <span className="mt-4 font-montserrat text-xs tracking-widest text-white/50">

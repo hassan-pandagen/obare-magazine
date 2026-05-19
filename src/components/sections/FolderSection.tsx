@@ -192,6 +192,7 @@ export default function FolderSection({
               )}
               <a
                 href={href}
+                aria-label={`Go Bare — ${title}`}
                 className="group relative mt-8 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white"
               >
                 <span className="relative">
@@ -291,6 +292,7 @@ export default function FolderSection({
             )}
             <a
               href={href}
+              aria-label={`Go Bare — ${title}`}
               className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7"
             >
               <span className="relative">

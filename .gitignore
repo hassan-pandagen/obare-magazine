@@ -39,3 +39,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# audit / test screenshots
+/audit-output/
+/test-results/
+/playwright-report/
+*.png
+*.jpg
+*.jpeg
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!src/**/*.png
+!src/**/*.jpg
+!src/**/*.jpeg
+
+# misc local files
+*.pdf
+CLIENT_FEEDBACK.md
+Final*.pdf
+*.log

@@ -34,9 +34,9 @@ export default function FooterCTA() {
 
   const [ctaVideo, setCtaVideo] = useState<string | null>(null);
   const [socials, setSocials] = useState<FooterMeta["socialLinks"]>({});
-  // Deferred preload — keeps initial page weight out of Lighthouse audits,
-  // then buffers the video in the background so hover playback is instant.
   const [videoReady, setVideoReady] = useState(false);
+  // Defer letter background images until the section is near-viewport
+  const [lettersVisible, setLettersVisible] = useState(false);
 
   useEffect(() => {
     client
@@ -58,6 +58,21 @@ export default function FooterCTA() {
       if (typeof id === "number") clearTimeout(id);
     };
   }, [ctaVideo]);
+
+  useEffect(() => {
+    if (!sectionRef.current || lettersVisible) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLettersVisible(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+    obs.observe(sectionRef.current);
+    return () => obs.disconnect();
+  }, [lettersVisible]);
 
   const onVideoEnter = () => {
     const v = videoRef.current;
@@ -132,12 +147,13 @@ export default function FooterCTA() {
               key={i}
               className="obare-letter relative font-poppins text-[22vw] font-black leading-none md:text-[14vw]"
               style={{
-                backgroundImage: `url(${image})`,
+                backgroundImage: lettersVisible ? `url(${image})` : undefined,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
+                WebkitTextFillColor: lettersVisible ? "transparent" : undefined,
+                backgroundClip: lettersVisible ? "text" : undefined,
+                color: lettersVisible ? undefined : "black",
               }}
             >
               {letter}
@@ -153,7 +169,8 @@ export default function FooterCTA() {
             onMouseLeave={onVideoLeave}
             onFocus={onVideoEnter}
             onBlur={onVideoLeave}
-            className="group/btn relative inline-flex items-center justify-center overflow-hidden rounded-full bg-red px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-300 hover:scale-[1.03]"
+            className="group/btn relative inline-flex items-center justify-center overflow-hidden rounded-full px-12 py-5 font-montserrat text-sm font-bold uppercase tracking-[0.2em] text-white transition-transform duration-300 hover:scale-[1.03]"
+            style={{ backgroundColor: "#c42e15" }}
           >
             {ctaVideo && videoReady && (
               <>

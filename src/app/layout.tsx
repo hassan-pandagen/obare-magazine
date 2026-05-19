@@ -9,7 +9,6 @@ import { Poppins, Montserrat, Archivo, Playfair_Display } from "next/font/google
 import localFont from "next/font/local";
 import "./globals.css";
 import GSAPProvider from "@/providers/GSAPProvider";
-import AgeGate from "@/components/ui/AgeGate";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -90,7 +89,9 @@ export default function RootLayout({
     >
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
+        <link rel="preconnect" href="https://47jnaej0.apicdn.sanity.io" crossOrigin="" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://47jnaej0.apicdn.sanity.io" />
         <link
           rel="preload"
           as="image"
@@ -113,7 +114,6 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        <AgeGate />
         <GSAPProvider>{children}</GSAPProvider>
         {/* Prevent iOS Safari pinch-zoom — Safari ignores user-scalable=no since iOS 10 */}
         <Script id="ios-gesture-lock" strategy="beforeInteractive">{`

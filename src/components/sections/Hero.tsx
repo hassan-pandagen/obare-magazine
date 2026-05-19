@@ -90,8 +90,14 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: 
       }
 
       if (tickerRef.current) {
-        gsap.set(tickerRef.current, { opacity: 0 });
-        tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        if (isMobile) {
+          // On mobile the heading animation is much shorter — just show ticker immediately
+          gsap.set(tickerRef.current, { opacity: 1 });
+        } else {
+          gsap.set(tickerRef.current, { opacity: 0 });
+          tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
+        }
       }
 
       gsap.to(headingRef.current, {
@@ -120,17 +126,17 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: 
           {bgImageMobile && (
             <source
               media="(max-width: 767px)"
-              srcSet={`${optimizeImg(bgImageMobile, { w: 720, q: 70 })} 1x, ${optimizeImg(bgImageMobile, { w: 1080, q: 70 })} 2x`}
+              srcSet={`${optimizeImg(bgImageMobile, { w: 480, q: 65 })} 1x, ${optimizeImg(bgImageMobile, { w: 720, q: 65 })} 2x`}
             />
           )}
           <img
             ref={bgRef as React.RefObject<HTMLImageElement>}
-            src={optimizeImg(bgImage, { w: 1600, q: 75 })}
-            srcSet={`${optimizeImg(bgImage, { w: 1200, q: 75 })} 1200w, ${optimizeImg(bgImage, { w: 1600, q: 75 })} 1600w, ${optimizeImg(bgImage, { w: 2000, q: 75 })} 2000w`}
+            src={optimizeImg(bgImage, { w: 1200, q: 70 })}
+            srcSet={`${optimizeImg(bgImage, { w: 900, q: 70 })} 900w, ${optimizeImg(bgImage, { w: 1200, q: 70 })} 1200w, ${optimizeImg(bgImage, { w: 1600, q: 70 })} 1600w`}
             sizes="100vw"
             alt=""
             fetchPriority="high"
-            decoding="async"
+            decoding="sync"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </picture>
