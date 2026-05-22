@@ -74,8 +74,8 @@ export default async function LinksPage() {
     featuredUrl,
     featuredImageUrl,
     featuredImageHotspot,
-    links = [],
-    gridItems = [],
+    links,
+    gridItems,
     utmSource,
     utmMedium,
   } = data;
@@ -138,9 +138,9 @@ export default async function LinksPage() {
       )}
 
       {/* ── Image grid ── */}
-      {gridItems.length > 0 && (
+      {(gridItems ?? []).length > 0 && (
         <div className="grid grid-cols-3">
-          {gridItems.map((item, i) => {
+          {(gridItems ?? []).map((item, i) => {
             const href = withUtm(item.url, utmSource, utmMedium);
             const ext = isExternal(item.url);
             const hotspot = item.imageHotspot;
@@ -179,9 +179,9 @@ export default async function LinksPage() {
       )}
 
       {/* ── Link buttons (below grid) ── */}
-      {links.length > 0 && (
+      {(links ?? []).length > 0 && (
         <nav className="mx-auto flex max-w-sm flex-col gap-3 px-6 py-10">
-          {links.map((item, i) => {
+          {(links ?? []).map((item, i) => {
             const accentCls =
               item.accent === "red"
                 ? "bg-red text-white border-red hover:opacity-90"
