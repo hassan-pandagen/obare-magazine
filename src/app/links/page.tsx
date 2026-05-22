@@ -144,7 +144,7 @@ export default async function LinksPage() {
             const href = withUtm(item.url, utmSource, utmMedium);
             const ext = isExternal(item.url);
             const hotspot = item.imageHotspot;
-            const bgPos = hotspot && typeof hotspot.x === "number"
+            const bgPos = hotspot && typeof hotspot.x === "number" && typeof hotspot.y === "number"
               ? `${hotspot.x * 100}% ${hotspot.y * 100}%`
               : "center";
             return (
