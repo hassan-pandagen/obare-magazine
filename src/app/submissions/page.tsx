@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { serverClient as client } from "@/sanity/client";
 import { submissionsHeroImageQuery, submissionsCopyQuery } from "@/sanity/queries/aboutPage";
 import SubmissionsClient, { type SubmissionsCopy } from "@/components/sections/SubmissionsClient";
 
@@ -12,8 +12,8 @@ interface HeroBg {
 
 export default async function SubmissionsPage() {
   const [hero, copy] = await Promise.all([
-    client.fetch<HeroBg | null>(submissionsHeroImageQuery),
-    client.fetch<SubmissionsCopy | null>(submissionsCopyQuery),
+    client.fetch<HeroBg | null>(submissionsHeroImageQuery).catch(() => null),
+    client.fetch<SubmissionsCopy | null>(submissionsCopyQuery).catch(() => null),
   ]);
   return (
     <SubmissionsClient

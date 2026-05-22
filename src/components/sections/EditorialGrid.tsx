@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, Autoplay } from "swiper/modules";
 import { optimizeImg } from "@/lib/sanityImg";
 import { RedEmphasis } from "@/lib/redEmphasis";
+import RichText from "@/components/portable/RichText";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -15,8 +16,8 @@ import "swiper/css/navigation";
 export interface EditorialStory {
   id: string | number;
   category?: string;
-  title: string;
-  subtitle?: string;
+  title: unknown[];
+  subtitle?: unknown[];
   cta?: string;
   image: string;
   imageMobile?: string;
@@ -56,13 +57,13 @@ export default function EditorialGrid({
   const renderCard = (story: EditorialStory) => (
     <a
       href={story.href ?? "#"}
-      aria-label={story.imageAlt ?? story.title}
+      aria-label={story.imageAlt ?? ""}
       className="story-card group relative block aspect-[3/4] h-full w-full overflow-hidden"
     >
       {/* Two bg layers: mobile uses mobile image if provided, desktop always uses desktop image */}
       <div
         role="img"
-        aria-label={story.imageAlt ?? story.title}
+        aria-label={story.imageAlt ?? ""}
         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08] md:hidden"
         style={{
           backgroundImage: `url(${optimizeImg(story.imageMobile ?? story.image, { w: 700 })})`,
@@ -70,7 +71,7 @@ export default function EditorialGrid({
       />
       <div
         role="img"
-        aria-label={story.imageAlt ?? story.title}
+        aria-label={story.imageAlt ?? ""}
         className="absolute inset-0 hidden bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.08] md:block"
         style={{ backgroundImage: `url(${optimizeImg(story.image, { w: 900 })})` }}
       />
@@ -82,11 +83,11 @@ export default function EditorialGrid({
           {story.category}
         </span>
         <h3 className="font-poppins text-2xl font-black uppercase leading-[1] text-white md:text-3xl lg:text-4xl">
-          <RedEmphasis>{story.title}</RedEmphasis>
+          <RichText value={story.title} />
         </h3>
         {story.subtitle && (
           <p className="mt-3 font-montserrat text-sm leading-relaxed text-white/60">
-            <RedEmphasis>{story.subtitle}</RedEmphasis>
+            <RichText value={story.subtitle} />
           </p>
         )}
         <div className="mt-5 flex items-center gap-2 font-archivo text-sm font-bold uppercase tracking-widest text-white/80 transition-colors group-hover:text-white" style={{ fontStretch: "125%" }}>

@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { simpleRichText, headlineRichText } from "./shared/richText";
 
 /**
  * Global site settings — one document, used across the whole site.
@@ -43,6 +44,13 @@ export const settings = defineType({
       fields: [
         defineField({ name: "alt", type: "string", title: "Alt text (SEO)", initialValue: "OBARE" }),
       ],
+    }),
+    defineField({
+      name: "tickerImage",
+      title: "Hero Ticker Image — optional",
+      type: "image",
+      options: { hotspot: false },
+      description: "Upload a PNG/SVG to show in the scrolling ticker bar instead of the default text. Leave empty to use text.",
     }),
     defineField({
       name: "heroMedia",
@@ -91,8 +99,8 @@ export const settings = defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "title", type: "string", title: "Title", validation: (r) => r.required() }),
-            defineField({ name: "subtitle", type: "string", title: "Subtitle" }),
+            defineField({ name: "title", type: "array", of: [headlineRichText], title: "Title" }),
+            defineField({ name: "subtitle", type: "array", of: [simpleRichText], title: "Subtitle" }),
             defineField({ name: "category", type: "string", title: "Category" }),
             defineField({ name: "author", type: "string", title: "Author" }),
             defineField({ name: "videoFile", type: "file", title: "Video", options: { accept: "video/*" } }),
@@ -140,8 +148,8 @@ export const settings = defineType({
         defineArrayMember({
           type: "object",
           fields: [
-            defineField({ name: "title", type: "string", title: "Title", validation: (r) => r.required() }),
-            defineField({ name: "subtitle", type: "text", title: "Subtitle", rows: 2 }),
+            defineField({ name: "title", type: "array", of: [headlineRichText], title: "Title" }),
+            defineField({ name: "subtitle", type: "array", of: [simpleRichText], title: "Subtitle" }),
             defineField({ name: "category", type: "string", title: "Category" }),
             defineField({
               name: "image",
@@ -238,7 +246,7 @@ export const settings = defineType({
         defineField({ name: "eyebrow", type: "string", title: "Eyebrow (small label)", initialValue: "Open Call" }),
         defineField({ name: "headlineLine1", type: "string", title: "Headline — Line 1", initialValue: "Your Work." }),
         defineField({ name: "headlineLine2", type: "string", title: "Headline — Line 2 (red)", initialValue: "On Obare Magazine." }),
-        defineField({ name: "subtitle", type: "text", rows: 2, title: "Subtitle", initialValue: "We are always looking for photographers, models, and writers to share with our community." }),
+        defineField({ name: "subtitle", type: "array", of: [simpleRichText], title: "Subtitle" }),
         defineField({ name: "formEyebrow", type: "string", title: "Form Eyebrow", initialValue: "Submit Your Work" }),
         defineField({ name: "formHeadline", type: "string", title: "Form Headline", initialValue: "Ready to be seen?" }),
       ],
@@ -254,7 +262,7 @@ export const settings = defineType({
         defineField({ name: "headlineLine1", type: "string", title: "Headline — Line 1", initialValue: "Contact" }),
         defineField({ name: "headlineLine2", type: "string", title: "Headline — Line 2 (red)", initialValue: "Us" }),
         defineField({ name: "infoHeadline", type: "string", title: "Info Block Headline", initialValue: "Let's talk." }),
-        defineField({ name: "infoSubtitle", type: "text", rows: 3, title: "Info Block Subtitle", initialValue: "Reach out about editorial pitches, advertising opportunities, event partnerships, or anything else on your mind. We read every email." }),
+        defineField({ name: "infoSubtitle", type: "array", of: [simpleRichText], title: "Info Block Subtitle" }),
       ],
     }),
 
@@ -293,7 +301,7 @@ export const settings = defineType({
           options: { list: [{ title: "Red", value: "red" }, { title: "White", value: "white" }], layout: "radio" },
           initialValue: "red",
         }),
-        defineField({ name: "subtitle", type: "text", rows: 2, title: "Subtitle text", initialValue: "A closer look at the women and the moments behind creating our imagery." }),
+        defineField({ name: "subtitle", type: "array", of: [simpleRichText], title: "Subtitle text" }),
         defineField({
           name: "subtitleColor", type: "string", title: "Subtitle color",
           options: { list: [{ title: "Red", value: "red" }, { title: "White/muted", value: "white" }], layout: "radio" },

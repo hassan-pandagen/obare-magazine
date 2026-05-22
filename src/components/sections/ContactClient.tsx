@@ -7,6 +7,7 @@ import { Field, Input, Textarea, Select, SubmitButton } from "@/components/ui/Fo
 import { optimizeImg } from "@/lib/sanityImg";
 import { client } from "@/sanity/client";
 import { footerMetaQuery } from "@/sanity/queries/aboutPage";
+import RichText from "@/components/portable/RichText";
 
 interface SocialLinks {
   instagram?: string;
@@ -31,7 +32,7 @@ export interface ContactCopy {
   headlineLine1?: string;
   headlineLine2?: string;
   infoHeadline?: string;
-  infoSubtitle?: string;
+  infoSubtitle?: unknown[];
 }
 
 export default function ContactClient({
@@ -118,7 +119,7 @@ export default function ContactClient({
               <div>
                 <h2 className="font-poppins text-2xl font-black uppercase">{copy?.infoHeadline ?? "Let's talk."}</h2>
                 <p className="mt-4 font-montserrat text-sm leading-relaxed text-white/60">
-                  {copy?.infoSubtitle ?? "Reach out about editorial pitches, advertising opportunities, event partnerships, or anything else on your mind. We read every email."}
+                  {copy?.infoSubtitle ? <RichText value={copy.infoSubtitle} /> : "Reach out about editorial pitches, advertising opportunities, event partnerships, or anything else on your mind. We read every email."}
                 </p>
 
                 <div className="mt-10 space-y-6 border-t border-white/10 pt-10">

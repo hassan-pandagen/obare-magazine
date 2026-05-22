@@ -12,6 +12,8 @@ export const siteLogoQuery = groq`
 export const homepageSettingsQuery = groq`
   *[_type == "settings"][0] {
     siteName,
+    "logoUrl": logo.asset->url,
+    "tickerImageUrl": tickerImage.asset->url,
     heroMedia {
       type,
       headline,
@@ -23,8 +25,8 @@ export const homepageSettingsQuery = groq`
       "imageMobileUrl": imageMobile.asset->url,
     },
     homepageProjects[] {
-      title,
-      subtitle,
+      title[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+      subtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
       category,
       author,
       imageAlt,
@@ -37,8 +39,8 @@ export const homepageSettingsQuery = groq`
       externalHref,
     },
     editorialStories[] {
-      title,
-      subtitle,
+      title[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+      subtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
       category,
       cta,
       imageAlt,

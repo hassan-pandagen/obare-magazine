@@ -3,6 +3,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { optimizeImg } from "@/lib/sanityImg";
+import RichText from "@/components/portable/RichText";
 
 const CATEGORIES = [
   "Photography",
@@ -18,7 +19,7 @@ export interface SubmissionsCopy {
   eyebrow?: string;
   headlineLine1?: string;
   headlineLine2?: string;
-  subtitle?: string;
+  subtitle?: unknown[];
   formEyebrow?: string;
   formHeadline?: string;
 }
@@ -77,7 +78,7 @@ export default function SubmissionsClient({
               <span className="text-red">{copy?.headlineLine2 ?? "On Obare Magazine."}</span>
             </h1>
             <p className="mt-8 max-w-lg font-montserrat text-base leading-relaxed text-white/55 md:text-lg">
-              {copy?.subtitle ?? "We are always looking for photographers, models, and writers to share with our community."}
+              {copy?.subtitle ? <RichText value={copy.subtitle} /> : "We are always looking for photographers, models, and writers to share with our community."}
             </p>
           </div>
         </section>

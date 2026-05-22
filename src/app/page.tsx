@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { serverClient as client } from "@/sanity/client";
 import {
   homepageSettingsQuery,
   homepageReelsQuery,
@@ -12,6 +12,8 @@ import HomeClient, {
 export const revalidate = 60;
 
 interface SettingsResult {
+  logoUrl?: string;
+  tickerImageUrl?: string;
   heroMedia?: {
     headline?: string;
     subheadline?: string;
@@ -19,8 +21,8 @@ interface SettingsResult {
     imageMobileUrl?: string;
   };
   homepageProjects?: Array<{
-    title: string;
-    subtitle?: string;
+    title: unknown[];
+    subtitle?: unknown[];
     category?: string;
     author?: string;
     imageAlt?: string;
@@ -33,8 +35,8 @@ interface SettingsResult {
     externalHref?: string;
   }>;
   editorialStories?: Array<{
-    title: string;
-    subtitle?: string;
+    title: unknown[];
+    subtitle?: unknown[];
     category?: string;
     cta?: string;
     imageAlt?: string;
@@ -55,8 +57,8 @@ interface ReelResult {
 
 export default async function Home() {
   const [settings, reelDocs] = await Promise.all([
-    client.fetch<SettingsResult | null>(homepageSettingsQuery),
-    client.fetch<ReelResult[]>(homepageReelsQuery),
+    client.fetch<SettingsResult | null>(homepageSettingsQuery).catch(() => null),
+    client.fetch<ReelResult[]>(homepageReelsQuery).catch(() => []),
   ]);
 
   const projects: HomeProject[] = (settings?.homepageProjects ?? []).map(
@@ -110,6 +112,8 @@ export default async function Home() {
       heroSubheadline={settings?.heroMedia?.subheadline}
       heroBgImage={settings?.heroMedia?.imageUrl}
       heroBgImageMobile={settings?.heroMedia?.imageMobileUrl}
+      heroLogoUrl={settings?.logoUrl}
+      heroTickerImageUrl={settings?.tickerImageUrl}
     />
   );
 }

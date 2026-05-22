@@ -90,14 +90,10 @@ export default function Footer() {
 
         {/* Bottom bar — large serif credit like HommmeGirls reference */}
         <div className="border-t border-white/10 px-6 py-8 md:px-10 lg:px-16">
-          <p
-            className="font-playfair text-white leading-[1.15]"
-            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.8rem)", fontWeight: 400 }}
-          >
-            Copyright &copy; 2026 OBARE Magazine.
-            <br />
+          <p className="font-montserrat text-xs text-white/50 leading-relaxed">
+            Copyright &copy; 2026 OBARE Magazine.{" "}
             Site built by{" "}
-            <a href="https://www.pandacodegen.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+            <a href="https://www.pandacodegen.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors">
               PandaCodeGen.
             </a>
           </p>

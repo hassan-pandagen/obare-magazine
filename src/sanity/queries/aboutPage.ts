@@ -3,17 +3,18 @@ import { groq } from "next-sanity";
 export const aboutPageQuery = groq`
   *[_type == "aboutPage"][0] {
     heroEyebrow,
-    heroHeadline,
-    heroSubtitle,
+    heroHeadline[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+    heroSubtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
     heroImageAlt,
+    heroRedOverlay,
     "heroImageUrl": heroImage.asset->url,
     "heroImageHotspot": heroImage.hotspot { x, y },
     "heroImageMobileUrl": heroImageMobile.asset->url,
     "heroImageMobileHotspot": heroImageMobile.hotspot { x, y },
     sections[] {
       eyebrow,
-      title,
-      body,
+      title[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+      body[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
       layout,
       imageAspectRatio,
       redOverlay,
@@ -23,18 +24,18 @@ export const aboutPageQuery = groq`
       "imageMobileUrl": imageMobile.asset->url,
       "imageMobileHotspot": imageMobile.hotspot { x, y }
     },
-    pillarsTitle,
+    pillarsTitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
     pillars[] {
-      title,
-      body,
+      title[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+      body[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
       imageAlt,
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
       "imageMobileUrl": imageMobile.asset->url,
       "imageMobileHotspot": imageMobile.hotspot { x, y }
     },
-    ctaHeadline,
-    ctaSubtitle,
+    ctaHeadline[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
+    ctaSubtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
     ctaPrimaryLabel,
     ctaPrimaryLink,
     ctaSecondaryLabel,
@@ -64,7 +65,7 @@ export const submissionsCopyQuery = groq`
     eyebrow,
     headlineLine1,
     headlineLine2,
-    subtitle,
+    subtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
     formEyebrow,
     formHeadline
   }
@@ -76,7 +77,7 @@ export const contactCopyQuery = groq`
     headlineLine1,
     headlineLine2,
     infoHeadline,
-    infoSubtitle
+    infoSubtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } }
   }
 `;
 
@@ -95,7 +96,7 @@ export const reelsCopyQuery = groq`
     headlineLine1Color,
     headlineLine2,
     headlineLine2Color,
-    subtitle,
+    subtitle[] { ..., markDefs[] { ..., _type == "highlight" => { color } } },
     subtitleColor
   }
 `;

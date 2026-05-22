@@ -20,8 +20,8 @@ const EditorialGrid = dynamic(() => import("@/components/sections/EditorialGrid"
 
 export interface HomeProject {
   id: string;
-  title: string;
-  subtitle?: string;
+  title: unknown[];
+  subtitle?: unknown[];
   category?: string;
   author?: string;
   videoSrc?: string;
@@ -44,8 +44,8 @@ export interface HomeReel {
 
 export interface HomeStory {
   id: string;
-  title: string;
-  subtitle?: string;
+  title: unknown[];
+  subtitle?: unknown[];
   category?: string;
   cta?: string;
   image: string;
@@ -62,9 +62,11 @@ interface Props {
   heroSubheadline?: string;
   heroBgImage?: string;
   heroBgImageMobile?: string;
+  heroLogoUrl?: string;
+  heroTickerImageUrl?: string;
 }
 
-export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile }: Props) {
+export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile, heroLogoUrl, heroTickerImageUrl }: Props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [showAgeGate, setShowAgeGate] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
@@ -183,7 +185,7 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
       <Navbar />
 
       <main>
-        <Hero headline={heroHeadline} subheadline={heroSubheadline} bgImage={heroBgImage} bgImageMobile={heroBgImageMobile} />
+        <Hero headline={heroHeadline} subheadline={heroSubheadline} bgImage={heroBgImage} bgImageMobile={heroBgImageMobile} logoUrl={heroLogoUrl} tickerImageUrl={heroTickerImageUrl} />
 
         <div ref={stackContainerRef} className="relative" style={{ overflowX: "clip" }}>
           {projects.map((project, i) => (

@@ -105,35 +105,28 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
           )}
 
           <div className="pointer-events-none absolute inset-0 bg-black/30" />
+          {article.coverImage?.credit && (
+            <div className="absolute bottom-4 right-4 z-10">
+              {article.coverImage.creditUrl ? (
+                <a href={article.coverImage.creditUrl} target="_blank" rel="noopener noreferrer"
+                  className="font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/40 transition-colors hover:text-white/70 md:text-[10px]">
+                  Photo by {article.coverImage.credit}
+                </a>
+              ) : (
+                <span className="font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/40 md:text-[10px]">
+                  Photo by {article.coverImage.credit}
+                </span>
+              )}
+            </div>
+          )}
 
 
           {/* Red panel — covers right 55% full height on mobile, large portion on desktop */}
-          <div className="absolute bottom-0 right-0 top-0 left-[10%] overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
-            <HeroDeckBox className="absolute bottom-0 left-0 right-0 top-[32%] md:top-0">
-
-              {/* Camera UI chrome */}
-              <div className="pointer-events-none absolute inset-0 text-white">
-                <div className="absolute left-4 top-4 flex items-center gap-1.5 font-archivo text-[9px] font-bold tracking-[0.12em] md:left-6 md:top-6 md:text-xs">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-red" />
-                  2026.4.21
-                  <span className="opacity-70">03:50 PM</span>
-                </div>
-                <div className="absolute right-4 top-4 font-archivo text-[9px] font-bold tracking-[0.12em] md:right-6 md:top-6 md:text-xs">
-                  200-300
-                </div>
-                <div className="absolute bottom-8 left-4 flex items-center gap-2 font-archivo text-[9px] font-bold tracking-[0.12em] md:bottom-6 md:left-6 md:text-xs">
-                  <span>F. 3.2</span>
-                  <span className="rounded-sm bg-white/90 px-1 py-0.5 text-black text-[8px]">ISO</span>
-                  <span>800</span>
-                </div>
-                <div className="absolute bottom-8 right-4 flex items-center gap-1.5 font-archivo text-[9px] font-bold tracking-[0.12em] md:bottom-6 md:right-6 md:text-xs">
-                  <span>RAW</span>
-                  <span>3/10</span>
-                </div>
-              </div>
+          <div className="absolute bottom-0 right-0 top-0 left-0 overflow-hidden md:top-28 md:left-[18%] lg:top-32 lg:left-[22%]">
+            <HeroDeckBox className="absolute bottom-0 left-0 right-0 top-[25%] md:top-0">
 
               {/* Headline — top of panel */}
-              <div className="absolute left-0 right-0 top-[12%] px-5 md:top-[15%] md:px-10 lg:px-14">
+              <div className="absolute left-0 right-0 top-[5%] px-4 md:top-[8%] md:px-8 lg:px-12" style={{ bottom: "28%" }}>
                 {article.category && (
                   <span className="mb-3 block font-montserrat text-[9px] font-bold uppercase tracking-[0.45em] text-white/70 md:mb-4 md:text-[10px]">
                     {article.category}
@@ -143,16 +136,16 @@ export default async function ArticlePage({ params }: { params: Promise<Params> 
                   </span>
                 )}
                 <h1
-                  className="font-poppins font-black uppercase text-white"
+                  className="font-poppins font-black uppercase text-white w-full"
                   style={{
-                    fontSize: "clamp(2.8rem, 12vw, 6rem)",
-                    lineHeight: 0.88,
+                    fontSize: "clamp(2.4rem, 13vw, 8rem)",
+                    lineHeight: 0.9,
                     letterSpacing: "-0.02em",
                     wordBreak: "break-word",
                     hyphens: "none",
                   }}
                 >
-                  {article.title.replace(/\*\*/g, "")}
+                  <RedEmphasis>{article.title}</RedEmphasis>
                 </h1>
               </div>
 

@@ -190,13 +190,16 @@ function RSVPModal({ event, onClose }: { event: (typeof EVENTS)[0]; onClose: () 
 
 function EventNotifyForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
-  const [form, setForm] = useState({ name: "", email: "", instagram: "", interests: "" });
+  const [form, setForm] = useState({ name: "", email: "", instagram: "", interest: "", agreed: false });
 
-  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type, checked } = e.target as HTMLInputElement;
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.agreed) return;
     setStatus("sending");
     try {
       await fetch("https://formsubmit.co/info@ObareMag.com", {
@@ -215,36 +218,44 @@ function EventNotifyForm() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
         </div>
         <h3 className="font-poppins text-2xl font-black uppercase">You&apos;re on the list.</h3>
-        <p className="font-montserrat text-sm text-white/55">We&apos;ll reach out when something is happening near you.</p>
+        <p className="font-montserrat text-sm text-white/55">We&apos;ll be in touch with event details and your RSVP confirmation.</p>
       </div>
     );
   }
 
+  const fieldCls = "border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white";
+  const labelCls = "font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-red";
+
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
       <label className="flex flex-col gap-2">
-        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Full Name *</span>
-        <input required name="name" value={form.name} onChange={update} placeholder="Your name"
-          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+        <span className={labelCls}>Full Name *</span>
+        <input required name="name" value={form.name} onChange={update} placeholder="Your name" className={fieldCls} />
       </label>
       <label className="flex flex-col gap-2">
-        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Email *</span>
-        <input required type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com"
-          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+        <span className={labelCls}>Email *</span>
+        <input required type="email" name="email" value={form.email} onChange={update} placeholder="you@example.com" className={fieldCls} />
       </label>
       <label className="flex flex-col gap-2">
-        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">Instagram Handle</span>
-        <input name="instagram" value={form.instagram} onChange={update} placeholder="@yourhandle"
-          className="border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+        <span className={labelCls}>Instagram Handle</span>
+        <input name="instagram" value={form.instagram} onChange={update} placeholder="@yourhandle" className={fieldCls} />
       </label>
       <label className="flex flex-col gap-2">
-        <span className="font-montserrat text-[10px] font-bold uppercase tracking-[0.3em] text-white/50">What kind of events interest you?</span>
-        <textarea name="interests" value={form.interests} onChange={update} rows={3} placeholder="launches, art nights, workshops, etc."
-          className="resize-none border-b border-white/20 bg-transparent pb-2 font-montserrat text-sm text-white outline-none placeholder:text-white/20 focus:border-white" />
+        <span className={labelCls}>What kind of events interest you?</span>
+        <textarea name="interest" value={form.interest} onChange={update} rows={3} placeholder="Launches, art nights, workshops, editorial showcases…"
+          className={`resize-none ${fieldCls}`} />
       </label>
-      <button type="submit" disabled={status === "sending"}
+      <label className="flex cursor-pointer items-start gap-3">
+        <input type="checkbox" name="agreed" checked={form.agreed} onChange={update}
+          className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-red" />
+        <span className="font-montserrat text-xs text-white/55">
+          I confirm that I&apos;ve read and agree to the{" "}
+          <a href="/privacy" className="font-bold text-white underline hover:text-red">Privacy Policy</a>
+        </span>
+      </label>
+      <button type="submit" disabled={status === "sending" || !form.agreed}
         className="self-start rounded-full bg-red px-10 py-4 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white transition-opacity hover:opacity-90 disabled:opacity-50">
-        {status === "sending" ? "Sending…" : "Notify Me →"}
+        {status === "sending" ? "Submitting…" : "Notify Me →"}
       </button>
     </form>
   );

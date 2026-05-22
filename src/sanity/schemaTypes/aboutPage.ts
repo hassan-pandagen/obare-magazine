@@ -1,4 +1,5 @@
 import { defineType, defineField, defineArrayMember } from "sanity";
+import { simpleRichText, headlineRichText } from "./shared/richText";
 
 /**
  * About Us page singleton — hero + 4 narrative sections + 3 pillar cards + CTA.
@@ -19,15 +20,15 @@ export const aboutPage = defineType({
     defineField({
       name: "heroHeadline",
       title: "Hero Headline",
-      type: "string",
-      initialValue: "The Magazine That's Real",
-      description: "Big bold title. Use a | to force a line break. Wrap words in **stars** to paint them red (e.g. Who We **Are**).",
+      type: "array",
+      of: [headlineRichText],
+      description: "Big bold title. Select words and use the highlight picker to paint them in any color.",
     }),
     defineField({
       name: "heroSubtitle",
       title: "Hero Subtitle",
-      type: "text",
-      rows: 3,
+      type: "array",
+      of: [simpleRichText],
     }),
     defineField({
       name: "heroImage",
@@ -47,6 +48,13 @@ export const aboutPage = defineType({
       title: "Hero Image — Alt Text (SEO)",
       type: "string",
       description: "Describe what's in the image for accessibility + search engines.",
+    }),
+    defineField({
+      name: "heroRedOverlay",
+      title: "Red Overlay on Hero Image?",
+      type: "boolean",
+      initialValue: true,
+      description: "Toggle the red tint overlay on the hero photo.",
     }),
 
     /* ── 4 narrative sections ─────────────────────────── */
@@ -69,16 +77,15 @@ export const aboutPage = defineType({
             defineField({
               name: "title",
               title: "Title",
-              type: "string",
-              validation: (r) => r.required(),
-              description: "Wrap words in **stars** to paint them red — e.g. Bare Models **Who Are They?**",
+              type: "array",
+              of: [headlineRichText],
+              description: "Select words and use the highlight picker to paint them in any color.",
             }),
             defineField({
               name: "body",
               title: "Body",
-              type: "text",
-              rows: 6,
-              description: "Hit Enter for paragraph breaks. Wrap words in **stars** for red emphasis.",
+              type: "array",
+              of: [simpleRichText],
             }),
             defineField({
               name: "image",
@@ -148,8 +155,8 @@ export const aboutPage = defineType({
     defineField({
       name: "pillarsTitle",
       title: "Pillars Section Title",
-      type: "string",
-      initialValue: "Things You Should Know About Us",
+      type: "array",
+      of: [headlineRichText],
     }),
     defineField({
       name: "pillars",
@@ -163,14 +170,14 @@ export const aboutPage = defineType({
             defineField({
               name: "title",
               title: "Title",
-              type: "string",
-              validation: (r) => r.required(),
+              type: "array",
+              of: [headlineRichText],
             }),
             defineField({
               name: "body",
               title: "Body",
-              type: "text",
-              rows: 4,
+              type: "array",
+              of: [simpleRichText],
             }),
             defineField({
               name: "image",
@@ -203,14 +210,14 @@ export const aboutPage = defineType({
     defineField({
       name: "ctaHeadline",
       title: "Closing Headline",
-      type: "string",
-      initialValue: "Let's Talk",
+      type: "array",
+      of: [headlineRichText],
     }),
     defineField({
       name: "ctaSubtitle",
       title: "Closing Subtitle",
-      type: "text",
-      rows: 2,
+      type: "array",
+      of: [simpleRichText],
     }),
     defineField({
       name: "ctaPrimaryLabel",

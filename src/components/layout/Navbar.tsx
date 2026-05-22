@@ -82,6 +82,14 @@ export default function Navbar() {
 
   const [isHidden, setIsHidden] = useState(false);
 
+  // Reset any stale GSAP transforms on mount so both bars start identical
+  useEffect(() => {
+    const top = hamburgerTopRef.current;
+    const bot = hamburgerBotRef.current;
+    if (top) gsap.set(top, { rotate: 0, y: 0 });
+    if (bot) gsap.set(bot, { rotate: 0, y: 0 });
+  }, []);
+
   useGSAP(() => {
     ScrollTrigger.create({
       start: "top -80",
@@ -141,11 +149,9 @@ export default function Navbar() {
     const bot = hamburgerBotRef.current;
     if (!top || !bot) return;
 
-    // 2-bar X: top bar rotates to "/", bottom to "\", both converge to the center line.
-    // Gap between bars is 7px + 3px bar height = 10px → converge by 5px each.
     if (isMobileOpen) {
-      gsap.to(top, { rotate: 45, y: 6, duration: 0.3, ease: "power2.inOut" });
-      gsap.to(bot, { rotate: -45, y: -6, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(top, { rotate: 45, y: 5.75, duration: 0.3, ease: "power2.inOut" });
+      gsap.to(bot, { rotate: -45, y: -5.75, duration: 0.3, ease: "power2.inOut" });
     } else {
       gsap.to(top, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
       gsap.to(bot, { rotate: 0, y: 0, duration: 0.3, ease: "power2.inOut" });
@@ -186,11 +192,11 @@ export default function Navbar() {
         ref={navRef}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-[transform,background-color,backdrop-filter] duration-300 ease-out will-change-transform",
-          isScrolled ? "md:bg-black/90 md:backdrop-blur-md" : "bg-transparent",
+          "bg-transparent",
           isHidden ? "-translate-y-full" : "translate-y-0"
         )}
       >
-        <div className="flex items-center justify-between px-4 py-3 md:px-8 md:py-5 lg:px-10">
+        <div className="flex items-center justify-between px-0 py-2 md:px-4 md:py-4">
           {/* Logo — uploaded image if available, else OBARE wordmark fallback */}
           <a href="/" className="relative z-50 flex items-center" aria-label="OBARE — Home">
             {logo?.url ? (
@@ -199,7 +205,7 @@ export default function Navbar() {
                 alt={logo.alt ?? "OBARE"}
                 width={400}
                 height={134}
-                className="h-14 w-auto md:h-16"
+                className="h-6 w-auto md:h-8"
                 style={{ filter: "brightness(0) invert(1)" }}
                 draggable={false}
                 loading="eager"
@@ -216,7 +222,7 @@ export default function Navbar() {
           </a>
 
           {/* Desktop nav links */}
-          <div className="relative z-50 hidden items-center lg:flex">
+          <div className="relative z-50 hidden items-center xl:flex">
             {NAV_LINKS.map((link, i) => {
               const isActive = link.href ? pathname === link.href : false;
               const cls = cn(
@@ -260,14 +266,14 @@ export default function Navbar() {
           </div>
 
           {/* Mobile/tablet: hamburger only */}
-          <div className="relative z-50 flex items-center gap-3 lg:hidden">
+          <div className="relative z-50 flex items-center gap-3 xl:hidden">
             <button
-              className="flex flex-col items-end justify-center gap-[9px] p-2"
+              className="flex flex-col items-end justify-center gap-[6px] p-0"
               onClick={() => setIsMobileOpen((prev) => !prev)}
               aria-label="Toggle menu"
             >
-              <span ref={hamburgerTopRef} className="block h-[4px] w-12 origin-center rounded-none bg-white" />
-              <span ref={hamburgerBotRef} className="block h-[4px] w-12 origin-center rounded-none bg-white" />
+              <span ref={hamburgerTopRef} className="block h-[3px] w-8 origin-center bg-white rounded-sm" />
+              <span ref={hamburgerBotRef} className="block h-[3px] w-8 origin-center bg-white rounded-sm" />
               <span ref={hamburgerMidRef} className="hidden" />
             </button>
           </div>

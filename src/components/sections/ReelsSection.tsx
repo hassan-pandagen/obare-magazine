@@ -397,8 +397,19 @@ function MobileSwiperReel({
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (isActive) { v.play().catch(() => {}); setIsPaused(false); }
-    else { v.pause(); v.currentTime = 0; setControlsVisible(false); }
+    if (isActive) {
+      // Wait for enough data before playing
+      if (v.readyState >= 2) {
+        v.play().catch(() => {});
+      } else {
+        v.addEventListener("canplay", () => v.play().catch(() => {}), { once: true });
+      }
+      setIsPaused(false);
+    } else {
+      v.pause();
+      v.currentTime = 0;
+      setControlsVisible(false);
+    }
   }, [isActive]);
 
   useEffect(() => () => { if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current); }, []);

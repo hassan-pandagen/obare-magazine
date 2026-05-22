@@ -207,11 +207,8 @@ function MediaCarousel({ items, caption }: { items: CarouselItem[]; caption?: st
 
 const components: PortableTextComponents = {
   block: {
-    // Normal paragraph — with the messy-magazine drop cap on the first one.
-    // The :first-child selector gives the very first body paragraph a huge red
-    // first letter like a print magazine lede.
     normal: ({ children }) => (
-      <p className="article-paragraph mb-7 font-montserrat text-[17px] leading-[1.85] text-white/80 md:text-lg">
+      <p className="article-paragraph mb-3 font-montserrat text-[14px] leading-[1.55] text-white/80 md:text-[15px]">
         {children}
       </p>
     ),
@@ -246,7 +243,7 @@ const components: PortableTextComponents = {
   },
 
   marks: {
-    strong: ({ children }) => <strong className="font-bold text-red">{children}</strong>,
+    strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
     underline: ({ children }) => <span className="underline">{children}</span>,
     link: ({ value, children }) => (
@@ -276,7 +273,7 @@ const components: PortableTextComponents = {
       // Deterministic tilt + horizontal nudge so layout stays stable across renders
       // but images don't all line up in a perfect column.
       const seed = (value.alt ?? " ").charCodeAt(0) || 1;
-      const tilt = seed % 2 === 0 ? "-rotate-[1deg]" : "rotate-[1deg]";
+      const tilt = "";
       const nudge = seed % 3 === 0 ? "md:ml-auto md:mr-0" : seed % 3 === 1 ? "md:mx-auto" : "md:mr-auto md:ml-0";
       return (
         <figure
@@ -291,7 +288,7 @@ const components: PortableTextComponents = {
             />
           </picture>
           {(value.caption || value.credit) && (
-            <figcaption className="mt-3 flex flex-col gap-1 px-6 md:px-0">
+            <figcaption className="mt-3 flex flex-col items-center gap-1 px-6 md:px-0">
               {value.caption && (
                 <span className="font-montserrat text-xs italic text-white/50">
                   {value.caption}
@@ -303,13 +300,13 @@ const components: PortableTextComponents = {
                     href={value.creditUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 transition-colors hover:text-white/70 md:text-[10px]"
+                    className="text-center font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/60 transition-colors hover:text-white/90 md:text-[10px]"
                   >
-                    Photo &middot; {value.credit}
+                    Photo by {value.credit}
                   </a>
                 ) : (
-                  <span className="self-end font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/35 md:text-[10px]">
-                    Photo &middot; {value.credit}
+                  <span className="text-center font-archivo text-[9px] font-bold uppercase tracking-[0.35em] text-white/60 md:text-[10px]">
+                    Photo by {value.credit}
                   </span>
                 )
               )}
@@ -339,8 +336,7 @@ const components: PortableTextComponents = {
           <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
             {value.images.map(
               (img: { url: string; alt?: string; _key?: string }, i: number) => {
-                const tilts = ["-rotate-[1.5deg]", "rotate-[0.8deg]", "-rotate-[0.5deg]", "rotate-[1.3deg]"];
-                const tilt = tilts[i % tilts.length];
+                const tilt = "";
                 return (
                   <img
                     key={img._key ?? i}
@@ -371,7 +367,7 @@ const components: PortableTextComponents = {
     pullQuote: ({ value }) => {
       if (!value?.quote) return null;
       const seed = (value.quote ?? "").charCodeAt(0) || 1;
-      const tilt = seed % 2 === 0 ? "-rotate-[0.8deg]" : "rotate-[0.8deg]";
+      const tilt = "";
       return (
         <aside className={`relative my-16 -mx-4 border-y-2 border-red bg-red/5 py-12 text-center ${tilt}`}>
           <span

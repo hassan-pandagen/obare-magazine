@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { optimizeImg } from "@/lib/sanityImg";
 import { RedEmphasis } from "@/lib/redEmphasis";
+import RichText from "@/components/portable/RichText";
 
 interface FolderSectionProps {
-  title: string;
-  subtitle?: string;
+  title: unknown[];
+  subtitle?: unknown[];
   category?: string;
   author?: string;
   videoSrc?: string;
@@ -154,7 +155,7 @@ export default function FolderSection({
           )}
           <img
             src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
-            alt={imageAlt ?? title}
+            alt={imageAlt ?? ""}
             className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: isDesktop ? "center" : hotspotPos }}
           />
@@ -183,16 +184,16 @@ export default function FolderSection({
             )}
             <div>
               <h2 className="font-poppins font-black uppercase leading-[0.88] text-white text-[7vw] lg:text-[6vw]">
-                <RedEmphasis>{title}</RedEmphasis>
+                <RichText value={title} />
               </h2>
               {subtitle && (
                 <p className="mt-6 max-w-xl font-montserrat text-base leading-relaxed text-white/75">
-                  <RedEmphasis>{subtitle}</RedEmphasis>
+                  <RichText value={subtitle} />
                 </p>
               )}
               <a
                 href={href}
-                aria-label={`Go Bare — ${title}`}
+                aria-label="Go Bare"
                 className="group relative mt-8 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white"
               >
                 <span className="relative">
@@ -207,7 +208,7 @@ export default function FolderSection({
             </div>
           </div>
 
-          {/* RIGHT — 9:16 media frame with mute control */}
+          {/* RIGHT — 9:16 media frame with tap controls */}
           <div className="relative flex items-center justify-center px-6 py-10 lg:px-10">
             <div
               className="relative h-full overflow-hidden rounded-md bg-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
@@ -215,6 +216,48 @@ export default function FolderSection({
             >
               {mediaElement}
 
+              {/* Tap overlay */}
+              {videoSrc && (
+                <button
+                  type="button"
+                  aria-label="Toggle video controls"
+                  onClick={handleVideoTap}
+                  className="absolute inset-0 z-[5] cursor-pointer"
+                />
+              )}
+
+              {/* Instagram-style controls — play/pause + mute */}
+              {videoSrc && (
+                <div
+                  className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${
+                    controlsVisible ? "opacity-100" : "opacity-0"
+                  }`}
+                  aria-hidden={!controlsVisible}
+                >
+                  <button
+                    type="button"
+                    onClick={togglePlay}
+                    aria-label={isPaused ? "Play" : "Pause"}
+                    tabIndex={controlsVisible ? 0 : -1}
+                    className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${
+                      controlsVisible ? "pointer-events-auto" : ""
+                    }`}
+                  >
+                    {isPaused ? <PlayIconLarge /> : <PauseIconLarge />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleMute}
+                    aria-label={muted ? "Unmute" : "Mute"}
+                    tabIndex={controlsVisible ? 0 : -1}
+                    className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${
+                      controlsVisible ? "pointer-events-auto" : ""
+                    }`}
+                  >
+                    {muted ? <MuteIcon /> : <UnmuteIcon />}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -263,7 +306,7 @@ export default function FolderSection({
                 onClick={toggleMute}
                 aria-label={muted ? "Unmute" : "Mute"}
                 tabIndex={controlsVisible ? 0 : -1}
-                className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white md:hidden ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
                   controlsVisible ? "pointer-events-auto" : ""
                 }`}
               >
@@ -282,12 +325,12 @@ export default function FolderSection({
           <div className="pointer-events-none absolute bottom-20 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
             <a href={href} className="pointer-events-auto group/title">
               <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-300 group-hover/title:decoration-white md:text-[8vw] lg:text-[7vw]">
-                <RedEmphasis>{title}</RedEmphasis>
+                <RichText value={title} />
               </h2>
             </a>
             {subtitle && (
               <p className="mt-4 max-w-xl font-montserrat text-sm leading-relaxed text-white/75 md:mt-6 md:text-base">
-                <RedEmphasis>{subtitle}</RedEmphasis>
+                <RichText value={subtitle} />
               </p>
             )}
             <a

@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { serverClient as client } from "@/sanity/client";
 import { contactHeroImageQuery, contactCopyQuery } from "@/sanity/queries/aboutPage";
 import ContactClient, { type ContactCopy } from "@/components/sections/ContactClient";
 
@@ -12,8 +12,8 @@ interface HeroBg {
 
 export default async function ContactPage() {
   const [hero, copy] = await Promise.all([
-    client.fetch<HeroBg | null>(contactHeroImageQuery),
-    client.fetch<ContactCopy | null>(contactCopyQuery),
+    client.fetch<HeroBg | null>(contactHeroImageQuery).catch(() => null),
+    client.fetch<ContactCopy | null>(contactCopyQuery).catch(() => null),
   ]);
   return (
     <ContactClient

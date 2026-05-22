@@ -13,9 +13,11 @@ interface HeroProps {
   subheadline?: string;
   bgImage?: string;
   bgImageMobile?: string;
+  logoUrl?: string;
+  tickerImageUrl?: string;
 }
 
-export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: HeroProps = {}) {
+export default function Hero({ headline, subheadline, bgImage, bgImageMobile, logoUrl, tickerImageUrl }: HeroProps = {}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const underlineRef = useRef<HTMLSpanElement>(null);
@@ -90,14 +92,8 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: 
       }
 
       if (tickerRef.current) {
-        const isMobile = window.matchMedia("(max-width: 767px)").matches;
-        if (isMobile) {
-          // On mobile the heading animation is much shorter — just show ticker immediately
-          gsap.set(tickerRef.current, { opacity: 1 });
-        } else {
-          gsap.set(tickerRef.current, { opacity: 0 });
-          tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
-        }
+        gsap.set(tickerRef.current, { opacity: 0 });
+        tl.to(tickerRef.current, { opacity: 1, duration: 0.5 }, "-=0.1");
       }
 
       gsap.to(headingRef.current, {
@@ -149,72 +145,92 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile }: 
       <div className="absolute inset-0 bg-black/30" />
 
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-end pb-10 md:pb-14">
-        <h1
-          ref={headingRef}
-          className="overflow-hidden whitespace-nowrap font-archivo font-bold leading-[0.85] tracking-[0.02em] text-white w-full text-center"
-          style={{
-            perspective: "800px",
-            fontStretch: "125%",
-            fontSize: "clamp(4.5rem, 18vw, 18vw)",
-            transform: "scaleX(1.18)",
-            transformOrigin: "center bottom",
-          }}
-        >
-          {headingText.split("").map((char, i) => (
-            <span
-              key={i}
-              className="char inline-block"
-              style={{ transformOrigin: "bottom center" }}
-            >
-              {char}
-            </span>
-          ))}
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          className="hidden"
-          style={{ lineHeight: "1.35" }}
-        >
-          {(subheadline ?? "My visual universe is surrealistic, colorful,\nand dark at the same time.")
-            .split(/\r?\n/)
-            .map((line, li, lines) => (
-              <span key={li} className="inline">
-                {line.split(/(\s+)/).map((part, pi) => {
-                  if (/^\s+$/.test(part)) return <span key={pi}>{part}</span>;
-                  return (
-                    <span key={pi} className="slogan-word inline-block will-change-transform">
-                      {part}
-                    </span>
-                  );
-                })}
-                {li < lines.length - 1 && <br />}
+      {/* Logo + Ticker stacked at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col">
+        {/* OBARE logo */}
+        {logoUrl ? (
+          <h1 ref={headingRef} className="w-full px-10 md:px-20 lg:px-32">
+            <img
+              src={`${optimizeImg(logoUrl, { w: 2400, q: 90 })}`}
+              alt="OBARE"
+              className="w-full block"
+              draggable={false}
+            />
+          </h1>
+        ) : (
+          <h1
+            ref={headingRef}
+            className="overflow-hidden whitespace-nowrap font-archivo font-bold leading-[0.85] tracking-[0.02em] text-white w-full text-center"
+            style={{
+              perspective: "800px",
+              fontStretch: "125%",
+              fontSize: "clamp(4.5rem, 18vw, 18vw)",
+              transform: "scaleX(1.18)",
+              transformOrigin: "center bottom",
+            }}
+          >
+            {headingText.split("").map((char, i) => (
+              <span key={i} className="char inline-block" style={{ transformOrigin: "bottom center" }}>
+                {char}
               </span>
             ))}
-        </p>
-      </div>
+          </h1>
+        )}
 
-      {/* Scroll ticker */}
-      <div
-        ref={tickerRef}
-        className="pointer-events-none absolute bottom-5 left-0 right-0 z-10 overflow-hidden md:bottom-6"
-      >
-        <div className="hero-ticker flex whitespace-nowrap">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="flex items-center">
-              <span
-                className="font-archivo text-sm font-bold uppercase tracking-[0.35em] text-white/85 md:text-base"
-                style={{ fontStretch: "125%" }}
-              >
-                The Magazine That&apos;s Real
-              </span>
-              <span className="mx-5 h-1.5 w-1.5 rounded-full bg-red md:mx-7" />
-            </span>
-          ))}
+        {/* Ticker */}
+        <div ref={tickerRef} className="pointer-events-none overflow-hidden py-2">
+          {/* Mobile: text ticker loop */}
+          <div className="hero-ticker flex whitespace-nowrap md:hidden">
+            {[0, 1].map((set) => (
+              <div key={set} className="flex items-center" aria-hidden={set === 1}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <span key={i} className="flex items-center">
+                    <span className="font-archivo text-sm font-bold uppercase tracking-[0.35em] text-white/85" style={{ fontStretch: "125%" }}>
+                      The Magazine That&apos;s Real
+                    </span>
+                    <span className="mx-6 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red" />
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+          {/* Desktop: PNG strip */}
+          {tickerImageUrl ? (
+            <div className="hero-ticker hidden md:flex">
+              <img src={`${optimizeImg(tickerImageUrl, { w: 3000, q: 90 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} />
+              <img src={`${optimizeImg(tickerImageUrl, { w: 3000, q: 90 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} aria-hidden />
+            </div>
+          ) : (
+            <div className="hero-ticker hidden md:flex whitespace-nowrap">
+              {[0, 1].map((set) => (
+                <div key={set} className="flex items-center" aria-hidden={set === 1}>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <span key={i} className="flex items-center">
+                      <span className="font-archivo text-sm font-bold uppercase tracking-[0.35em] text-white/85 md:text-base" style={{ fontStretch: "125%" }}>
+                        The Magazine That&apos;s Real
+                      </span>
+                      <span className="mx-6 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-red md:mx-10" />
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Hidden subtitle */}
+      <p ref={subtitleRef} className="hidden" style={{ lineHeight: "1.35" }}>
+        {(subheadline ?? "").split(/\r?\n/).map((line, li, lines) => (
+          <span key={li} className="inline">
+            {line.split(/(\s+)/).map((part, pi) => {
+              if (/^\s+$/.test(part)) return <span key={pi}>{part}</span>;
+              return <span key={pi} className="slogan-word inline-block will-change-transform">{part}</span>;
+            })}
+            {li < lines.length - 1 && <br />}
+          </span>
+        ))}
+      </p>
     </section>
   );
 }

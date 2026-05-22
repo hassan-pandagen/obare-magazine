@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import ReelModal from "@/components/sections/ReelModal";
 import { optimizeImg } from "@/lib/sanityImg";
 import { RedEmphasis } from "@/lib/redEmphasis";
+import RichText from "@/components/portable/RichText";
 
 export interface ReelItem {
   id: string;
@@ -27,7 +28,7 @@ export interface ReelsCopy {
   headlineLine1Color?: "red" | "white";
   headlineLine2?: string;
   headlineLine2Color?: "red" | "white";
-  subtitle?: string;
+  subtitle?: unknown[];
   subtitleColor?: "red" | "white";
 }
 
@@ -88,7 +89,7 @@ export default function ReelsIndexClient({ reels, copy }: { reels: ReelItem[]; c
             <span className={copy?.headlineLine2Color === "white" ? "text-white" : "text-red"}>{copy?.headlineLine2 ?? "Picture"}</span>
           </h1>
           <p className={`mt-6 max-w-xl font-montserrat text-sm leading-relaxed md:text-base ${copy?.subtitleColor === "red" ? "text-red" : "text-white/55"}`}>
-            {copy?.subtitle ?? "A closer look at the women and the moments behind creating our imagery."}
+            {copy?.subtitle ? <RichText value={copy.subtitle} /> : "A closer look at the women and the moments behind creating our imagery."}
           </p>
         </section>
 

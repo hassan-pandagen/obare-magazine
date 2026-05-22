@@ -39,7 +39,7 @@ export const articleBySlugQuery = groq`
     excerpt,
     dropCapColor,
     dropCapColorCustom,
-    "coverImage": coverImage { asset, alt, caption },
+    "coverImage": coverImage { asset, alt, caption, credit, creditUrl },
     "coverImageMobile": coverImageMobile { asset },
     "coverVideo": coverVideo.asset->url,
     "coverVideoMobile": coverVideoMobile.asset->url,

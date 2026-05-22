@@ -7,13 +7,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { optimizeImg } from "@/lib/sanityImg";
+import RichText from "@/components/portable/RichText";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export interface AboutSection {
   eyebrow?: string;
-  title: string;
-  body?: string;
+  title: unknown[];
+  body?: unknown[];
   imageUrl?: string;
   imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
@@ -25,8 +26,8 @@ export interface AboutSection {
 }
 
 export interface AboutPillar {
-  title: string;
-  body?: string;
+  title: unknown[];
+  body?: unknown[];
   imageUrl?: string;
   imageAlt?: string;
   imageHotspot?: { x?: number; y?: number };
@@ -36,18 +37,19 @@ export interface AboutPillar {
 
 export interface AboutData {
   heroEyebrow?: string;
-  heroHeadline?: string;
-  heroSubtitle?: string;
+  heroHeadline?: unknown[];
+  heroSubtitle?: unknown[];
   heroImageUrl?: string;
   heroImageAlt?: string;
   heroImageHotspot?: { x?: number; y?: number };
   heroImageMobileUrl?: string;
   heroImageMobileHotspot?: { x?: number; y?: number };
+  heroRedOverlay?: boolean;
   sections?: AboutSection[];
-  pillarsTitle?: string;
+  pillarsTitle?: unknown[];
   pillars?: AboutPillar[];
-  ctaHeadline?: string;
-  ctaSubtitle?: string;
+  ctaHeadline?: unknown[];
+  ctaSubtitle?: unknown[];
   ctaPrimaryLabel?: string;
   ctaPrimaryLink?: string;
   ctaSecondaryLabel?: string;
@@ -264,8 +266,6 @@ export default function AboutClient({ data }: { data: AboutData }) {
     { scope: rootRef }
   );
 
-  const headline = data.heroHeadline ?? "The Magazine That's Real";
-
   return (
     <>
       <Navbar />
@@ -281,12 +281,12 @@ export default function AboutClient({ data }: { data: AboutData }) {
         />
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
-        <section className="about-hero relative overflow-hidden px-6 pb-16 pt-36 md:px-14 md:pb-24 md:pt-40 lg:px-20">
+        <section className="about-hero relative overflow-hidden px-6 pb-16 pt-36 pr-10 md:px-14 md:pr-20 md:pb-24 md:pt-40 lg:px-20 lg:pr-28">
           <div className="absolute left-0 top-0 h-full w-1 bg-red" />
 
           <div className="relative z-10 grid items-start gap-14 md:grid-cols-[1fr_1.15fr] md:gap-12 lg:gap-16">
             {/* LEFT — text */}
-            <div className="about-hero-text md:-mt-6 lg:-mt-10" style={{ transform: "rotate(-3deg)" }}>
+            <div className="about-hero-text md:-mt-6 lg:-mt-10">
               {data.heroEyebrow && (
                 <span className="mb-6 inline-block rounded-full border border-red/50 px-4 py-1.5 font-montserrat text-[10px] font-bold uppercase tracking-[0.45em] text-red">
                   {data.heroEyebrow}
@@ -294,49 +294,23 @@ export default function AboutClient({ data }: { data: AboutData }) {
               )}
               <h1
                 className="font-poppins font-black uppercase leading-[0.85] text-white"
-                style={{ fontSize: "clamp(3rem, 8.5vw, 8.5rem)", perspective: "800px" }}
+                style={{ fontSize: "clamp(3rem, 8.5vw, 8.5rem)" }}
               >
-                {headline.split("|").map((line, lineIdx, arr) => (
-                  <span key={lineIdx} className="block">
-                    {line.split(/(\s+)/).map((word, wi) => {
-                      if (/^\s+$/.test(word)) return <span key={wi}>{word}</span>;
-                      const redMatch = /^\*\*([^*]+)\*\*$/.exec(word);
-                      const isRed = !!redMatch;
-                      const clean = isRed ? redMatch![1] : word;
-                      return (
-                        <span
-                          key={wi}
-                          className={`inline-block whitespace-nowrap ${isRed ? "text-red" : ""}`}
-                        >
-                          {clean.split("").map((c, i) => (
-                            <span
-                              key={i}
-                              className="char inline-block"
-                              style={{ transformOrigin: "bottom center" }}
-                            >
-                              {c}
-                            </span>
-                          ))}
-                        </span>
-                      );
-                    })}
-                    {lineIdx < arr.length - 1 && <br />}
-                  </span>
-                ))}
+                {data.heroHeadline ? <RichText value={data.heroHeadline} /> : "The Magazine That's Real"}
               </h1>
               {data.heroSubtitle && (
                 <p className="mt-8 max-w-xl font-montserrat text-base leading-relaxed text-white/75 md:text-lg">
-                  {data.heroSubtitle}
+                  <RichText value={data.heroSubtitle} />
                 </p>
               )}
             </div>
 
             {/* RIGHT — tilted photo card with camera chrome */}
             {data.heroImageUrl && (
-              <div className="relative flex items-center justify-end md:-mr-14 lg:-mr-20">
+              <div className="relative flex items-center justify-end">
                 <div
                   role="img"
-                  aria-label={data.heroImageAlt ?? data.heroHeadline ?? ""}
+                  aria-label={data.heroImageAlt ?? ""}
                   className="about-hero-image relative aspect-[4/3] w-full overflow-hidden border-[3px] border-red shadow-[0_20px_60px_rgba(0,0,0,0.5)] will-change-transform"
                   style={{ transform: "rotate(-5deg)" }}
                 >
@@ -369,32 +343,10 @@ export default function AboutClient({ data }: { data: AboutData }) {
                           : "center 30%",
                     }}
                   />
-                  <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />
+                  {data.heroRedOverlay !== false && (
+                    <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />
+                  )}
 
-                  {/* Camera UI chrome */}
-                  <div className="pointer-events-none absolute inset-0 text-white">
-                    <div className="absolute left-3 top-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:left-4 md:top-4 md:text-xs">
-                      <span className="inline-block h-2 w-2 rounded-full bg-red" />
-                      2026.1.25
-                      <span className="opacity-70">03:50 PM</span>
-                    </div>
-                    <div className="absolute right-3 top-3 flex items-center gap-1 rounded-sm bg-black/40 px-2 py-0.5 font-archivo text-[10px] font-bold tracking-[0.15em] backdrop-blur-sm md:right-4 md:top-4 md:text-xs">
-                      200-300
-                    </div>
-                    <div className="absolute bottom-3 left-3 flex items-center gap-3 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:left-4 md:text-xs">
-                      <span>F. 3.2</span>
-                      <span className="rounded-sm bg-white/90 px-1.5 py-0.5 text-black">ISO</span>
-                      <span>600</span>
-                    </div>
-                    <div className="absolute bottom-3 right-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:right-4 md:text-xs">
-                      <span className="rounded-sm bg-black/40 px-1.5 py-0.5 backdrop-blur-sm">RAW</span>
-                      <span>3/10</span>
-                    </div>
-                    <div className="absolute left-1/2 bottom-12 flex -translate-x-1/2 items-center gap-2 font-archivo text-[9px] font-bold md:bottom-14">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-sm border border-white/60 text-[10px]">⊡</span>
-                      <span>0</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
@@ -414,7 +366,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
                 className="mb-16 font-poppins font-black uppercase leading-[0.9]"
                 style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
               >
-                {data.pillarsTitle}
+                <RichText value={data.pillarsTitle} />
               </h2>
             )}
             <div className="grid gap-6 md:grid-cols-3 md:gap-5">
@@ -422,7 +374,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
                 <article
                   key={i}
                   role="img"
-                  aria-label={pillar.imageAlt ?? pillar.title}
+                  aria-label={pillar.imageAlt ?? ""}
                   className="pillar-card group relative aspect-[4/5] overflow-hidden rounded-md bg-zinc-900"
                 >
                   {pillar.imageUrl && (
@@ -456,11 +408,11 @@ export default function AboutClient({ data }: { data: AboutData }) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-7">
                     <h3 className="font-poppins text-2xl font-black uppercase leading-tight md:text-3xl">
-                      {pillar.title}
+                      <RichText value={pillar.title} />
                     </h3>
                     {pillar.body && (
                       <p className="mt-3 font-montserrat text-sm leading-relaxed text-white/75">
-                        {pillar.body}
+                        <RichText value={pillar.body} />
                       </p>
                     )}
                   </div>
@@ -481,7 +433,7 @@ export default function AboutClient({ data }: { data: AboutData }) {
 
 function AboutSectionBlock({ section }: { section: AboutSection }) {
   const layout = section.layout ?? "image-right";
-  const body = section.body ?? "";
+  const body = section.body;
 
   if (layout === "full-bleed") {
     return (
@@ -492,7 +444,7 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
             <>
               <div
                 role="img"
-                aria-label={section.imageAlt ?? section.title}
+                aria-label={section.imageAlt ?? ""}
                 className="section-image absolute inset-0 bg-cover bg-center will-change-transform"
                 style={{ backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200 })}')` }}
               />
@@ -512,11 +464,11 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
               className="font-poppins font-black uppercase leading-[0.88]"
               style={{ fontSize: "clamp(3rem, 9vw, 8rem)" }}
             >
-              {splitWords(section.title)}
+              <RichText value={section.title} />
             </h2>
             {body && (
               <div className="mt-8 max-w-2xl space-y-3 font-montserrat text-base leading-relaxed text-white/80 md:text-lg">
-                {splitWords(body)}
+                <RichText value={body} />
               </div>
             )}
           </div>
@@ -546,11 +498,11 @@ function AboutSectionBlock({ section }: { section: AboutSection }) {
             className="font-poppins font-black uppercase leading-[0.88]"
             style={{ fontSize: "clamp(2.5rem, 5.5vw, 5.5rem)" }}
           >
-            {splitWords(section.title)}
+            <RichText value={section.title} />
           </h2>
           {body && (
             <div className="mt-8 space-y-3 font-montserrat text-base leading-relaxed text-white/75 md:text-lg">
-              {splitWords(body)}
+              <RichText value={body} />
             </div>
           )}
         </div>
@@ -568,7 +520,6 @@ function SectionImage({
   imageFirst: boolean;
 }) {
   // Alternate tilt direction based on image side for visual rhythm
-  const tilt = imageFirst ? "-4deg" : "4deg";
   const hotspot = section.imageHotspot;
   const bgPosition =
     hotspot && typeof hotspot.x === "number" && typeof hotspot.y === "number"
@@ -591,50 +542,28 @@ function SectionImage({
   return (
     <div
       role="img"
-      aria-label={section.imageAlt ?? section.title}
+      aria-label={section.imageAlt ?? ""}
       className="section-image relative w-full overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)] will-change-transform"
-      style={{ transform: `rotate(${tilt})`, aspectRatio }}
+      style={{ aspectRatio }}
     >
       {/* Mobile layer */}
       <div
-        className="absolute inset-0 bg-cover md:hidden"
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat md:hidden"
         style={{
           backgroundImage: `url('${optimizeImg(mobileUrl, { w: 900, hotspot: mobileHotspot })}')`,
-          backgroundPosition: mobileBgPos,
         }}
       />
       {/* Desktop layer */}
       <div
-        className="absolute inset-0 hidden bg-cover md:block"
+        className="absolute inset-0 hidden bg-contain bg-center bg-no-repeat md:block"
         style={{
           backgroundImage: `url('${optimizeImg(section.imageUrl, { w: 1200, hotspot })}')`,
-          backgroundPosition: bgPosition,
         }}
       />
       {section.redOverlay && (
         <div className="absolute inset-0 bg-red/35 mix-blend-multiply" />
       )}
 
-      {/* Camera UI chrome */}
-      <div className="pointer-events-none absolute inset-0 text-white">
-        <div className="absolute left-3 top-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:left-4 md:top-4 md:text-xs">
-          <span className="inline-block h-2 w-2 rounded-full bg-red" />
-          2026.1.25
-          <span className="opacity-70">03:50 PM</span>
-        </div>
-        <div className="absolute right-3 top-3 rounded-sm bg-black/40 px-2 py-0.5 font-archivo text-[10px] font-bold tracking-[0.15em] backdrop-blur-sm md:right-4 md:top-4 md:text-xs">
-          200-300
-        </div>
-        <div className="absolute bottom-3 left-3 flex items-center gap-3 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:left-4 md:text-xs">
-          <span>F. 3.2</span>
-          <span className="rounded-sm bg-white/90 px-1.5 py-0.5 text-black">ISO</span>
-          <span>600</span>
-        </div>
-        <div className="absolute bottom-3 right-3 flex items-center gap-2 font-archivo text-[10px] font-bold tracking-[0.15em] md:bottom-4 md:right-4 md:text-xs">
-          <span className="rounded-sm bg-black/40 px-1.5 py-0.5 backdrop-blur-sm">RAW</span>
-          <span>3/10</span>
-        </div>
-      </div>
     </div>
   );
 }

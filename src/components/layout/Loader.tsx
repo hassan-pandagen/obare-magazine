@@ -16,43 +16,35 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
       return;
     }
 
-    let startTs: number | null = null;
-    let raf: number;
     let done = false;
+    const startTs = performance.now();
 
-    const tick = (ts: number) => {
+    const interval = window.setInterval(() => {
       if (done) return;
-      if (!startTs) startTs = ts;
-      const elapsed = ts - startTs;
+      const elapsed = performance.now() - startTs;
       const pct = Math.min(100, Math.round((elapsed / DURATION_MS) * 100));
 
       setProgress(pct);
       if (progressRef.current) progressRef.current.style.width = `${pct}%`;
 
-      if (pct < 100) {
-        raf = requestAnimationFrame(tick);
-        return;
+      if (pct >= 100) {
+        done = true;
+        window.clearInterval(interval);
+        const el = loaderRef.current;
+        if (el) {
+          el.style.transition = "clip-path 0.35s cubic-bezier(0.76, 0, 0.24, 1)";
+          el.style.clipPath = "inset(0 0 100% 0)";
+        }
+        window.setTimeout(() => {
+          try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ }
+          onComplete();
+        }, 370);
       }
-
-      // Bar filled — slide loader up via CSS transition then call onComplete
-      done = true;
-      const el = loaderRef.current;
-      if (el) {
-        el.style.transition = "clip-path 0.35s cubic-bezier(0.76, 0, 0.24, 1)";
-        el.style.clipPath = "inset(0 0 100% 0)";
-      }
-      const delay = el ? 370 : 0;
-      window.setTimeout(() => {
-        try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* ignore */ }
-        onComplete();
-      }, delay);
-    };
-
-    raf = requestAnimationFrame(tick);
+    }, 16);
 
     return () => {
       done = true;
-      cancelAnimationFrame(raf);
+      window.clearInterval(interval);
     };
   }, [onComplete]);
 

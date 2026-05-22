@@ -107,6 +107,8 @@ export const article = defineType({
       fields: [
         defineField({ name: "alt", type: "string", title: "Alt text (SEO)" }),
         defineField({ name: "caption", type: "string", title: "Caption" }),
+        defineField({ name: "credit", type: "string", title: "Photo Credit — optional" }),
+        defineField({ name: "creditUrl", type: "url", title: "Photo Credit Link — optional", description: "Link to photographer portfolio or Instagram" }),
       ],
     }),
     defineField({

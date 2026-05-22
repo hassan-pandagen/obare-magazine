@@ -15,6 +15,7 @@ const poppins = Poppins({
   weight: ["400", "600", "700", "800", "900"],
   variable: "--font-poppins-var",
   display: "swap",
+  preload: false,
 });
 
 const montserrat = Montserrat({
@@ -22,6 +23,7 @@ const montserrat = Montserrat({
   weight: ["400", "500", "600", "700"],
   variable: "--font-montserrat-var",
   display: "swap",
+  preload: false,
 });
 
 const archivo = Archivo({
@@ -30,6 +32,7 @@ const archivo = Archivo({
   variable: "--font-archivo-var",
   display: "swap",
   axes: ["wdth"],
+  preload: false,
 });
 
 const playfair = Playfair_Display({
@@ -37,6 +40,7 @@ const playfair = Playfair_Display({
   weight: ["400", "700", "900"],
   variable: "--font-playfair-var",
   display: "swap",
+  preload: false,
 });
 
 // Placeholder for custom fonts — replace src with actual font files when available

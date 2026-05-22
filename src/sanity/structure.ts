@@ -20,6 +20,15 @@ export const structure: StructureResolver = (S) =>
         .schemaType("reel")
         .child(S.documentTypeList("reel").title("Reels")),
 
+      S.listItem()
+        .title("Reels Page — Heading & Copy")
+        .child(
+          S.editor()
+            .id("settings-reels")
+            .schemaType("settings")
+            .documentId("site-settings")
+        ),
+
       S.divider(),
 
       // ── Events ───────────────────────────────────────────────────────────
