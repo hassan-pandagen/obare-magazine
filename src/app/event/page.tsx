@@ -202,10 +202,10 @@ function EventNotifyForm() {
     if (!form.agreed) return;
     setStatus("sending");
     try {
-      await fetch("https://formsubmit.co/info@ObareMag.com", {
+      await fetch("/api/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ ...form, _subject: "OBARE Events — Notify Me", _captcha: "false" }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "event", name: form.name, email: form.email, instagram: form.instagram, interest: form.interest }),
       });
     } catch {}
     setStatus("sent");

@@ -29,8 +29,13 @@ export default function AdvertiseModal({ open, onClose }: Props) {
     e.preventDefault();
     if (!form.agreed) return;
     setStatus("sending");
-    // TODO: wire to /api/advertise or email provider
-    await new Promise((r) => setTimeout(r, 900));
+    try {
+      await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "advertise", email: form.email, instagram: form.instagram, description: form.description }),
+      });
+    } catch {}
     setStatus("sent");
   };
 

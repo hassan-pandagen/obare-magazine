@@ -69,8 +69,13 @@ export default function ContactClient({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
-    // TODO: wire to API route / email provider
-    await new Promise((r) => setTimeout(r, 1000));
+    try {
+      await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "contact", ...form }),
+      });
+    } catch {}
     setStatus("sent");
     setForm({ name: "", email: "", department: "general", message: "" });
   };

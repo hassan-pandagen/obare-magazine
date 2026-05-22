@@ -30,7 +30,13 @@ export default function EventModal({ open, onClose }: Props) {
     e.preventDefault();
     if (!form.agreed) return;
     setStatus("sending");
-    await new Promise((r) => setTimeout(r, 900));
+    try {
+      await fetch("/api/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "event", name: form.name, email: form.email, instagram: form.instagram, interest: form.interest }),
+      });
+    } catch {}
     setStatus("sent");
   };
 

@@ -5,25 +5,11 @@ export const linksPageQuery = groq`
     headline,
     tagline,
     "profileImageUrl": profileImage.asset->url,
-    "profileImageHotspot": profileImage.hotspot { x, y },
-    featuredEnabled,
-    featuredTitle,
-    featuredSubtitle,
-    featuredUrl,
-    "featuredImageUrl": featuredImage.asset->url,
-    "featuredImageHotspot": featuredImage.hotspot { x, y },
-    links[active == true] {
-      label,
-      sublabel,
-      url,
-      accent
-    },
+    "bannerImageUrl": bannerImage.asset->url,
     gridItems[active == true] {
       "imageUrl": image.asset->url,
       "imageHotspot": image.hotspot { x, y },
-      alt,
-      url,
-      caption
+      url
     },
     utmSource,
     utmMedium
