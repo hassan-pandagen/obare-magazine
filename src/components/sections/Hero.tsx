@@ -151,10 +151,13 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile, lo
         {logoUrl ? (
           <h1 ref={headingRef} className="w-full px-10 md:px-20 lg:px-32">
             <img
-              src={`${optimizeImg(logoUrl, { w: 2400, q: 90 })}`}
+              src={`${optimizeImg(logoUrl, { w: 1200, q: 85 })}`}
               alt="OBARE"
+              width={1200}
+              height={400}
               className="w-full block"
               draggable={false}
+              fetchPriority="high"
             />
           </h1>
         ) : (

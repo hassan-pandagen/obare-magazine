@@ -105,9 +105,10 @@ export default function FolderSection({
     return () => cancelAnimationFrame(id);
   }, [isDesktop]);
 
-  // Lazy-load video src only when card is within ~1 viewport from being visible
+  // Lazy-load video src only when card is within ~20% of viewport
   useEffect(() => {
-    if (!videoSrc || !cardRef.current || shouldLoadVideo) return;
+    if (!videoSrc || !cardRef.current) return;
+    const el = cardRef.current;
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -115,11 +116,12 @@ export default function FolderSection({
           obs.disconnect();
         }
       },
-      { rootMargin: "100% 0px" }
+      { rootMargin: "20% 0px" }
     );
-    obs.observe(cardRef.current);
+    obs.observe(el);
     return () => obs.disconnect();
-  }, [videoSrc, shouldLoadVideo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoSrc]);
 
   const hotspotPos =
     imageHotspot && typeof imageHotspot.x === "number" && typeof imageHotspot.y === "number"
@@ -135,7 +137,7 @@ export default function FolderSection({
           loop
           muted
           playsInline
-          autoPlay
+          autoPlay={shouldLoadVideo}
           preload="none"
           poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
           className="folder-video absolute inset-0 h-full w-full object-cover"
@@ -193,7 +195,7 @@ export default function FolderSection({
               )}
               <a
                 href={href}
-                aria-label="Go Bare"
+                aria-label="Go Bare — read article"
                 className="group relative mt-8 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white"
               >
                 <span className="relative">
@@ -323,7 +325,7 @@ export default function FolderSection({
             </div>
           )}
           <div className="pointer-events-none absolute bottom-20 left-5 right-5 z-10 md:bottom-14 md:left-10 md:right-10 lg:bottom-16 lg:left-16 lg:right-16">
-            <a href={href} className="pointer-events-auto group/title">
+            <a href={href} aria-label="Read article" className="pointer-events-auto group/title">
               <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-300 group-hover/title:decoration-white md:text-[8vw] lg:text-[7vw]">
                 <RichText value={title} />
               </h2>
@@ -335,7 +337,7 @@ export default function FolderSection({
             )}
             <a
               href={href}
-              aria-label={`Go Bare — ${title}`}
+              aria-label="Go Bare — read article"
               className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7"
             >
               <span className="relative">

@@ -97,13 +97,12 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
         target?.play().catch(() => {});
       };
 
-      // First card's video should be buffered eagerly — user sees it immediately.
-      // Re-query after any layout change (mobile ↔ desktop) refreshes triggers.
+      // First card: preload metadata only (duration/dimensions), not full video.
+      // Full buffering happens via autoplay when the card enters the viewport.
       const warmFirst = () => {
         const v = sections[0]?.querySelector<HTMLVideoElement>(".folder-video");
-        if (v) {
-          v.preload = "auto";
-          v.load();
+        if (v && v.preload !== "auto") {
+          v.preload = "metadata";
         }
       };
       warmFirst();
@@ -129,19 +128,18 @@ export default function HomeClient({ projects, reels, stories, heroHeadline, her
             onLeaveBack: () => getVideo()?.pause(),
           });
 
-          // Preload-ahead: when THIS card starts entering the viewport,
-          // warm up the NEXT card's video so it's buffered before the user gets there.
+          // Preload-ahead: when THIS card is 50% through, load metadata for next.
+          // Full buffering starts when next card actually enters viewport via autoplay.
           const nextSection = sections[i + 1];
           if (nextSection) {
             ScrollTrigger.create({
               trigger: section,
-              start: "top 80%",
+              start: "top 50%",
               once: true,
               onEnter: () => {
                 const nv = nextSection.querySelector<HTMLVideoElement>(".folder-video");
-                if (nv) {
-                  nv.preload = "auto";
-                  nv.load();
+                if (nv && nv.preload === "none") {
+                  nv.preload = "metadata";
                 }
               },
             });

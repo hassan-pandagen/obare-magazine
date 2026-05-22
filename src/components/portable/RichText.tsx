@@ -14,12 +14,17 @@ const components: PortableTextComponents = {
 };
 
 interface RichTextProps {
-  value: unknown[];
+  value: unknown[] | string | null | undefined;
   className?: string;
 }
 
 export default function RichText({ value, className }: RichTextProps) {
-  if (!value?.length) return null;
+  if (!value) return null;
+  // Handle legacy plain string values (before portable text migration)
+  if (typeof value === "string") {
+    return <span className={className}>{value}</span>;
+  }
+  if (!Array.isArray(value) || value.length === 0) return null;
   return (
     <span className={className}>
       <PortableText value={value as Parameters<typeof PortableText>[0]["value"]} components={components} />

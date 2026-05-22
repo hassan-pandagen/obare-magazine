@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { client } from "@/sanity/client";
+import { serverClient } from "@/sanity/client";
 import { linksPageQuery } from "@/sanity/queries/linksPage";
 import { optimizeImg } from "@/lib/sanityImg";
-import { RedEmphasis } from "@/lib/redEmphasis";
 
 export const revalidate = 60;
 
@@ -11,6 +10,14 @@ export const metadata: Metadata = {
   description: "The magazine that's real. Our latest stories, reels, and more.",
   robots: { index: false, follow: true },
 };
+
+interface GridItem {
+  imageUrl: string;
+  imageHotspot?: { x?: number; y?: number };
+  alt?: string;
+  url: string;
+  caption?: string;
+}
 
 interface LinkItem {
   label: string;
@@ -31,18 +38,14 @@ interface LinksData {
   featuredImageUrl?: string;
   featuredImageHotspot?: { x?: number; y?: number };
   links?: LinkItem[];
+  gridItems?: GridItem[];
   utmSource?: string;
   utmMedium?: string;
 }
 
-/**
- * Append UTM params to a URL for analytics tracking.
- * Skips internal relative links and links that already have UTMs.
- */
 function withUtm(url: string, source?: string, medium?: string): string {
   if (!url) return "#";
   if (!source) return url;
-  // Internal links don't need UTM (same-site tracking)
   if (url.startsWith("/") || url.startsWith("#")) return url;
   try {
     const u = new URL(url);
@@ -60,12 +63,11 @@ function isExternal(url: string) {
 }
 
 export default async function LinksPage() {
-  const data = (await client.fetch<LinksData | null>(linksPageQuery)) ?? {};
+  const data = await serverClient.fetch<LinksData | null>(linksPageQuery).catch(() => null) ?? {};
   const {
     headline = "OBARE",
     tagline,
     profileImageUrl,
-    profileImageHotspot,
     featuredEnabled,
     featuredTitle,
     featuredSubtitle,
@@ -73,89 +75,119 @@ export default async function LinksPage() {
     featuredImageUrl,
     featuredImageHotspot,
     links = [],
+    gridItems = [],
     utmSource,
     utmMedium,
   } = data;
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="mx-auto flex max-w-md flex-col items-center px-6 pb-16 pt-14">
-        {/* Profile */}
+      {/* ── Header ── */}
+      <div className="flex flex-col items-center px-6 pt-10 pb-6">
         {profileImageUrl && (
-          <div
-            className="h-24 w-24 overflow-hidden rounded-full border border-white/15"
-            style={{
-              backgroundImage: `url(${optimizeImg(profileImageUrl, { w: 240, hotspot: profileImageHotspot })})`,
-              backgroundSize: "cover",
-              backgroundPosition:
-                profileImageHotspot && typeof profileImageHotspot.x === "number"
-                  ? `${(profileImageHotspot.x ?? 0.5) * 100}% ${(profileImageHotspot.y ?? 0.5) * 100}%`
-                  : "center",
-            }}
-            aria-hidden
+          <img
+            src={optimizeImg(profileImageUrl, { w: 160 })}
+            alt={headline}
+            width={64}
+            height={64}
+            className="h-16 w-16 rounded-full object-cover border border-white/20 mb-4"
           />
         )}
-
-        <h1 className="mt-5 text-center font-poppins text-xl font-black uppercase tracking-wide">
-          <RedEmphasis>{headline}</RedEmphasis>
+        <h1 className="font-poppins text-2xl font-black uppercase tracking-[0.06em] text-white">
+          {headline}
         </h1>
         {tagline && (
-          <p className="mt-2 text-center font-montserrat text-sm leading-relaxed text-white/60">
-            <RedEmphasis>{tagline}</RedEmphasis>
+          <p className="mt-1 font-montserrat text-xs text-white/50 tracking-[0.2em] uppercase">
+            {tagline}
           </p>
         )}
+      </div>
 
-        {/* Featured card */}
-        {featuredEnabled && featuredUrl && (
-          <a
-            href={withUtm(featuredUrl, utmSource, utmMedium)}
-            target={isExternal(featuredUrl) ? "_blank" : undefined}
-            rel={isExternal(featuredUrl) ? "noopener noreferrer" : undefined}
-            className="group mt-10 relative block w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900 transition-all hover:border-red"
-            style={{ aspectRatio: "16 / 10" }}
-          >
-            {featuredImageUrl && (
-              <div
-                className="absolute inset-0 bg-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                style={{
-                  backgroundImage: `url(${optimizeImg(featuredImageUrl, { w: 800, hotspot: featuredImageHotspot })})`,
-                  backgroundPosition:
-                    featuredImageHotspot && typeof featuredImageHotspot.x === "number"
-                      ? `${(featuredImageHotspot.x ?? 0.5) * 100}% ${(featuredImageHotspot.y ?? 0.5) * 100}%`
-                      : "center",
-                }}
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-            <div className="absolute left-0 top-0 m-4">
-              <span className="rounded-full bg-red px-3 py-1 font-montserrat text-[9px] font-bold uppercase tracking-[0.3em] text-white">
-                Featured
-              </span>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-5">
+      {/* ── Featured hero banner ── */}
+      {featuredEnabled && featuredUrl && featuredImageUrl && (
+        <a
+          href={withUtm(featuredUrl, utmSource, utmMedium)}
+          target={isExternal(featuredUrl) ? "_blank" : undefined}
+          rel={isExternal(featuredUrl) ? "noopener noreferrer" : undefined}
+          className="group relative block w-full overflow-hidden"
+          style={{ aspectRatio: "2 / 1" }}
+        >
+          <img
+            src={optimizeImg(featuredImageUrl, { w: 1200, hotspot: featuredImageHotspot })}
+            alt={featuredTitle ?? "Featured"}
+            width={1200}
+            height={600}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          {(featuredTitle || featuredSubtitle) && (
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
               {featuredTitle && (
-                <h2 className="font-poppins text-lg font-black uppercase leading-tight">
-                  <RedEmphasis>{featuredTitle}</RedEmphasis>
+                <h2 className="font-poppins text-3xl font-black uppercase leading-tight text-white md:text-5xl">
+                  {featuredTitle}
                 </h2>
               )}
               {featuredSubtitle && (
-                <p className="mt-1 font-montserrat text-xs text-white/75">
-                  <RedEmphasis>{featuredSubtitle}</RedEmphasis>
+                <p className="mt-2 font-montserrat text-sm text-white/70 md:text-base">
+                  {featuredSubtitle}
                 </p>
               )}
             </div>
-          </a>
-        )}
+          )}
+        </a>
+      )}
 
-        {/* Links */}
-        <nav className="mt-8 flex w-full flex-col gap-3">
+      {/* ── Image grid ── */}
+      {gridItems.length > 0 && (
+        <div className="grid grid-cols-3">
+          {gridItems.map((item, i) => {
+            const href = withUtm(item.url, utmSource, utmMedium);
+            const ext = isExternal(item.url);
+            const hotspot = item.imageHotspot;
+            const bgPos = hotspot && typeof hotspot.x === "number"
+              ? `${hotspot.x * 100}% ${hotspot.y * 100}%`
+              : "center";
+            return (
+              <a
+                key={i}
+                href={href}
+                target={ext ? "_blank" : undefined}
+                rel={ext ? "noopener noreferrer" : undefined}
+                className="group relative block overflow-hidden"
+                style={{ aspectRatio: "1 / 1" }}
+                aria-label={item.caption ?? item.alt ?? "View"}
+              >
+                <img
+                  src={optimizeImg(item.imageUrl, { w: 500 })}
+                  alt={item.alt ?? item.caption ?? ""}
+                  width={500}
+                  height={500}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                  style={{ objectPosition: bgPos }}
+                />
+                {item.caption && (
+                  <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <p className="w-full p-3 font-montserrat text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+                      {item.caption}
+                    </p>
+                  </div>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Link buttons (below grid) ── */}
+      {links.length > 0 && (
+        <nav className="mx-auto flex max-w-sm flex-col gap-3 px-6 py-10">
           {links.map((item, i) => {
             const accentCls =
               item.accent === "red"
                 ? "bg-red text-white border-red hover:opacity-90"
                 : item.accent === "ghost"
                 ? "bg-transparent text-white/70 border-white/10 hover:text-white hover:border-white/30"
-                : "bg-white/[0.04] text-white border-white/15 hover:bg-white/[0.08] hover:border-white/30";
+                : "bg-white/[0.05] text-white border-white/15 hover:bg-white/[0.10] hover:border-white/30";
             const href = withUtm(item.url, utmSource, utmMedium);
             const ext = isExternal(item.url);
             return (
@@ -164,27 +196,26 @@ export default async function LinksPage() {
                 href={href}
                 target={ext ? "_blank" : undefined}
                 rel={ext ? "noopener noreferrer" : undefined}
-                className={`flex min-h-[56px] items-center justify-between rounded-full border px-6 py-4 font-montserrat text-sm font-bold uppercase tracking-[0.15em] transition-all ${accentCls}`}
+                className={`flex min-h-[52px] items-center justify-between rounded-full border px-6 py-3 font-montserrat text-xs font-bold uppercase tracking-[0.15em] transition-all ${accentCls}`}
               >
-                <span className="flex flex-col items-start text-left">
-                  <span><RedEmphasis>{item.label}</RedEmphasis></span>
+                <span className="flex flex-col">
+                  <span>{item.label}</span>
                   {item.sublabel && (
-                    <span className="mt-0.5 text-[10px] font-normal normal-case tracking-normal opacity-70">
-                      <RedEmphasis>{item.sublabel}</RedEmphasis>
+                    <span className="mt-0.5 text-[10px] font-normal normal-case tracking-normal opacity-60">
+                      {item.sublabel}
                     </span>
                   )}
                 </span>
-                <span aria-hidden className="text-xs opacity-70">→</span>
+                <span aria-hidden className="opacity-60">→</span>
               </a>
             );
           })}
         </nav>
+      )}
 
-        {/* Footer */}
-        <p className="mt-14 font-montserrat text-[10px] uppercase tracking-[0.4em] text-white/30">
-          © OBARE Magazine
-        </p>
-      </div>
+      <p className="pb-10 text-center font-montserrat text-[10px] uppercase tracking-[0.4em] text-white/25">
+        © OBARE Magazine
+      </p>
     </main>
   );
 }

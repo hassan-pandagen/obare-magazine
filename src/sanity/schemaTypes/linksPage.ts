@@ -122,6 +122,42 @@ export const linksPage = defineType({
       ],
     }),
 
+    /* ── Image grid (likeshop-style) ───────────────────────────────── */
+    defineField({
+      name: "gridItems",
+      title: "Image Grid (Instagram-style tiles)",
+      description: "Each tile is a clickable image. Add as many as you want — they appear in a 3-column grid below the hero.",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Image",
+              type: "image",
+              options: { hotspot: true },
+              validation: (r) => r.required(),
+            }),
+            defineField({ name: "alt", title: "Alt text (SEO)", type: "string" }),
+            defineField({
+              name: "url",
+              title: "Link URL",
+              type: "string",
+              description: "Relative (/articles/xyz) or absolute URL",
+              validation: (r) => r.required(),
+            }),
+            defineField({ name: "caption", title: "Caption (optional overlay text)", type: "string" }),
+            defineField({ name: "active", title: "Show on page", type: "boolean", initialValue: true }),
+          ],
+          preview: {
+            select: { title: "caption", subtitle: "url", media: "image" },
+            prepare: ({ title, subtitle, media }) => ({ title: title || subtitle, media }),
+          },
+        }),
+      ],
+    }),
+
     /* ── UTM tracking ───────────────────────────────────────────────── */
     defineField({
       name: "utmSource",

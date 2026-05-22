@@ -18,6 +18,13 @@ export const linksPageQuery = groq`
       url,
       accent
     },
+    gridItems[active == true] {
+      "imageUrl": image.asset->url,
+      "imageHotspot": image.hotspot { x, y },
+      alt,
+      url,
+      caption
+    },
     utmSource,
     utmMedium
   }
