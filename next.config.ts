@@ -25,18 +25,14 @@ const nextConfig: NextConfig = {
       },
 
       // ── Old specific pages → new equivalents ────────────────────────────
-      { source: "/about", destination: "/about", permanent: true },
       { source: "/about-us", destination: "/about", permanent: true },
       { source: "/about-us-02", destination: "/about", permanent: true },
-      { source: "/contact", destination: "/contact", permanent: true },
       { source: "/contact-copy", destination: "/contact", permanent: true },
       { source: "/contact-copy-2", destination: "/contact", permanent: true },
       { source: "/contact-us", destination: "/contact", permanent: true },
-      { source: "/submissions", destination: "/submissions", permanent: true },
       { source: "/subscribe", destination: "/newsletter", permanent: true },
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
       { source: "/terms-of-service", destination: "/terms", permanent: true },
-      { source: "/content-guidelines", destination: "/content-guidelines", permanent: true },
       { source: "/post-grids/articles", destination: "/articles", permanent: true },
 
       // ── Old home variants → homepage ────────────────────────────────────
