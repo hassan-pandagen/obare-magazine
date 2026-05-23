@@ -202,8 +202,8 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile, lo
           {/* Desktop: PNG strip */}
           {tickerImageUrl ? (
             <div className="hero-ticker hidden md:flex">
-              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} width={2400} height={88} />
-              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} aria-hidden width={2400} height={88} />
+              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} width={2400} height={79} />
+              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} aria-hidden width={2400} height={79} />
             </div>
           ) : (
             <div className="hero-ticker hidden md:flex whitespace-nowrap">
