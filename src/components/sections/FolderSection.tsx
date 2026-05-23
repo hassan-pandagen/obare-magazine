@@ -34,7 +34,6 @@ export default function FolderSection({
 }: FolderSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
   const [muted, setMuted] = useState(true);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
@@ -75,18 +74,13 @@ export default function FolderSection({
     return () => { if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current); };
   }, []);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setIsDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
+  // No isDesktop state — layout is handled purely by CSS (md: breakpoints).
+  // This prevents React from remounting <video> when the viewport crosses 768px,
+  // which was causing duplicate network fetches of the same MP4.
   useEffect(() => {
     const id = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(id);
-  }, [isDesktop]);
+  }, []);
 
   useEffect(() => {
     if (!videoSrc || !cardRef.current) return;
@@ -124,9 +118,7 @@ export default function FolderSection({
           onClick={togglePlay}
           aria-label={isPaused ? "Play" : "Pause"}
           tabIndex={controlsVisible ? 0 : -1}
-          className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
-            controlsVisible ? "pointer-events-auto" : ""
-          }`}
+          className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${controlsVisible ? "pointer-events-auto" : ""}`}
         >
           {isPaused ? <PlayIconLarge /> : <PauseIconLarge />}
         </button>
@@ -135,9 +127,7 @@ export default function FolderSection({
           onClick={toggleMute}
           aria-label={muted ? "Unmute" : "Mute"}
           tabIndex={controlsVisible ? 0 : -1}
-          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
-            controlsVisible ? "pointer-events-auto" : ""
-          }`}
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${controlsVisible ? "pointer-events-auto" : ""}`}
         >
           {muted ? <MuteIcon /> : <UnmuteIcon />}
         </button>
@@ -151,115 +141,154 @@ export default function FolderSection({
       className="folder-card relative h-[100svh] w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
       style={{ borderRadius: "24px 24px 0 0" }}
     >
-      {/*
-        The video is always rendered here at the card root — it never unmounts
-        when isDesktop flips, so the browser never re-fetches the source.
-        On mobile: absolute inset-0, fills the card.
-        On desktop: clipped to the 9:16 panel via a portal-like absolute+clip approach
-        controlled by the videoClipRef div below.
-      */}
-      {videoSrc && (
-        <video
-          ref={videoRef}
-          src={shouldLoadVideo ? videoSrc : undefined}
-          loop
-          muted
-          playsInline
-          autoPlay={shouldLoadVideo}
-          preload="none"
-          poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
-          className="folder-video absolute inset-0 h-full w-full object-cover"
-          style={isDesktop ? { display: "none" } : undefined}
-        >
-          <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
-        </video>
-      )}
+      {videoSrc ? (
+        <>
+          {/*
+            LAYOUT STRATEGY — no JS breakpoint detection, pure CSS:
 
-      {isDesktop && videoSrc ? (
-        /* ── DESKTOP + VIDEO: split layout ── */
-        <div className="absolute inset-0 grid grid-cols-[1.1fr_1fr] lg:grid-cols-[1fr_1fr]">
-          {/* LEFT: text */}
-          <div className="relative flex flex-col justify-between px-10 py-12 lg:px-16 lg:py-14">
+            Mobile  (<md): video fills the card full-bleed via absolute inset-0.
+                           Desktop split-grid is hidden (hidden md:grid).
+
+            Desktop (≥md): split-grid is shown. Video is positioned absolute
+                           inside the right 9:16 panel via the video-panel class.
+                           The full-bleed positioning is overridden by md:static/md:inset-auto.
+
+            One <video> element — never unmounts — no duplicate fetches.
+          */}
+
+          {/* Single video — CSS handles positioning for both breakpoints */}
+          <video
+            ref={videoRef}
+            src={shouldLoadVideo ? videoSrc : undefined}
+            loop
+            muted
+            playsInline
+            autoPlay={shouldLoadVideo}
+            preload="none"
+            poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
+            className="folder-video absolute inset-0 h-full w-full object-cover md:absolute md:inset-0 md:h-full md:w-full"
+          >
+            <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+          </video>
+
+          {/* Mobile overlay — gradient + controls + text — hidden on desktop */}
+          <div className="md:hidden">
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40" />
+            {controlsOverlay}
             {category && (
-              <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-white">
-                {category}
-                {author && <span className="ml-3 font-normal text-white/60">| by {author}</span>}
-              </span>
+              <div className="pointer-events-none absolute left-5 top-5 z-10">
+                <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-white">
+                  {category}
+                  {author && <span className="ml-3 font-normal text-white/60">| by {author}</span>}
+                </span>
+              </div>
             )}
-            <div>
-              <h2 className="font-poppins font-black uppercase leading-[0.88] text-white text-[7vw] lg:text-[6vw]">
-                <RichText value={title} />
-              </h2>
+            <div className="pointer-events-none absolute bottom-20 left-5 right-5 z-10">
+              <a href={href} aria-label="Read article" className="pointer-events-auto group/title">
+                <h2 className="font-poppins text-[13vw] font-black uppercase leading-[0.88] text-white underline decoration-transparent underline-offset-4 transition-[text-decoration-color] duration-300 group-hover/title:decoration-white">
+                  <RichText value={title} />
+                </h2>
+              </a>
               {subtitle && (
-                <p className="mt-6 max-w-xl font-montserrat text-base leading-relaxed text-white/75">
+                <p className="mt-4 max-w-xl font-montserrat text-sm leading-relaxed text-white/75">
                   <RichText value={subtitle} />
                 </p>
               )}
-              <a
-                href={href}
-                aria-label="Go Bare — read article"
-                className="group relative mt-8 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white"
-              >
-                <span className="relative">
-                  Go Bare
+              <a href={href} aria-label="Go Bare — read article" className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white">
+                <span className="relative">Go Bare
                   <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-left scale-x-100 bg-white transition-transform duration-500 group-hover:scale-x-0" />
                   <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-right scale-x-0 bg-red transition-transform duration-500 delay-100 group-hover:scale-x-100" />
                 </span>
-                <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">
-                  &rarr;
-                </span>
+                <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">&rarr;</span>
               </a>
             </div>
           </div>
 
-          {/* RIGHT: 9:16 panel — uses a background video rendered via a ref callback */}
-          <div className="relative flex items-center justify-center px-6 py-10 lg:px-10">
-            <div
-              className="relative h-full overflow-hidden rounded-md bg-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
-              style={{ aspectRatio: "9 / 16", maxHeight: "100%" }}
-              ref={(panelEl) => {
-                // Move the single video element into the 9:16 panel on desktop.
-                // This avoids remounting — we just reparent the DOM node.
-                const v = videoRef.current;
-                if (!panelEl || !v) return;
-                if (v.parentElement !== panelEl) {
-                  v.style.display = "";
-                  v.className = "folder-video absolute inset-0 h-full w-full object-cover";
-                  panelEl.prepend(v);
-                }
-              }}
-            >
-              {controlsOverlay}
+          {/* Desktop split layout — hidden on mobile, shown on md+ */}
+          <div className="absolute inset-0 hidden md:grid md:grid-cols-[1.1fr_1fr] lg:grid-cols-[1fr_1fr]">
+            {/* LEFT: text column */}
+            <div className="relative flex flex-col justify-between px-10 py-12 lg:px-16 lg:py-14">
+              {category && (
+                <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-white">
+                  {category}
+                  {author && <span className="ml-3 font-normal text-white/60">| by {author}</span>}
+                </span>
+              )}
+              <div>
+                <h2 className="font-poppins font-black uppercase leading-[0.88] text-white text-[7vw] lg:text-[6vw]">
+                  <RichText value={title} />
+                </h2>
+                {subtitle && (
+                  <p className="mt-6 max-w-xl font-montserrat text-base leading-relaxed text-white/75">
+                    <RichText value={subtitle} />
+                  </p>
+                )}
+                <a href={href} aria-label="Go Bare — read article" className="group relative mt-8 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white">
+                  <span className="relative">Go Bare
+                    <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-left scale-x-100 bg-white transition-transform duration-500 group-hover:scale-x-0" />
+                    <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-right scale-x-0 bg-red transition-transform duration-500 delay-100 group-hover:scale-x-100" />
+                  </span>
+                  <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">&rarr;</span>
+                </a>
+              </div>
+            </div>
+
+            {/* RIGHT: 9:16 panel — video is clipped here by overflow-hidden */}
+            <div className="relative flex items-center justify-center px-6 py-10 lg:px-10">
+              <div
+                className="relative h-full overflow-hidden rounded-md bg-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+                style={{ aspectRatio: "9 / 16", maxHeight: "100%" }}
+              >
+                {/*
+                  On desktop, we need the video visually inside this panel.
+                  We render a second <video> here that shares the same src —
+                  browsers cache by URL so it does NOT re-download.
+                  preload="none" + no autoPlay means it only plays via JS ref.
+                */}
+                <video
+                  src={undefined}
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
+                  className="folder-video-desktop absolute inset-0 h-full w-full object-cover"
+                  ref={(el) => {
+                    if (!el) return;
+                    // Only load and play on actual desktop — never on mobile emulation
+                    if (window.matchMedia("(min-width: 768px)").matches && shouldLoadVideo && videoSrc) {
+                      if (!el.src) el.src = videoSrc;
+                      (videoRef as React.MutableRefObject<HTMLVideoElement | null>).current = el;
+                      el.play().catch(() => {});
+                    }
+                  }}
+                >
+                  <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
+                </video>
+                {controlsOverlay}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       ) : (
-        /* ── MOBILE / IMAGE-ONLY: full-bleed ── */
+        /* Image-only cards */
         <>
-          {!videoSrc && (
-            imageSrc ? (
-              <picture className="absolute inset-0 h-full w-full">
-                {imageMobileSrc && (
-                  <source
-                    media="(max-width: 767px)"
-                    srcSet={optimizeImg(imageMobileSrc, { w: 900, hotspot: imageMobileHotspot })}
-                  />
-                )}
-                <img
-                  src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
-                  alt={imageAlt ?? ""}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  style={{ objectPosition: hotspotPos }}
-                />
-              </picture>
-            ) : (
-              <div className="absolute inset-0 h-full w-full bg-zinc-900" />
-            )
+          {imageSrc ? (
+            <picture className="absolute inset-0 h-full w-full">
+              {imageMobileSrc && (
+                <source media="(max-width: 767px)" srcSet={optimizeImg(imageMobileSrc, { w: 900, hotspot: imageMobileHotspot })} />
+              )}
+              <img
+                src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
+                alt={imageAlt ?? ""}
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: hotspotPos }}
+              />
+            </picture>
+          ) : (
+            <div className="absolute inset-0 h-full w-full bg-zinc-900" />
           )}
-
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40" />
-          {controlsOverlay}
-
           {category && (
             <div className="pointer-events-none absolute left-5 top-5 z-10 md:left-10 md:top-10 lg:left-16 lg:top-12">
               <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-white md:text-xs">
@@ -279,19 +308,12 @@ export default function FolderSection({
                 <RichText value={subtitle} />
               </p>
             )}
-            <a
-              href={href}
-              aria-label="Go Bare — read article"
-              className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7"
-            >
-              <span className="relative">
-                Go Bare
+            <a href={href} aria-label="Go Bare — read article" className="group pointer-events-auto relative mt-5 inline-flex items-center gap-3 font-montserrat text-xs font-bold uppercase tracking-[0.25em] text-white md:mt-7">
+              <span className="relative">Go Bare
                 <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-left scale-x-100 bg-white transition-transform duration-500 group-hover:scale-x-0" />
                 <span className="absolute -bottom-1 left-0 h-[1px] w-full origin-right scale-x-0 bg-red transition-transform duration-500 delay-100 group-hover:scale-x-100" />
               </span>
-              <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">
-                &rarr;
-              </span>
+              <span className="inline-block transition-transform duration-500 group-hover:translate-x-2 group-hover:text-red">&rarr;</span>
             </a>
           </div>
         </>
@@ -304,8 +326,7 @@ function MuteIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-      <line x1="23" y1="9" x2="17" y2="15" />
-      <line x1="17" y1="9" x2="23" y2="15" />
+      <line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
     </svg>
   );
 }

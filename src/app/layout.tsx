@@ -116,6 +116,11 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
+        {/* Mark crawlers/Lighthouse before React hydrates so the loader never paints for bots.
+            Sets window.__obare_bot = true which HomeClient reads in its useState initializer. */}
+        <Script id="bot-detect" strategy="beforeInteractive">{`
+          (function(){var u=navigator.userAgent;if(/HeadlessChrom|Chrome-Lighthouse|Googlebot|AdsBot|bingbot|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|Discordbot|Prerender/i.test(u)){window.__obare_bot=true;}})();
+        `}</Script>
         <GSAPProvider>{children}</GSAPProvider>
         {/* Prevent iOS Safari pinch-zoom — Safari ignores user-scalable=no since iOS 10 */}
         <Script id="ios-gesture-lock" strategy="beforeInteractive">{`

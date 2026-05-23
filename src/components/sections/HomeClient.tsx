@@ -66,13 +66,10 @@ interface Props {
   heroTickerImageUrl?: string;
 }
 
-function isCrawler() {
-  if (typeof navigator === "undefined") return false;
-  return /Chrome-Lighthouse|Googlebot|AdsBot|bingbot|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|Discordbot|HeadlessChrome|Prerender/i.test(navigator.userAgent);
-}
-
 export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile, heroLogoUrl, heroTickerImageUrl }: Props) {
-  const [isLoaded, setIsLoaded] = useState(() => isCrawler());
+  // window.__obare_bot is set by an inline beforeInteractive script in layout.tsx
+  // before React hydrates — so this initializer reads the correct value on first render.
+  const [isLoaded, setIsLoaded] = useState(() => typeof window !== "undefined" && !!(window as typeof window & { __obare_bot?: boolean }).__obare_bot);
   const [showAgeGate, setShowAgeGate] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
 
