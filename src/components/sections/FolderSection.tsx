@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { optimizeImg } from "@/lib/sanityImg";
-import { RedEmphasis } from "@/lib/redEmphasis";
 import RichText from "@/components/portable/RichText";
 
 interface FolderSectionProps {
@@ -38,8 +37,6 @@ export default function FolderSection({
   const [isDesktop, setIsDesktop] = useState(false);
   const [muted, setMuted] = useState(true);
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-  // Instagram-reels-style mobile controls: hidden until the user taps the
-  // video, then fade in the center for 2.5s before auto-hiding.
   const [controlsVisible, setControlsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const hideTimerRef = useRef<number | null>(null);
@@ -55,38 +52,27 @@ export default function FolderSection({
   const togglePlay = () => {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) {
-      v.play().catch(() => {});
-      setIsPaused(false);
-    } else {
-      v.pause();
-      setIsPaused(true);
-    }
+    if (v.paused) { v.play().catch(() => {}); setIsPaused(false); }
+    else { v.pause(); setIsPaused(true); }
     showControls();
   };
 
   const showControls = () => {
     setControlsVisible(true);
     if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
-    hideTimerRef.current = window.setTimeout(() => {
-      setControlsVisible(false);
-    }, 2500);
+    hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
   };
 
   const handleVideoTap = () => {
     setControlsVisible((v) => !v);
     if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
     if (!controlsVisible) {
-      hideTimerRef.current = window.setTimeout(() => {
-        setControlsVisible(false);
-      }, 2500);
+      hideTimerRef.current = window.setTimeout(() => setControlsVisible(false), 2500);
     }
   };
 
   useEffect(() => {
-    return () => {
-      if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
-    };
+    return () => { if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current); };
   }, []);
 
   useEffect(() => {
@@ -97,25 +83,16 @@ export default function FolderSection({
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // When the viewport crosses the md breakpoint the video element gets
-  // re-mounted (React swaps the JSX branch). ScrollTrigger still holds a
-  // reference to the destroyed element — refresh tells it to re-query.
   useEffect(() => {
     const id = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(id);
   }, [isDesktop]);
 
-  // Lazy-load video src only when card is within ~20% of viewport
   useEffect(() => {
     if (!videoSrc || !cardRef.current) return;
     const el = cardRef.current;
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoadVideo(true);
-          obs.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setShouldLoadVideo(true); obs.disconnect(); } },
       { rootMargin: "20% 0px" }
     );
     obs.observe(el);
@@ -128,9 +105,60 @@ export default function FolderSection({
       ? `${imageHotspot.x * 100}% ${imageHotspot.y * 100}%`
       : "center 25%";
 
-  const mediaElement = (() => {
-    if (videoSrc) {
-      return (
+  const controlsOverlay = videoSrc ? (
+    <>
+      <button
+        type="button"
+        aria-label="Toggle video controls"
+        onClick={handleVideoTap}
+        className="absolute inset-0 z-[5] cursor-pointer"
+      />
+      <div
+        className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${
+          controlsVisible ? "opacity-100" : "opacity-0"
+        }`}
+        aria-hidden={!controlsVisible}
+      >
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={isPaused ? "Play" : "Pause"}
+          tabIndex={controlsVisible ? 0 : -1}
+          className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
+            controlsVisible ? "pointer-events-auto" : ""
+          }`}
+        >
+          {isPaused ? <PlayIconLarge /> : <PauseIconLarge />}
+        </button>
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute" : "Mute"}
+          tabIndex={controlsVisible ? 0 : -1}
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
+            controlsVisible ? "pointer-events-auto" : ""
+          }`}
+        >
+          {muted ? <MuteIcon /> : <UnmuteIcon />}
+        </button>
+      </div>
+    </>
+  ) : null;
+
+  return (
+    <div
+      ref={cardRef}
+      className="folder-card relative h-[100svh] w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
+      style={{ borderRadius: "24px 24px 0 0" }}
+    >
+      {/*
+        The video is always rendered here at the card root — it never unmounts
+        when isDesktop flips, so the browser never re-fetches the source.
+        On mobile: absolute inset-0, fills the card.
+        On desktop: clipped to the 9:16 panel via a portal-like absolute+clip approach
+        controlled by the videoClipRef div below.
+      */}
+      {videoSrc && (
         <video
           ref={videoRef}
           src={shouldLoadVideo ? videoSrc : undefined}
@@ -141,42 +169,16 @@ export default function FolderSection({
           preload="none"
           poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
           className="folder-video absolute inset-0 h-full w-full object-cover"
+          style={isDesktop ? { display: "none" } : undefined}
         >
           <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
         </video>
-      );
-    }
-    if (imageSrc) {
-      return (
-        <picture className="absolute inset-0 h-full w-full">
-          {imageMobileSrc && (
-            <source
-              media="(max-width: 767px)"
-              srcSet={optimizeImg(imageMobileSrc, { w: 900, hotspot: imageMobileHotspot })}
-            />
-          )}
-          <img
-            src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
-            alt={imageAlt ?? ""}
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: isDesktop ? "center" : hotspotPos }}
-          />
-        </picture>
-      );
-    }
-    return <div className="absolute inset-0 h-full w-full bg-zinc-900" />;
-  })();
+      )}
 
-  return (
-    <div
-      ref={cardRef}
-      className="folder-card relative h-[100svh] w-full overflow-hidden bg-black shadow-[0_-20px_60px_rgba(0,0,0,0.55)] will-change-transform"
-      style={{ borderRadius: "24px 24px 0 0" }}
-    >
       {isDesktop && videoSrc ? (
-        /* ─────────── DESKTOP + VIDEO: split — text left, 9:16 video right ─────────── */
+        /* ── DESKTOP + VIDEO: split layout ── */
         <div className="absolute inset-0 grid grid-cols-[1.1fr_1fr] lg:grid-cols-[1fr_1fr]">
-          {/* LEFT — text column */}
+          {/* LEFT: text */}
           <div className="relative flex flex-col justify-between px-10 py-12 lg:px-16 lg:py-14">
             {category && (
               <span className="block font-montserrat text-xs font-bold uppercase tracking-[0.4em] text-white">
@@ -210,112 +212,54 @@ export default function FolderSection({
             </div>
           </div>
 
-          {/* RIGHT — 9:16 media frame with tap controls */}
+          {/* RIGHT: 9:16 panel — uses a background video rendered via a ref callback */}
           <div className="relative flex items-center justify-center px-6 py-10 lg:px-10">
             <div
               className="relative h-full overflow-hidden rounded-md bg-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
               style={{ aspectRatio: "9 / 16", maxHeight: "100%" }}
+              ref={(panelEl) => {
+                // Move the single video element into the 9:16 panel on desktop.
+                // This avoids remounting — we just reparent the DOM node.
+                const v = videoRef.current;
+                if (!panelEl || !v) return;
+                if (v.parentElement !== panelEl) {
+                  v.style.display = "";
+                  v.className = "folder-video absolute inset-0 h-full w-full object-cover";
+                  panelEl.prepend(v);
+                }
+              }}
             >
-              {mediaElement}
-
-              {/* Tap overlay */}
-              {videoSrc && (
-                <button
-                  type="button"
-                  aria-label="Toggle video controls"
-                  onClick={handleVideoTap}
-                  className="absolute inset-0 z-[5] cursor-pointer"
-                />
-              )}
-
-              {/* Instagram-style controls — play/pause + mute */}
-              {videoSrc && (
-                <div
-                  className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${
-                    controlsVisible ? "opacity-100" : "opacity-0"
-                  }`}
-                  aria-hidden={!controlsVisible}
-                >
-                  <button
-                    type="button"
-                    onClick={togglePlay}
-                    aria-label={isPaused ? "Play" : "Pause"}
-                    tabIndex={controlsVisible ? 0 : -1}
-                    className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${
-                      controlsVisible ? "pointer-events-auto" : ""
-                    }`}
-                  >
-                    {isPaused ? <PlayIconLarge /> : <PauseIconLarge />}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={toggleMute}
-                    aria-label={muted ? "Unmute" : "Mute"}
-                    tabIndex={controlsVisible ? 0 : -1}
-                    className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red ${
-                      controlsVisible ? "pointer-events-auto" : ""
-                    }`}
-                  >
-                    {muted ? <MuteIcon /> : <UnmuteIcon />}
-                  </button>
-                </div>
-              )}
+              {controlsOverlay}
             </div>
           </div>
         </div>
       ) : (
-        /* ─────────── MOBILE (all) + DESKTOP (images only): full-bleed + overlay text ─────────── */
+        /* ── MOBILE / IMAGE-ONLY: full-bleed ── */
         <>
-          {mediaElement}
+          {!videoSrc && (
+            imageSrc ? (
+              <picture className="absolute inset-0 h-full w-full">
+                {imageMobileSrc && (
+                  <source
+                    media="(max-width: 767px)"
+                    srcSet={optimizeImg(imageMobileSrc, { w: 900, hotspot: imageMobileHotspot })}
+                  />
+                )}
+                <img
+                  src={optimizeImg(imageSrc, { w: 1600, hotspot: imageHotspot })}
+                  alt={imageAlt ?? ""}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ objectPosition: hotspotPos }}
+                />
+              </picture>
+            ) : (
+              <div className="absolute inset-0 h-full w-full bg-zinc-900" />
+            )
+          )}
+
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40" />
+          {controlsOverlay}
 
-          {/* Instagram-reels-style tap-zone. Covers the whole card so a tap
-             anywhere on the media toggles the center controls. Category,
-             title, and Go Bare sit above this at z-10+. */}
-          {videoSrc && (
-            <button
-              type="button"
-              aria-label="Toggle video controls"
-              onClick={handleVideoTap}
-              className="absolute inset-0 z-[5] cursor-pointer"
-            />
-          )}
-
-          {/* Center controls — Instagram-style vertical stack. Play/pause is
-             the primary (larger) icon centered on the card. Mute sits just
-             beneath it as the secondary control. Appear on tap, auto-hide
-             after 2.5s. Pointer-events only active while visible. */}
-          {videoSrc && (
-            <div
-              className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 transition-opacity duration-300 ${
-                controlsVisible ? "opacity-100" : "opacity-0"
-              }`}
-              aria-hidden={!controlsVisible}
-            >
-              <button
-                type="button"
-                onClick={togglePlay}
-                aria-label={isPaused ? "Play" : "Pause"}
-                tabIndex={controlsVisible ? 0 : -1}
-                className={`flex h-[72px] w-[72px] items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
-                  controlsVisible ? "pointer-events-auto" : ""
-                }`}
-              >
-                {isPaused ? <PlayIconLarge /> : <PauseIconLarge />}
-              </button>
-              <button
-                type="button"
-                onClick={toggleMute}
-                aria-label={muted ? "Unmute" : "Mute"}
-                tabIndex={controlsVisible ? 0 : -1}
-                className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-all hover:bg-red hover:text-white ${
-                  controlsVisible ? "pointer-events-auto" : ""
-                }`}
-              >
-                {muted ? <MuteIcon /> : <UnmuteIcon />}
-              </button>
-            </div>
-          )}
           {category && (
             <div className="pointer-events-none absolute left-5 top-5 z-10 md:left-10 md:top-10 lg:left-16 lg:top-12">
               <span className="block font-montserrat text-[10px] font-bold uppercase tracking-[0.4em] text-white md:text-xs">

@@ -152,6 +152,8 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile, lo
           <h1 ref={headingRef} className="w-full px-10 md:px-20 lg:px-32">
             <img
               src={`${optimizeImg(logoUrl, { w: 1200, q: 85 })}`}
+              srcSet={`${optimizeImg(logoUrl, { w: 600, q: 85 })} 600w, ${optimizeImg(logoUrl, { w: 900, q: 85 })} 900w, ${optimizeImg(logoUrl, { w: 1200, q: 85 })} 1200w`}
+              sizes="(max-width: 767px) 80vw, (max-width: 1199px) 70vw, 1200px"
               alt="OBARE"
               width={1200}
               height={400}
@@ -200,8 +202,8 @@ export default function Hero({ headline, subheadline, bgImage, bgImageMobile, lo
           {/* Desktop: PNG strip */}
           {tickerImageUrl ? (
             <div className="hero-ticker hidden md:flex">
-              <img src={`${optimizeImg(tickerImageUrl, { w: 3000, q: 90 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} />
-              <img src={`${optimizeImg(tickerImageUrl, { w: 3000, q: 90 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} aria-hidden />
+              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} width={2400} height={88} />
+              <img src={`${optimizeImg(tickerImageUrl, { w: 2400, q: 85 })}`} alt="" className="h-11 w-auto flex-shrink-0" draggable={false} aria-hidden width={2400} height={88} />
             </div>
           ) : (
             <div className="hero-ticker hidden md:flex whitespace-nowrap">

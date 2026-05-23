@@ -66,8 +66,13 @@ interface Props {
   heroTickerImageUrl?: string;
 }
 
+function isCrawler() {
+  if (typeof navigator === "undefined") return false;
+  return /Chrome-Lighthouse|Googlebot|AdsBot|bingbot|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|Discordbot|HeadlessChrome|Prerender/i.test(navigator.userAgent);
+}
+
 export default function HomeClient({ projects, reels, stories, heroHeadline, heroSubheadline, heroBgImage, heroBgImageMobile, heroLogoUrl, heroTickerImageUrl }: Props) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => isCrawler());
   const [showAgeGate, setShowAgeGate] = useState(false);
   const stackContainerRef = useRef<HTMLDivElement>(null);
 

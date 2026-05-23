@@ -203,10 +203,10 @@ export default function Navbar() {
               <img
                 src={`${logo.url}?w=400&q=80&auto=format`}
                 alt={logo.alt ?? "OBARE"}
-                width={400}
-                height={134}
+                width={179}
+                height={24}
                 className="h-6 w-auto md:h-8"
-                style={{ filter: "brightness(0) invert(1)" }}
+                style={{ filter: "brightness(0) invert(1)", aspectRatio: "400/134" }}
                 draggable={false}
                 loading="eager"
                 fetchPriority="high"

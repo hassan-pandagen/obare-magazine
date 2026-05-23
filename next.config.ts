@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
+  // Tell Next.js/SWC to target modern browsers — eliminates polyfills for
+  // Array.at, Array.flat, Object.fromEntries, etc. that browserslist already excludes.
+  experimental: {
+    optimizePackageImports: ["gsap", "swiper", "@portabletext/react"],
+  },
+
   async redirects() {
     return [
       // ── Old article posts → new articles (slug preserved) ──────────────

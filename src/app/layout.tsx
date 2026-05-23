@@ -93,8 +93,6 @@ export default function RootLayout({
     >
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="" />
-        <link rel="preconnect" href="https://47jnaej0.apicdn.sanity.io" crossOrigin="" />
-        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://47jnaej0.apicdn.sanity.io" />
         <link
           rel="preload"

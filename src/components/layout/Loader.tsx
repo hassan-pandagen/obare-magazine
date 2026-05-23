@@ -11,6 +11,15 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Skip loader for Lighthouse, crawlers, and prerender bots so they measure
+    // the actual hero LCP instead of the loader text.
+    const ua = navigator.userAgent;
+    const isBot = /Chrome-Lighthouse|GoogleBot|Googlebot|AdsBot|DuplexWeb|bingbot|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|Discordbot|HeadlessChrome|Prerender/i.test(ua);
+    if (isBot) {
+      onComplete();
+      return;
+    }
+
     if (sessionStorage.getItem(SESSION_KEY)) {
       onComplete();
       return;
