@@ -28,6 +28,15 @@ export default function AgeGate({ onDismiss }: AgeGateProps = {}) {
     return () => cancelAnimationFrame(id);
   }, [show]);
 
+  // Lock body scroll on iOS while gate is visible — prevents the overlay
+  // content from scrolling off-screen as the page underneath shifts.
+  useEffect(() => {
+    if (!show) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [show]);
+
   const confirm = () => {
     try { localStorage.setItem(STORAGE_KEY, "1"); } catch {}
     setShow(false);
@@ -43,8 +52,8 @@ export default function AgeGate({ onDismiss }: AgeGateProps = {}) {
 
   return (
     <div
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black px-6 transition-opacity duration-300"
-      style={{ opacity: visible ? 1 : 0 }}
+      className="fixed inset-x-0 top-0 z-[999] flex bg-black px-6 transition-opacity duration-300"
+      style={{ opacity: visible ? 1 : 0, height: "100dvh", alignItems: "center", justifyContent: "center" }}
     >
       <div className="w-full max-w-md text-center">
         <p className="font-montserrat text-[10px] font-bold uppercase tracking-[0.45em] text-red mb-6">
