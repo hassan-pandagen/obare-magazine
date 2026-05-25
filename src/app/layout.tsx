@@ -128,6 +128,23 @@ export default function RootLayout({
           document.addEventListener('gesturechange',function(e){e.preventDefault();},{passive:false});
           document.addEventListener('gestureend',function(e){e.preventDefault();},{passive:false});
         `}</Script>
+        {/* Block horizontal swipe-back/forward on Samsung Browser and Android Chrome.
+            Tracks touch start X; if horizontal delta > vertical delta, prevents default
+            so the browser doesn't interpret it as a navigation gesture. */}
+        <Script id="swipe-lock" strategy="beforeInteractive">{`
+          (function(){
+            var startX=0,startY=0;
+            document.addEventListener('touchstart',function(e){
+              startX=e.touches[0].clientX;
+              startY=e.touches[0].clientY;
+            },{passive:true});
+            document.addEventListener('touchmove',function(e){
+              var dx=Math.abs(e.touches[0].clientX-startX);
+              var dy=Math.abs(e.touches[0].clientY-startY);
+              if(dx>dy&&dx>10){e.preventDefault();}
+            },{passive:false});
+          })();
+        `}</Script>
 
         {/* Google Analytics — replace G-XXXXXXXXXX with your GA4 Measurement ID */}
         {process.env.NEXT_PUBLIC_GA_ID && (
