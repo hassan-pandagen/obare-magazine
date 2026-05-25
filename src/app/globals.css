@@ -23,9 +23,9 @@ html {
      so position: sticky on descendants still works. This is the safe way
      to cut horizontal overflow on mobile without breaking the deck stack. */
   overflow-x: clip;
-  /* Prevent double-tap zoom on Android Chrome / Samsung Internet — allows
-     normal panning but blocks pinch and double-tap scale gestures. */
-  touch-action: pan-x pan-y;
+  /* pan-y only — blocks horizontal swipe-back/forward on iOS Safari.
+     pan-x was causing the folder stack to slide left/right like browser navigation. */
+  touch-action: pan-y;
   -webkit-touch-callout: none;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -52,6 +52,7 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-montserrat), sans-serif;
+  overscroll-behavior-x: none;
 }
 
 /* Selection color */
