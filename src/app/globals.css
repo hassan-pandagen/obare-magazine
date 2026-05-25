@@ -76,6 +76,13 @@ body {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
+/* Prevent Samsung Browser / Android Chrome from treating horizontal drags
+   on folder cards as back/forward navigation */
+.folder-card {
+  overscroll-behavior: none;
+  touch-action: pan-y;
+}
+
 .hero-ticker {
   animation: hero-ticker-anim 15s linear infinite;
 }

@@ -128,20 +128,24 @@ export default function RootLayout({
           document.addEventListener('gesturechange',function(e){e.preventDefault();},{passive:false});
           document.addEventListener('gestureend',function(e){e.preventDefault();},{passive:false});
         `}</Script>
-        {/* Block horizontal swipe-back/forward on Samsung Browser and Android Chrome.
-            Tracks touch start X; if horizontal delta > vertical delta, prevents default
-            so the browser doesn't interpret it as a navigation gesture. */}
+        {/* Block edge-swipe back/forward on Samsung Browser and Android Chrome.
+            Only intercepts touches that START within 30px of the left/right edge
+            AND move more horizontally than vertically — the exact signature of a
+            browser navigation gesture. Center-origin horizontal swipes are ignored. */}
         <Script id="swipe-lock" strategy="beforeInteractive">{`
           (function(){
-            var startX=0,startY=0;
+            var startX=0,startY=0,blockH=false;
+            var EDGE=30;
             document.addEventListener('touchstart',function(e){
               startX=e.touches[0].clientX;
               startY=e.touches[0].clientY;
+              blockH=(startX<EDGE||startX>window.innerWidth-EDGE);
             },{passive:true});
             document.addEventListener('touchmove',function(e){
+              if(!blockH)return;
               var dx=Math.abs(e.touches[0].clientX-startX);
               var dy=Math.abs(e.touches[0].clientY-startY);
-              if(dx>dy&&dx>10){e.preventDefault();}
+              if(dx>dy&&dx>8){e.preventDefault();}
             },{passive:false});
           })();
         `}</Script>
