@@ -156,7 +156,7 @@ export default function FolderSection({
             One <video> element — never unmounts — no duplicate fetches.
           */}
 
-          {/* Single video — CSS handles positioning for both breakpoints */}
+          {/* Mobile-only video — hidden on desktop, desktop panel has its own */}
           <video
             ref={videoRef}
             src={shouldLoadVideo ? videoSrc : undefined}
@@ -166,7 +166,7 @@ export default function FolderSection({
             autoPlay={shouldLoadVideo}
             preload="none"
             poster={imageSrc ? optimizeImg(imageSrc, { w: 800 }) : undefined}
-            className="folder-video absolute inset-0 h-full w-full object-cover md:absolute md:inset-0 md:h-full md:w-full"
+            className="folder-video absolute inset-0 h-full w-full object-cover md:hidden"
           >
             <track kind="captions" src="/captions/empty.vtt" srcLang="en" label="English" default />
           </video>
